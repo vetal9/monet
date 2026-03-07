@@ -1,0 +1,4031 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Монет</title>
+<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --c1:#ff3d87;--c2:#ff6db3;--c3:#ffb3d4;
+  --m1:#00e5a0;--m2:#5fffc0;--m3:#a8ffda;
+  --p1:#ffb085;--p2:#ffd0b0;
+  --v1:#c77dff;--v2:#e0aaff;
+  --bg:#0d0515;
+  --s1:rgba(255,255,255,.07);--s2:rgba(255,255,255,.11);--s3:rgba(255,255,255,.16);
+  --bd:rgba(255,160,200,.16);--bd2:rgba(255,160,200,.28);
+  --ink:#fff0f6;--ink2:rgba(255,220,238,.55);--ink3:rgba(255,180,220,.28);
+  --nav:76px;--r:22px;--r2:16px;--r3:12px;
+}
+
+/* ── KEYFRAMES ── */
+@keyframes bgShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes orbDrift{0%,100%{transform:translate(0,0)}33%{transform:translate(24px,-18px)}66%{transform:translate(-12px,14px)}}
+@keyframes screenIn{from{opacity:0}to{opacity:1}}
+@keyframes screenOut{from{opacity:1;transform:translateY(0) scale(1)}to{opacity:0;transform:translateY(-14px) scale(.98)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(100%)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeOverlay{from{opacity:0}to{opacity:1}}
+@keyframes cardIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 20px rgba(255,61,135,.3)}50%{box-shadow:0 0 40px rgba(255,61,135,.6)}}
+@keyframes spinRing{to{stroke-dashoffset:var(--dash)}}
+@keyframes numberUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes navDot{from{width:4px}to{width:20px}}
+
+html,body{height:100%;overflow:hidden}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Cabinet Grotesk',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Animated mesh bg */
+.bg-mesh{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% -5%, rgba(255,61,135,.18) 0%,transparent 55%),
+    radial-gradient(ellipse 60% 50% at 85% 110%, rgba(0,229,160,.12) 0%,transparent 55%),
+    radial-gradient(ellipse 50% 40% at 70% 45%, rgba(199,125,255,.09) 0%,transparent 55%),
+    radial-gradient(ellipse 40% 30% at 30% 80%, rgba(255,176,133,.08) 0%,transparent 55%);
+}
+.orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(60px)}
+.orb1{width:500px;height:500px;background:radial-gradient(circle,rgba(255,61,135,.22),transparent 65%);top:-320px;left:-150px;animation:orbDrift 14s ease-in-out infinite}
+.orb2{width:420px;height:420px;background:radial-gradient(circle,rgba(0,229,160,.14),transparent 65%);bottom:-180px;right:-120px;animation:orbDrift 18s ease-in-out infinite reverse}
+.orb3{width:350px;height:350px;background:radial-gradient(circle,rgba(199,125,255,.12),transparent 65%);top:35%;left:55%;animation:orbDrift 22s ease-in-out infinite 5s}
+
+/* ── LAYOUT ── */
+.app{display:flex;flex-direction:column;height:100vh;max-width:860px;margin:0 auto;position:relative;z-index:1}
+
+/* ── HEADER ── */
+.header{padding:6px 22px 4px;flex-shrink:0}
+.hrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+.app-name{
+  font-size:11px;font-weight:900;letter-spacing:3.5px;text-transform:uppercase;
+  background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3),var(--c2),var(--c1));
+  background-size:200% auto;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:shimmer 4s linear infinite;
+}
+.hdate{font-size:11.5px;color:var(--ink3);font-weight:500}
+.greeting{font-size:20px;font-weight:900;letter-spacing:-.5px;line-height:1.1;margin-bottom:4px}
+.greeting em{
+  font-style:normal;
+  background:linear-gradient(90deg,var(--c1),var(--c2),var(--m1),var(--c2),var(--c1));
+  background-size:200% auto;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:shimmer 5s linear infinite;
+}
+
+/* ── SCROLL ── */
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 20px calc(var(--nav) + 20px);scroll-behavior:smooth}
+.scroll::-webkit-scrollbar{display:none}
+
+/* ── SCREENS ── */
+.screen{display:none}
+.screen.active{display:block;animation:screenIn .35s cubic-bezier(.2,0,.2,1) both}
+#sc-piggy.active{display:flex!important}
+.screen.leaving{animation:screenOut .2s cubic-bezier(.2,0,.2,1) both}
+
+/* ── GLASS MIXIN ── */
+.glass{
+  background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.03));
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border:1px solid var(--bd);border-radius:var(--r);
+}
+
+/* ── SHIMMER TEXT util ── */
+.txt-rose{background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3),var(--c2),var(--c1));background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite}
+.txt-mint{background:linear-gradient(90deg,var(--m1),var(--m2),var(--m3),var(--m2),var(--m1));background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite}
+.txt-peach{background:linear-gradient(90deg,var(--p1),var(--p2),var(--p1));background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite}
+.txt-violet{background:linear-gradient(90deg,var(--v1),var(--v2),var(--v1));background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite}
+
+/* ── BALANCE HERO ── */
+.hero{
+  margin:18px 0 14px;
+  background:linear-gradient(145deg,rgba(255,61,135,.18),rgba(255,109,179,.1),rgba(199,125,255,.12));
+  backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
+  border:1px solid var(--bd);border-radius:var(--r);
+  padding:24px 22px;position:relative;overflow:hidden;
+}
+.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(255,61,135,.14),transparent 65%)}
+.hero::after{content:'';position:absolute;bottom:-80px;left:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(199,125,255,.1),transparent 65%)}
+.hero-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--ink3);margin-bottom:8px}
+.hero-bal{
+  font-family:'Fira Code',monospace;font-size:44px;font-weight:600;letter-spacing:-1.5px;line-height:1;margin-bottom:6px;
+  animation:numberUp .4s ease both;
+}
+.hero-bal.pos{background:linear-gradient(90deg,var(--m1),var(--m2),var(--m3),var(--m2),var(--m1));background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite,numberUp .4s ease both}
+.hero-bal.neg{background:linear-gradient(90deg,#ff3d6d,#ff8599);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite,numberUp .4s ease both}
+.hero-bal.zero{color:var(--ink2)}
+.hero-sub{font-size:12.5px;color:var(--ink2);margin-bottom:20px;line-height:1.45}
+.pills{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pill{
+  background:rgba(255,255,255,.06);backdrop-filter:blur(12px);
+  border:1px solid var(--bd);border-radius:var(--r2);
+  padding:11px 14px;display:flex;align-items:center;gap:10px;
+}
+.pill-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.pill-dot.g{background:var(--m2);box-shadow:0 0 8px var(--m2)}
+.pill-dot.r{background:var(--c1);box-shadow:0 0 8px var(--c1)}
+.pill-lbl{font-size:10px;color:var(--ink3);font-weight:700;text-transform:uppercase;letter-spacing:.7px;margin-bottom:2px}
+.pill-val{font-family:'Fira Code',monospace;font-size:13.5px;font-weight:600;color:var(--ink)}
+
+/* ── RING ── */
+
+/* ══ HOME REDESIGN ══ */
+.h-hero{
+  position:relative;overflow:hidden;
+  border-radius:24px;
+  background:linear-gradient(145deg,rgba(255,61,135,.15) 0%,rgba(199,125,255,.1) 50%,rgba(0,229,160,.08) 100%);
+  border:1px solid rgba(255,255,255,.1);
+  padding:24px 20px 20px;
+  margin-bottom:12px;
+  animation:cardIn .4s ease both;
+}
+.h-hero-glow{
+  position:absolute;top:-40px;right:-40px;width:180px;height:180px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,61,135,.3),transparent 65%);
+  filter:blur(30px);pointer-events:none;
+  animation:pulse 4s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.1)}}
+.h-hero-inner{position:relative;z-index:1}
+.h-hero-label{
+  display:flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:800;color:rgba(255,255,255,.45);
+  text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;
+}
+.h-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--m2);
+  box-shadow:0 0 8px var(--m2);
+  animation:pulse 2s ease-in-out infinite;
+}
+.h-hero-bal{
+  font-family:'Fira Code',monospace;
+  font-size:clamp(28px,8vw,42px);
+  font-weight:900;letter-spacing:-1px;
+  line-height:1;margin-bottom:8px;
+  transition:all .4s ease;
+}
+.h-hero-bal.pos{background:linear-gradient(90deg,#00e5a0,#5fffc0,#00e5a0);background-size:200% auto;animation:shimmer 3s linear infinite;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.h-hero-bal.neg{background:linear-gradient(90deg,#ff3d87,#ff6db3);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.h-hero-bal.zero{color:rgba(255,255,255,.3)}
+.h-hero-sub{font-size:12.5px;color:rgba(255,255,255,.4);margin-bottom:18px;font-weight:500}
+.h-hero-row{display:flex;align-items:center;gap:0;background:rgba(0,0,0,.2);border-radius:16px;padding:12px 16px}
+.h-stat{display:flex;align-items:center;gap:10px;flex:1}
+.h-stat-ico{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0}
+.inc-bg{background:rgba(0,229,160,.15);color:var(--m2)}
+.exp-bg{background:rgba(255,61,135,.15);color:var(--c1)}
+.sav-bg{background:rgba(255,176,133,.15)}
+.h-stat-lbl{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.8px;margin-bottom:2px}
+.h-stat-val{font-family:'Fira Code',monospace;font-size:13px;font-weight:700}
+.inc-col{color:var(--m2)}
+.exp-col{color:var(--c1)}
+.sav-col{background:linear-gradient(90deg,var(--p1),var(--p2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.h-divider{width:1px;height:36px;background:rgba(255,255,255,.08);margin:0 4px;flex-shrink:0}
+
+/* Quick stats */
+.h-stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.h-mini-card{
+  background:var(--s1);border:1px solid var(--bd);border-radius:16px;
+  padding:12px 8px;text-align:center;cursor:pointer;
+  transition:all .18s ease;animation:cardIn .35s ease both;
+}
+.h-mini-card:hover{background:var(--s2);border-color:var(--bd2);transform:translateY(-2px)}
+.h-mini-card:nth-child(1){animation-delay:.05s}
+.h-mini-card:nth-child(2){animation-delay:.1s}
+.h-mini-card:nth-child(3){animation-delay:.15s}
+.h-mini-card:nth-child(4){animation-delay:.2s}
+.h-mini-ico{font-size:18px;margin-bottom:4px}
+.h-mini-val{font-family:'Fira Code',monospace;font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.h-mini-lbl{font-size:9.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px}
+
+/* Ring + chart */
+.h-ring-chart{
+  display:flex;gap:12px;margin-bottom:12px;
+  background:var(--s1);border:1px solid var(--bd);border-radius:20px;
+  padding:16px;animation:cardIn .4s .1s ease both;
+}
+.h-ring-side{flex:0 0 120px;display:flex;flex-direction:column;align-items:center}
+.h-chart-side{flex:1;display:flex;flex-direction:column;justify-content:flex-end;min-width:0}
+
+/* Top categories */
+.h-cats-card{
+  background:var(--s1);border:1px solid var(--bd);border-radius:20px;
+  padding:16px;margin-bottom:12px;
+  animation:cardIn .4s .15s ease both;
+}
+.h-cats-title{font-size:12px;font-weight:800;color:var(--ink2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
+
+/* Light theme */
+:root[data-theme="light"] .h-hero{background:linear-gradient(145deg,rgba(255,61,135,.08),rgba(199,125,255,.06),rgba(0,180,120,.05))}
+:root[data-theme="light"] .h-stat-lbl{color:rgba(80,10,40,.45)!important}
+:root[data-theme="light"] .h-stat-val.sav-col{background:linear-gradient(90deg,var(--p1),var(--p2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+:root[data-theme="light"] .h-hero-label{color:rgba(80,10,40,.4)}
+:root[data-theme="light"] .h-hero-sub{color:rgba(80,10,40,.4)}
+:root[data-theme="light"] .h-hero-row{background:rgba(0,0,0,.04)}
+:root[data-theme="light"] .h-stat-lbl{color:rgba(80,10,40,.35)}
+:root[data-theme="light"] .h-mini-card{background:rgba(255,255,255,.8)}
+:root[data-theme="light"] .h-ring-chart{background:rgba(255,255,255,.8)}
+:root[data-theme="light"] .h-cats-card{background:rgba(255,255,255,.8)}
+
+.ring-card{
+  display:flex;align-items:center;gap:20px;
+  background:linear-gradient(145deg,rgba(255,255,255,.08),rgba(255,255,255,.03));
+  backdrop-filter:blur(20px);border:1px solid var(--bd);border-radius:var(--r);
+  padding:20px;margin-bottom:12px;
+}
+.ring-wrap{position:relative;width:108px;height:108px;flex-shrink:0}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-bg-c{fill:none;stroke:rgba(255,255,255,.07);stroke-width:9}
+.ring-fill{fill:none;stroke-width:9;stroke-linecap:round;transition:stroke-dashoffset .9s cubic-bezier(.4,0,.2,1)}
+.ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.ring-pct{font-family:'Fira Code',monospace;font-size:18px;font-weight:600;color:var(--ink)}
+.ring-lbl{font-size:9px;color:var(--ink3);font-weight:800;text-transform:uppercase;letter-spacing:.6px;margin-top:2px}
+.ring-info{flex:1;min-width:0}
+.ring-title{font-size:15px;font-weight:800;color:var(--ink);margin-bottom:4px}
+.ring-desc{font-size:12px;color:var(--ink2);line-height:1.5;margin-bottom:12px}
+.legend{display:flex;flex-direction:column;gap:6px}
+.leg-row{display:flex;align-items:center;gap:8px}
+.leg-label{font-size:12px;color:var(--ink2);flex:0 0 80px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.leg-bar-bg{flex:1;height:4px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden}
+.leg-bar{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--c1),var(--c2));transition:width .8s ease}
+.leg-val{font-family:'Fira Code',monospace;font-size:10.5px;color:var(--ink3);flex-shrink:0}
+
+/* ── CHART ── */
+.chart-card{background:linear-gradient(145deg,rgba(255,255,255,.08),rgba(255,255,255,.03));backdrop-filter:blur(20px);border:1px solid var(--bd);border-radius:var(--r);padding:18px;margin-bottom:12px}
+.sec-title{font-size:11.5px;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:1.3px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.sec-link{font-size:12px;font-weight:700;letter-spacing:0;text-transform:none;background:linear-gradient(90deg,var(--c1),var(--c2),var(--m1));background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite;cursor:pointer}
+.bars{height:78px;display:flex;align-items:flex-end;gap:7px;margin-bottom:8px}
+.bg{flex:1;display:flex;gap:3px;align-items:flex-end}
+.bv{border-radius:4px 4px 0 0;min-height:3px;transition:height .7s cubic-bezier(.4,0,.2,1)}
+.bv.i{background:linear-gradient(180deg,var(--m2),rgba(95,255,192,.3))}
+.bv.e{background:linear-gradient(180deg,var(--c1),rgba(255,61,135,.25))}
+.blbls{display:flex;gap:7px}
+.blbl{flex:1;text-align:center;font-size:9px;color:var(--ink3);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+
+/* ── TX ── */
+.tx-list{display:flex;flex-direction:column;gap:4px;margin-bottom:6px}
+.tx{
+  display:flex;align-items:center;gap:12px;padding:12px 15px;
+  border-radius:var(--r2);background:var(--s1);border:1px solid transparent;
+  transition:background .15s,border-color .15s;
+  animation:cardIn .2s ease both;
+}
+.tx:hover{background:var(--s2);border-color:var(--bd)}
+.tx-ico{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.tx-ico.i{background:rgba(95,255,192,.1);border:1px solid rgba(95,255,192,.14)}
+.tx-ico.e{background:rgba(255,61,135,.1);border:1px solid rgba(255,61,135,.14)}
+.tx-mid{flex:1;min-width:0}
+.tx-name{font-size:13.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx-cat{font-size:11px;color:var(--ink3);margin-top:2px}
+.tx-r{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0}
+.tx-amt{font-family:'Fira Code',monospace;font-size:13.5px;font-weight:600}
+.tx-amt.i{background:linear-gradient(90deg,var(--m1),var(--m2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.tx-amt.e{background:linear-gradient(90deg,var(--c1),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.tx-date{font-size:10px;color:var(--ink3)}
+.tx-del{opacity:0;font-size:9.5px;padding:2px 8px;border-radius:8px;background:rgba(255,61,135,.1);border:1px solid rgba(255,61,135,.18);color:var(--c1);cursor:pointer;transition:all .12s}
+.tx:hover .tx-del{opacity:1}
+.tx-del:hover{background:rgba(255,61,135,.22)}
+
+/* ── ADD FORM ── */
+.aform{
+  background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.03));
+  backdrop-filter:blur(24px);border:1px solid var(--bd);border-radius:var(--r);
+  padding:22px;margin-bottom:14px;position:relative;overflow:hidden;
+}
+.aform::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;background-size:200% auto;animation:shimmer 3s linear infinite}
+.aform.fi::before{background:linear-gradient(90deg,var(--m1),var(--m2),var(--m3),var(--m2),var(--m1))}
+.aform.fe::before{background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3),var(--c2),var(--c1))}
+.aform.fg::before{background:linear-gradient(90deg,var(--p1),var(--p2),var(--p1))}
+.aform.fc::before{background:linear-gradient(90deg,var(--v1),var(--v2),var(--v1))}
+.ftitle{font-size:16px;font-weight:900;color:var(--ink);margin-bottom:18px;display:flex;align-items:center;gap:9px}
+.fbadge{font-size:10.5px;font-weight:800;padding:3px 11px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase}
+.fbadge.i{background:rgba(95,255,192,.13);color:var(--m2);border:1px solid rgba(95,255,192,.2)}
+.fbadge.e{background:rgba(255,61,135,.13);color:var(--c2);border:1px solid rgba(255,61,135,.2)}
+.fbadge.g{background:rgba(255,176,133,.13);color:var(--p1);border:1px solid rgba(255,176,133,.2)}
+.fbadge.c{background:rgba(199,125,255,.13);color:var(--v1);border:1px solid rgba(199,125,255,.2)}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:10px;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px}
+.field input,.field select{
+  width:100%;background:rgba(255,255,255,.06);
+  border:1.5px solid var(--bd);border-radius:var(--r3);
+  color:var(--ink);font-family:'Cabinet Grotesk',sans-serif;
+  font-size:14.5px;font-weight:600;padding:11px 14px;
+  outline:none;transition:all .18s;-webkit-appearance:none;
+  backdrop-filter:blur(8px);
+}
+.field input::placeholder{color:var(--ink3)}
+.field select option{background:#1a0520}
+.field input:focus,.field select:focus{border-color:rgba(255,109,179,.55);background:rgba(255,255,255,.1);box-shadow:0 0 0 3px rgba(255,61,135,.12),0 0 24px rgba(255,61,135,.07)}
+.field input.fm:focus{border-color:rgba(95,255,192,.5);box-shadow:0 0 0 3px rgba(95,255,192,.1)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+
+/* ── CHIPS ── */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.chip{
+  padding:6px 13px;border-radius:20px;font-size:12.5px;font-weight:600;cursor:pointer;
+  border:1.5px solid var(--bd);background:rgba(255,255,255,.04);color:var(--ink2);
+  transition:all .14s;backdrop-filter:blur(8px);
+}
+.chip:hover{border-color:var(--bd2);color:var(--ink);background:rgba(255,255,255,.09)}
+.chip.si{border-color:rgba(95,255,192,.5);background:rgba(95,255,192,.1);color:var(--m2);box-shadow:0 0 14px rgba(95,255,192,.12)}
+.chip.se{border-color:rgba(255,61,135,.5);background:rgba(255,61,135,.1);color:var(--c2);box-shadow:0 0 14px rgba(255,61,135,.12)}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  padding:13px 22px;border-radius:50px;border:none;
+  font-family:'Cabinet Grotesk',sans-serif;font-weight:900;font-size:14px;
+  cursor:pointer;transition:all .2s;width:100%;
+  background-size:200% auto;animation:shimmer 4s linear infinite;
+}
+.btn-m{background:linear-gradient(90deg,var(--m1),var(--m2),var(--m3),var(--m2),var(--m1));color:#042d1a;box-shadow:0 4px 22px rgba(0,229,160,.3)}
+.btn-m:hover{box-shadow:0 6px 32px rgba(0,229,160,.5);transform:translateY(-2px)}
+.btn-r{background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3),var(--c2),var(--c1));color:#fff;box-shadow:0 4px 22px rgba(255,61,135,.35)}
+.btn-r:hover{box-shadow:0 6px 32px rgba(255,61,135,.55);transform:translateY(-2px)}
+.btn-p{background:linear-gradient(90deg,var(--p1),var(--p2),var(--p1));color:#3a1500;box-shadow:0 4px 22px rgba(255,176,133,.3)}
+.btn-p:hover{box-shadow:0 6px 32px rgba(255,176,133,.5);transform:translateY(-2px)}
+.btn-v{background:linear-gradient(90deg,var(--v1),var(--v2),var(--v1));color:#1a0030;box-shadow:0 4px 22px rgba(199,125,255,.3)}
+.btn-v:hover{box-shadow:0 6px 32px rgba(199,125,255,.5);transform:translateY(-2px)}
+.btn-g{background:rgba(255,255,255,.07);border:1.5px solid var(--bd2);color:var(--ink2);font-weight:700;animation:none}
+.btn-g:hover{background:rgba(255,255,255,.13);color:var(--ink)}
+.btn-sm{padding:9px 17px;font-size:12.5px;width:auto}
+
+/* ── TYPE TOGGLE ── */
+.type-toggle{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+
+/* ── PERIOD / FILTER ── */
+.ptabs{display:flex;gap:6px;margin-bottom:13px}
+.ptab{
+  padding:7px 16px;border-radius:20px;font-size:12.5px;font-weight:700;
+  cursor:pointer;border:1.5px solid var(--bd);background:rgba(255,255,255,.04);color:var(--ink3);
+  transition:all .15s;
+}
+.ptab.active{border-color:rgba(255,61,135,.5);background:rgba(255,61,135,.1);color:var(--c2);box-shadow:0 0 16px rgba(255,61,135,.14)}
+.frow{display:flex;gap:6px;overflow-x:auto;margin-bottom:13px;padding-bottom:2px}
+.frow::-webkit-scrollbar{display:none}
+.fbtn{flex-shrink:0;padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--bd);background:rgba(255,255,255,.04);color:var(--ink3);transition:all .12s;white-space:nowrap}
+.fbtn.active{border-color:var(--bd2);background:var(--s2);color:var(--ink)}
+.datediv{font-size:10.5px;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:1.2px;padding:14px 0 8px}
+
+
+
+/* ════ CONFETTI EXPLOSION ════ */
+.confetti-piece{
+  position:fixed;width:10px;height:10px;
+  border-radius:2px;pointer-events:none;z-index:9999;
+  animation:confettiFall var(--dur) ease-in forwards;
+}
+@keyframes confettiFall{
+  0%{transform:translateY(0) rotate(0deg) scale(1);opacity:1}
+  80%{opacity:1}
+  100%{transform:translateY(var(--fy)) translateX(var(--fx)) rotate(var(--rot)) scale(.4);opacity:0}
+}
+.goal-blast{
+  position:fixed;inset:0;pointer-events:none;z-index:9998;
+  display:flex;align-items:center;justify-content:center;
+}
+.goal-blast-ring{
+  width:200px;height:200px;border-radius:50%;
+  border:4px solid #00e5a0;opacity:0;
+  animation:blastRing .6s ease-out forwards;
+}
+@keyframes blastRing{
+  0%{transform:scale(0);opacity:.9}
+  100%{transform:scale(3);opacity:0}
+}
+.goal-blast-emoji{
+  position:fixed;font-size:60px;
+  animation:blastEmoji .8s cubic-bezier(.34,1.56,.64,1) forwards;
+  pointer-events:none;z-index:9999;
+}
+@keyframes blastEmoji{
+  0%{transform:scale(0) rotate(-20deg);opacity:0}
+  60%{transform:scale(1.3) rotate(10deg);opacity:1}
+  100%{transform:scale(1) rotate(0deg);opacity:1}
+}
+@keyframes blastEmojiOut{
+  0%{transform:scale(1);opacity:1}
+  100%{transform:scale(0) translateY(-40px);opacity:0}
+}
+
+/* ════ GOALS CARDS ════ */
+.goals-list{display:flex;flex-direction:column;gap:12px;margin-bottom:14px}
+.gl-card{
+  border-radius:22px;padding:20px;
+  background:var(--s1);border:1px solid var(--bd);
+  animation:cardIn .2s ease both;position:relative;overflow:hidden;
+}
+.gl-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,#ff3d87,#c77dff,#6c3bff);
+}
+.gl-done::after{background:linear-gradient(90deg,#00e5a0,#00b4d8)}
+.gl-top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.gl-ico{
+  width:48px;height:48px;border-radius:16px;flex-shrink:0;
+  background:var(--s2);display:flex;align-items:center;justify-content:center;
+  font-size:24px;
+}
+.gl-info{flex:1;min-width:0}
+.gl-name{font-size:15px;font-weight:900;color:var(--ink);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gl-dead{font-size:11px;color:var(--ink3)}
+.gl-pct-badge{
+  font-size:12px;font-weight:800;padding:5px 12px;
+  border-radius:20px;flex-shrink:0;
+}
+.gl-amounts{display:flex;align-items:baseline;gap:6px;margin-bottom:12px}
+.gl-curr{font-family:'Fira Code',monospace;font-size:26px;font-weight:900;color:var(--ink)}
+.gl-target{font-family:'Fira Code',monospace;font-size:14px;color:var(--ink3);font-weight:600}
+.gl-bar-wrap{margin-bottom:14px}
+.gl-bar-bg{height:14px;background:var(--s2);border-radius:14px;overflow:hidden;margin-bottom:7px}
+.gl-bar-fill{height:100%;border-radius:14px;transition:width 1s cubic-bezier(.34,1.56,.64,1)}
+.gl-bar-info{display:flex;justify-content:space-between;align-items:center}
+.gl-bar-lbl{font-size:11px;color:var(--ink3)}
+.gl-bar-pct{font-size:11px;font-weight:800;color:var(--ink2)}
+.gl-acts{display:flex;gap:8px}
+.gl-btn-add{
+  flex:1;padding:11px;border:none;border-radius:12px;cursor:pointer;
+  font-family:'Cabinet Grotesk',sans-serif;font-size:13px;font-weight:900;
+  background:linear-gradient(90deg,#ff3d87,#c77dff);color:#fff;transition:all .15s;
+}
+.gl-btn-add:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.gl-btn-del{
+  padding:11px 16px;border-radius:12px;border:1.5px solid var(--bd);
+  background:none;color:var(--ink3);cursor:pointer;
+  font-family:'Cabinet Grotesk',sans-serif;font-size:13px;font-weight:700;transition:all .15s;
+}
+.gl-btn-del:hover{border-color:var(--c1);color:var(--c1)}
+:root[data-theme="light"] .gl-card{background:#fff;border-color:rgba(0,0,0,.08)}
+:root[data-theme="light"] .gl-bar-bg{background:rgba(0,0,0,.06)}
+:root[data-theme="light"] .gl-ico{background:rgba(0,0,0,.05)}
+
+/* ── OLD GOALS HIDDEN ──
+
+/* ════ BANK CARD CREDITS ════ */
+.bc-summary{
+  display:flex;align-items:center;
+  background:var(--s1);border:1px solid var(--bd);
+  border-radius:16px;padding:14px 18px;margin-bottom:14px;gap:0;
+}
+.bc-sum-item{flex:1;text-align:center}
+.bc-sum-lbl{font-size:9px;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+.bc-sum-val{font-family:'Fira Code',monospace;font-size:16px;font-weight:900;color:var(--ink)}
+.bc-sum-div{width:1px;height:32px;background:var(--bd);flex-shrink:0}
+
+/* The card itself */
+.bc-card{
+  position:relative;overflow:hidden;
+  border-radius:22px;padding:22px 22px 16px;
+  margin-bottom:14px;
+  box-shadow:0 20px 50px rgba(0,0,0,.5);
+  animation:cardIn .25s ease both;
+}
+.bc-shine{
+  position:absolute;top:-80%;left:-30%;width:60%;height:220%;
+  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.07) 50%,transparent 60%);
+  transform:skewX(-15deg);pointer-events:none;
+  animation:cardShine 7s ease-in-out infinite 1s;
+}
+.bc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.bc-bank{font-size:13px;font-weight:900;color:rgba(255,255,255,.8);letter-spacing:.5px}
+.bc-rate-badge{font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;border:1px solid;letter-spacing:.5px}
+.bc-dots{font-size:12px;color:rgba(255,255,255,.35);letter-spacing:2px;margin-bottom:12px;font-family:'Fira Code',monospace}
+.bc-bal-lbl{font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.bc-bal{font-family:'Fira Code',monospace;font-size:clamp(24px,7vw,34px);font-weight:900;color:#fff;margin-bottom:14px;letter-spacing:-1px}
+.bc-prog-wrap{margin-bottom:14px}
+.bc-prog-track{height:6px;background:rgba(255,255,255,.12);border-radius:6px;overflow:hidden;margin-bottom:5px}
+.bc-prog-fill{height:100%;border-radius:6px;transition:width .8s ease;box-shadow:0 0 8px currentColor}
+.bc-prog-meta{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.4)}
+.bc-bottom{display:flex;align-items:flex-end;gap:0;margin-bottom:14px}
+.bc-stat{flex:1}
+.bc-sl{font-size:9px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
+.bc-sv{font-family:'Fira Code',monospace;font-size:13px;font-weight:700;color:#fff}
+/* Gold chip */
+.bc-chip{
+  width:38px;height:30px;border-radius:5px;margin-left:auto;flex-shrink:0;
+  background:linear-gradient(135deg,#c8a96e,#f0d080,#a07840);
+  position:relative;overflow:hidden;
+}
+.bc-chip-h{position:absolute;top:50%;left:0;right:0;height:1px;background:rgba(0,0,0,.2);transform:translateY(-50%)}
+.bc-chip-v{position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(0,0,0,.2);transform:translateX(-50%)}
+.bc-due{font-size:11px;color:rgba(255,255,255,.55);margin-bottom:10px}
+.bc-acts{display:flex;gap:8px}
+.bc-pay{
+  flex:1;padding:10px;border:none;border-radius:12px;cursor:pointer;
+  font-family:'Cabinet Grotesk',sans-serif;font-size:13px;font-weight:900;
+  background:rgba(255,255,255,.15);color:#fff;
+  border:1px solid rgba(255,255,255,.2);
+  backdrop-filter:blur(10px);transition:all .15s;
+}
+.bc-pay:hover{background:rgba(255,255,255,.25)}
+.bc-del{
+  width:40px;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.15);
+  background:rgba(255,0,0,.15);color:rgba(255,100,100,.8);cursor:pointer;
+  font-size:14px;transition:all .15s;
+}
+.bc-del:hover{background:rgba(255,0,0,.3)}
+
+/* Light theme — keep cards dark (they're bank cards!) */
+:root[data-theme="light"] .bc-summary{background:#fff;border-color:rgba(0,0,0,.08)}
+
+/* ── CREDIT CARDS ── */
+.cstack{display:flex;flex-direction:column;gap:14px;margin-bottom:14px}
+.ccard{
+  border-radius:24px;padding:22px;position:relative;overflow:hidden;
+  animation:cardIn .22s ease both;
+  transition:transform .2s,box-shadow .2s;
+  background:linear-gradient(145deg,rgba(255,61,135,.22),rgba(255,109,179,.13),rgba(199,125,255,.18));
+  border:1px solid rgba(255,140,190,.22);
+  box-shadow:0 8px 40px rgba(255,61,135,.18),0 2px 0 rgba(255,255,255,.07) inset;
+}
+.ccard:hover{transform:translateY(-3px);box-shadow:0 16px 56px rgba(255,61,135,.28)}
+/* Shimmer overlay on card */
+.ccard::before{
+  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);
+  animation:cardShimmer 4s ease-in-out infinite;
+}
+@keyframes cardShimmer{0%{left:-100%}50%,100%{left:150%}}
+.ccard::after{content:'';position:absolute;top:-80px;right:-80px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.09),transparent 65%)}
+.cc{position:relative;z-index:1}
+.cc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+.cc-chip{width:46px;height:32px;background:linear-gradient(135deg,rgba(255,255,255,.45),rgba(255,255,255,.2));border-radius:7px;border:1px solid rgba(255,255,255,.3);backdrop-filter:blur(8px)}
+.cc-ratebadge{font-family:'Fira Code',monospace;font-size:11.5px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);color:#fff;padding:5px 12px;border-radius:20px}
+.cc-bank{font-size:9.5px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:2.2px;margin-bottom:3px}
+.cc-name{font-size:18px;font-weight:900;color:#fff;margin-bottom:14px;letter-spacing:-.2px}
+.cc-dots{font-family:'Fira Code',monospace;font-size:11px;letter-spacing:5px;color:rgba(255,255,255,.1);margin-bottom:16px}
+.cc-prog-bg{height:4px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;margin-bottom:5px}
+.cc-prog{height:100%;border-radius:4px;background:linear-gradient(90deg,rgba(255,255,255,.7),rgba(255,255,255,.4));transition:width .7s}
+.cc-prog-meta{display:flex;justify-content:space-between;margin-bottom:18px}
+.cc-prog-meta span{font-size:10px;color:rgba(255,255,255,.28)}
+.cc-debt-lbl{font-size:9.5px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px}
+.cc-debt{font-family:'Fira Code',monospace;font-size:28px;font-weight:600;color:#fff;margin-bottom:18px;letter-spacing:-.5px}
+.cc-stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px}
+.cc-stat{background:rgba(255,255,255,.09);border-radius:13px;padding:12px;border:1px solid rgba(255,255,255,.06)}
+.cc-sl{font-size:9.5px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+.cc-sv{font-family:'Fira Code',monospace;font-size:13.5px;font-weight:600;color:rgba(255,255,255,.88)}
+.cc-due{font-size:11.5px;color:rgba(255,255,255,.3);margin-bottom:15px}
+.cc-acts{display:flex;gap:8px}
+.cc-btn-pay{
+  background:linear-gradient(90deg,rgba(255,255,255,.28),rgba(255,255,255,.18));
+  border:1.5px solid rgba(255,255,255,.32);color:#fff;font-weight:900;font-size:13px;
+  padding:10px 20px;border-radius:50px;font-family:'Cabinet Grotesk',sans-serif;
+  cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;
+  backdrop-filter:blur(8px);
+}
+.cc-btn-pay:hover{background:rgba(255,255,255,.38);transform:translateY(-1px)}
+.cc-btn-del{
+  background:rgba(0,0,0,.15);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.45);
+  font-size:13px;padding:10px 20px;border-radius:50px;font-family:'Cabinet Grotesk',sans-serif;
+  font-weight:600;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;margin-left:auto;
+}
+.cc-btn-del:hover{background:rgba(255,61,135,.2);color:rgba(255,180,200,.9)}
+
+/* ── BOTTOM NAV ── */
+.bnav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:860px;height:var(--nav);
+  background:rgba(13,5,21,.8);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
+  border-top:1px solid var(--bd);
+  display:flex;align-items:stretch;
+  padding:0 4px;z-index:200;
+  overflow-x:auto;overflow-y:hidden;
+  scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.bnav::-webkit-scrollbar{display:none}
+/* Swipe hint gradient edges */
+.bnav::after{
+  content:'';position:fixed;bottom:0;right:0;
+  width:32px;height:var(--nav);
+  background:linear-gradient(to left,rgba(13,5,21,.85),transparent);
+  pointer-events:none;z-index:201;
+}
+.ntab{
+  flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;cursor:pointer;border:none;background:transparent;
+  color:var(--ink3);font-family:'Cabinet Grotesk',sans-serif;
+  font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;
+  transition:all .2s;border-radius:18px;margin:7px 2px;position:relative;
+  white-space:nowrap;
+}
+.ntab:hover{color:var(--ink2);background:rgba(255,255,255,.05)}
+.ntab.active{color:var(--c2)}
+.ntab.active::after{
+  content:'';position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);
+  height:2.5px;border-radius:2px 2px 0 0;
+  background:linear-gradient(90deg,var(--c1),var(--c2));
+  animation:navDot .3s ease both;
+}
+.tico{
+  width:40px;height:28px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;font-size:17px;transition:all .2s;
+}
+.ntab.active .tico{background:rgba(255,61,135,.15);box-shadow:0 0 18px rgba(255,61,135,.18)}
+.tico-add{
+  width:56px;height:56px;border-radius:50%;font-size:26px;
+  background:linear-gradient(135deg,var(--c1),var(--c2),var(--c3));
+  background-size:200% auto;animation:shimmer 3s linear infinite;
+  box-shadow:0 0 28px rgba(255,61,135,.55),0 6px 20px rgba(255,61,135,.4);
+  margin-top:-20px;
+}
+
+
+
+.ntab-add-center{
+  position:relative;
+  flex:1.2;
+}
+.ntab-add-center .tico-add{
+  position:relative;top:-10px;
+}
+.ntab-add-center span{
+  margin-top:-6px;
+}
+
+
+
+
+/* ════ WHEEL MENU ════ */
+.wheel-menu{
+  position:fixed;
+  bottom:calc(var(--nav) + 10px);
+  left:50%;transform:translateX(-50%);
+  width:0;height:0;
+  z-index:491;pointer-events:none;
+}
+.wheel-item{
+  position:absolute;
+  width:64px;height:64px;border-radius:50%;
+  background:var(--s1);border:1.5px solid var(--bd);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;cursor:pointer;
+  font-family:'Cabinet Grotesk',sans-serif;
+  font-size:9px;font-weight:800;color:var(--ink2);
+  text-transform:uppercase;letter-spacing:.4px;
+  box-shadow:0 8px 30px rgba(0,0,0,.4);
+  opacity:0;
+  transform:translate(-50%,-50%) scale(0);
+  transition:opacity .25s ease, transform .25s cubic-bezier(.34,1.56,.64,1), background .15s;
+  pointer-events:none;
+}
+.wheel-item.visible{
+  opacity:1;transform:translate(-50%,-50%) scale(1);
+  pointer-events:all;
+}
+.wheel-item:hover{
+  background:rgba(255,61,135,.15);border-color:var(--c1);color:var(--c1);
+}
+.wheel-ico{font-size:22px;line-height:1}
+/* Rotate plus icon when open */
+.tico-add.spinning{
+  transform:rotate(45deg);
+  background:linear-gradient(135deg,#ff3d87,#c77dff) !important;
+  animation:none !important;
+}
+:root[data-theme="light"] .wheel-item{background:#fff;border-color:rgba(0,0,0,.1)}
+
+/* ════ MORE MENU PANEL ════ */
+.more-panel{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);
+  width:100%;max-width:860px;
+  background:var(--s1);border-radius:28px 28px 0 0;
+  border-top:1px solid var(--bd);
+  padding:12px 20px 32px;
+  z-index:501;
+  transition:transform .35s cubic-bezier(.32,0,.15,1);
+  box-shadow:0 -20px 60px rgba(0,0,0,.4);
+}
+.more-panel.open{transform:translateX(-50%) translateY(0)}
+.more-handle{
+  width:40px;height:4px;border-radius:4px;
+  background:var(--bd2);margin:0 auto 16px;
+}
+.more-title{
+  font-size:11px;font-weight:800;color:var(--ink3);
+  text-transform:uppercase;letter-spacing:1px;
+  margin-bottom:16px;padding:0 2px;
+}
+.more-grid{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:8px;
+}
+.more-item{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  background:var(--s2);border:1px solid var(--bd);border-radius:18px;
+  padding:14px 8px;cursor:pointer;border:none;
+  font-family:'Cabinet Grotesk',sans-serif;
+  font-size:10px;font-weight:800;color:var(--ink2);
+  text-transform:uppercase;letter-spacing:.5px;
+  transition:all .18s;
+}
+.more-item:hover,.more-item.active{
+  background:rgba(255,61,135,.12);color:var(--c1);
+  border-color:rgba(255,61,135,.25);
+}
+.more-ico{
+  width:40px;height:40px;border-radius:14px;
+  background:var(--s1);display:flex;align-items:center;
+  justify-content:center;font-size:20px;
+}
+.more-item.active .more-ico{
+  background:rgba(255,61,135,.15);
+}
+:root[data-theme="light"] .more-panel{background:#fff}
+:root[data-theme="light"] .more-item{background:rgba(0,0,0,.04);color:rgba(80,10,40,.6)}
+:root[data-theme="light"] .more-ico{background:rgba(0,0,0,.06)}
+
+/* ── EXPORT CARD ── */
+.export-card{
+  background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.04));
+  backdrop-filter:blur(24px);border:1px solid var(--bd);border-radius:var(--r);
+  padding:22px;margin-top:14px;position:relative;overflow:hidden;
+}
+.export-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;
+  background:linear-gradient(90deg,var(--m1),var(--m2),var(--m3),var(--m2),var(--m1));
+  background-size:200% auto;animation:shimmer 3s linear infinite;}
+.export-title{font-size:15px;font-weight:900;color:var(--ink);margin-bottom:5px}
+.export-sub{font-size:12px;color:var(--ink3);margin-bottom:16px}
+.export-row{display:grid;grid-template-columns:1fr 90px;gap:10px;margin-bottom:14px}
+.exp-select{
+  width:100%;background:rgba(255,255,255,.07);border:1.5px solid var(--bd);
+  border-radius:var(--r3);color:var(--ink);font-family:'Cabinet Grotesk',sans-serif;
+  font-size:14px;font-weight:600;padding:11px 14px;outline:none;
+  transition:all .18s;-webkit-appearance:none;cursor:pointer;
+}
+.exp-select option{background:#1a0520}
+.exp-select:focus{border-color:rgba(95,255,192,.5);box-shadow:0 0 0 3px rgba(95,255,192,.1)}
+.export-preview{
+  background:rgba(255,255,255,.04);border:1px solid var(--bd);
+  border-radius:var(--r3);padding:14px;margin-bottom:14px;
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;
+}
+.exp-stat{text-align:center}
+.exp-stat-lbl{font-size:10px;color:var(--ink3);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+.exp-stat-val{font-family:'Fira Code',monospace;font-size:14px;font-weight:600}
+.exp-stat-val.g{background:linear-gradient(90deg,var(--m1),var(--m2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.exp-stat-val.r{background:linear-gradient(90deg,var(--c1),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.exp-stat-val.b{color:var(--ink)}
+
+
+
+
+
+
+
+/* ── DEST TOGGLE ── */
+.dest-btn{
+  padding:10px;border-radius:var(--r3);border:1.5px solid var(--bd);
+  background:var(--s1);color:var(--ink3);
+  font-family:'Cabinet Grotesk',sans-serif;font-size:13px;font-weight:800;
+  cursor:pointer;transition:all .15s;
+}
+.dest-btn:hover{background:var(--s2);color:var(--ink2)}
+.dest-btn.dest-active{
+  border-color:rgba(0,229,160,.4);
+  background:rgba(0,229,160,.1);
+  color:var(--m2);
+}
+#destPiggy.dest-active{
+  border-color:rgba(255,176,133,.4);
+  background:rgba(255,176,133,.1);
+  color:var(--p1);
+}
+
+
+
+/* ══ PIGGY REDESIGN ══ */
+.pg-hero{
+  position:relative;overflow:hidden;
+  border-radius:28px;
+  background:linear-gradient(135deg,#1a0520 0%,#2a0a30 40%,#1f0828 100%);
+  border:1px solid rgba(255,176,133,.2);
+  padding:28px 24px 22px;
+  text-align:center;
+  margin-bottom:14px;
+}
+.pg-hero-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%,rgba(255,176,133,.18),transparent),
+    radial-gradient(ellipse 60% 40% at 20% 100%,rgba(199,125,255,.12),transparent),
+    radial-gradient(ellipse 50% 50% at 80% 80%,rgba(255,61,135,.1),transparent);
+}
+.pg-coin{
+  font-size:44px;margin-bottom:10px;
+  filter:drop-shadow(0 0 16px rgba(255,176,133,.5));
+  animation:coinBounce 3s ease-in-out infinite;
+  display:block;
+}
+@keyframes coinBounce{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-6px) rotate(3deg)}}
+.pg-coin:active{transform:scale(.9)!important}
+.pg-coin:hover{filter:drop-shadow(0 0 24px rgba(255,176,133,.8)) brightness(1.2);transform:scale(1.15)}
+.pg-coin:active{transform:scale(.95)}
+.pg-hero-label{
+  font-size:11px;font-weight:800;letter-spacing:2px;
+  text-transform:uppercase;color:rgba(255,176,133,.6);
+  margin-bottom:10px;
+}
+.pg-hero-bal{
+  font-family:'Fira Code',monospace;
+  font-size:clamp(32px,9vw,52px);
+  font-weight:900;letter-spacing:-1px;
+  background:linear-gradient(90deg,#ffb085,#ffd4a8,#ffb085);
+  background-size:200% auto;
+  animation:shimmer 3s linear infinite;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:18px;line-height:1;
+}
+.pg-hero-stats{
+  display:flex;align-items:center;justify-content:center;gap:0;
+  background:rgba(255,255,255,.05);border-radius:16px;
+  padding:12px 16px;border:1px solid rgba(255,255,255,.06);
+}
+.pg-stat{flex:1;text-align:center}
+.pg-stat-val{font-family:'Fira Code',monospace;font-size:14px;font-weight:700;margin-bottom:3px}
+.pg-stat-lbl{font-size:9.5px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.6px}
+.pg-stat-sep{width:1px;height:32px;background:rgba(255,255,255,.08);flex-shrink:0;margin:0 4px}
+
+/* Actions */
+.pg-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.pg-action-card{
+  border-radius:20px;padding:18px 16px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  border:1px solid rgba(255,255,255,.08);
+  background:var(--s1);
+  transition:transform .15s;
+}
+.pg-action-card:hover{transform:translateY(-2px)}
+.pg-action-icon{
+  width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:900;
+  background:rgba(0,229,160,.15);color:var(--m2);
+  flex-shrink:0;
+}
+.pg-out-ico{background:rgba(255,61,135,.15)!important;color:var(--c1)!important}
+.pg-action-label{font-size:11px;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px}
+.pg-input{
+  width:100%;background:var(--s2);border:1.5px solid var(--bd);
+  border-radius:12px;padding:10px;
+  font-size:20px;font-family:'Fira Code',monospace;font-weight:700;
+  color:var(--ink);text-align:center;
+  transition:border-color .15s;outline:none;
+}
+.pg-input:focus{border-color:var(--p1)}
+.pg-btn{
+  width:100%;padding:11px;border-radius:12px;
+  font-family:'Cabinet Grotesk',sans-serif;font-size:13px;font-weight:900;
+  border:none;cursor:pointer;transition:all .15s;
+}
+.pg-btn-in{background:linear-gradient(90deg,var(--p1),var(--p2));color:#1a0520}
+.pg-btn-in:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.pg-btn-out{background:linear-gradient(90deg,var(--c1),var(--c2));color:#fff}
+.pg-btn-out:hover{filter:brightness(1.1);transform:translateY(-1px)}
+
+/* History */
+.pg-hist-wrap{
+  border-radius:20px;overflow:hidden;
+  border:1px solid var(--bd);background:var(--s1);
+}
+.pg-hist-head{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 18px;border-bottom:1px solid var(--bd);
+}
+.pg-hist-title{font-size:12px;font-weight:800;color:var(--ink2);text-transform:uppercase;letter-spacing:.8px}
+.pg-clear{font-size:11px;color:var(--c1);cursor:pointer;font-weight:700;opacity:.7;transition:opacity .15s}
+.pg-clear:hover{opacity:1}
+
+/* History items */
+.pg-tx{
+  display:flex;align-items:center;gap:12px;
+  padding:13px 18px;border-bottom:1px solid var(--bd);
+  transition:background .12s;
+}
+.pg-tx:last-child{border-bottom:none}
+.pg-tx:hover{background:var(--s2)}
+.pg-tx-bar{width:3px;height:38px;border-radius:4px;flex-shrink:0}
+.pg-tx-bar.in{background:linear-gradient(180deg,var(--m1),var(--m2))}
+.pg-tx-bar.out{background:linear-gradient(180deg,var(--c1),var(--c2))}
+.pg-tx-ico{font-size:20px;flex-shrink:0}
+.pg-tx-info{flex:1;min-width:0}
+.pg-tx-name{font-size:13px;font-weight:700;color:var(--ink)}
+.pg-tx-date{font-size:11px;color:var(--ink3);margin-top:2px}
+.pg-tx-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.pg-tx-amt{font-family:'Fira Code',monospace;font-size:14px;font-weight:700}
+.pg-tx-amt.in{color:var(--m2)}
+.pg-tx-amt.out{color:var(--c1)}
+.pg-tx-del{font-size:10px;color:var(--ink3);cursor:pointer;padding:2px 8px;border-radius:6px;border:1px solid var(--bd);background:none;transition:all .12s}
+.pg-tx-del:hover{border-color:var(--c1);color:var(--c1)}
+
+/* Light theme */
+:root[data-theme="light"] .pg-hero{background:linear-gradient(135deg,#fff0f6,#ffe8f5,#fff4ee)}
+:root[data-theme="light"] .pg-hero-stats{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.06)}
+:root[data-theme="light"] .pg-stat-lbl{color:rgba(80,10,40,.35)}
+:root[data-theme="light"] .pg-action-card{background:rgba(255,255,255,.8)}
+:root[data-theme="light"] .pg-input{background:rgba(0,0,0,.04);color:#1a0520}
+:root[data-theme="light"] .pg-hist-wrap{background:rgba(255,255,255,.8)}
+
+
+
+
+/* ════ REVOLUT STYLE PIGGY ════ */
+.rv-hero{
+  position:relative;overflow:hidden;border-radius:28px;
+  padding:28px 24px 24px;margin-bottom:14px;margin-top:-4px;
+  background:linear-gradient(135deg,#6c3bff 0%,#a855f7 35%,#ec4899 65%,#f97316 100%);
+  box-shadow:0 16px 48px rgba(108,59,255,.4);
+}
+.rv-hero-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 100% 0%,rgba(255,255,255,.15),transparent),
+             radial-gradient(ellipse 60% 50% at 0% 100%,rgba(0,0,0,.2),transparent);
+  pointer-events:none;
+}
+.rv-hero-label{
+  position:relative;font-size:12px;font-weight:800;
+  color:rgba(255,255,255,.7);letter-spacing:1.5px;
+  text-transform:uppercase;margin-bottom:10px;
+}
+.rv-hero-bal{
+  position:relative;
+  font-family:'Fira Code',monospace;
+  font-size:clamp(36px,10vw,56px);font-weight:900;
+  color:#fff;letter-spacing:-1.5px;
+  text-shadow:0 4px 24px rgba(0,0,0,.2);
+  margin-bottom:20px;line-height:1;
+}
+.rv-hero-stats{
+  position:relative;display:flex;align-items:center;
+  background:rgba(0,0,0,.2);border-radius:16px;padding:12px 16px;
+  backdrop-filter:blur(10px);
+}
+.rv-stat{flex:1;text-align:center}
+.rv-stat-val{font-family:'Fira Code',monospace;font-size:14px;font-weight:800;color:#fff;margin-bottom:3px}
+.rv-stat-lbl{font-size:9px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.8px}
+.rv-stat-div{width:1px;height:30px;background:rgba(255,255,255,.2);flex-shrink:0}
+
+/* Action buttons */
+.rv-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.rv-act-btn{
+  border:none;border-radius:20px;padding:16px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  cursor:pointer;font-family:'Cabinet Grotesk',sans-serif;
+  font-size:13px;font-weight:800;transition:all .18s;
+}
+.rv-act-in{
+  background:linear-gradient(135deg,#6c3bff,#a855f7);
+  color:#fff;box-shadow:0 8px 24px rgba(108,59,255,.35);
+}
+.rv-act-in:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(108,59,255,.5)}
+.rv-act-out{
+  background:linear-gradient(135deg,#ec4899,#f97316);
+  color:#fff;box-shadow:0 8px 24px rgba(236,72,153,.35);
+}
+.rv-act-out:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(236,72,153,.5)}
+.rv-act-ico{
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:900;
+}
+
+/* Input panel */
+.rv-panel{
+  background:var(--s1);border:1.5px solid var(--bd);
+  border-radius:20px;padding:18px;margin-bottom:12px;
+  animation:cardIn .2s ease;
+}
+.rv-panel-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.rv-panel-title{font-size:14px;font-weight:900;color:var(--ink)}
+.rv-panel-close{
+  width:28px;height:28px;border-radius:50%;border:1px solid var(--bd);
+  background:var(--s2);color:var(--ink3);cursor:pointer;font-size:12px;
+}
+.rv-input{
+  width:100%;box-sizing:border-box;
+  background:var(--s2);border:2px solid var(--bd);border-radius:14px;
+  padding:14px;font-size:28px;font-family:'Fira Code',monospace;
+  font-weight:800;color:var(--ink);text-align:center;
+  outline:none;margin-bottom:12px;transition:border-color .15s;
+}
+.rv-input:focus{border-color:#a855f7}
+.rv-confirm{
+  width:100%;padding:14px;border:none;border-radius:14px;cursor:pointer;
+  font-family:'Cabinet Grotesk',sans-serif;font-size:15px;font-weight:900;
+  color:#fff;transition:all .15s;
+  background:linear-gradient(135deg,#6c3bff,#a855f7,#ec4899);
+  background-size:200% auto;animation:shimmer 3s linear infinite;
+}
+.rv-confirm:hover{filter:brightness(1.1);transform:translateY(-1px)}
+
+/* History */
+.rv-hist-head{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:10px;padding:0 2px;
+}
+.rv-hist-title{font-size:12px;font-weight:800;color:var(--ink2);text-transform:uppercase;letter-spacing:.8px}
+.rv-hist-clr{font-size:11px;color:#ec4899;cursor:pointer;font-weight:700;opacity:.7}
+.rv-hist-clr:hover{opacity:1}
+
+/* History items */
+.rv-tx{
+  display:flex;align-items:center;gap:12px;
+  border-radius:16px;padding:13px 16px;margin-bottom:8px;
+  animation:cardIn .2s ease both;
+  background:var(--s1);border:1px solid var(--bd);
+}
+.rv-tx-ico{
+  width:42px;height:42px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+}
+.rv-tx-ico.in{background:linear-gradient(135deg,rgba(108,59,255,.2),rgba(168,85,247,.2))}
+.rv-tx-ico.out{background:linear-gradient(135deg,rgba(236,72,153,.2),rgba(249,115,22,.2))}
+.rv-tx-mid{flex:1;min-width:0}
+.rv-tx-name{font-size:13px;font-weight:700;color:var(--ink)}
+.rv-tx-date{font-size:11px;color:var(--ink3);margin-top:2px}
+.rv-tx-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+.rv-tx-amt{font-family:'Fira Code',monospace;font-size:15px;font-weight:800}
+.rv-tx-amt.in{background:linear-gradient(90deg,#a855f7,#6c3bff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.rv-tx-amt.out{background:linear-gradient(90deg,#ec4899,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.rv-tx-del{font-size:10px;background:none;border:1px solid var(--bd);color:var(--ink3);border-radius:6px;padding:2px 8px;cursor:pointer;transition:all .12s}
+.rv-tx-del:hover{border-color:#ec4899;color:#ec4899}
+
+/* Light theme */
+:root[data-theme="light"] .rv-panel{background:#fff}
+:root[data-theme="light"] .rv-input{background:#f8f5ff;color:#1a0520}
+:root[data-theme="light"] .rv-tx{background:#fff;border-color:rgba(0,0,0,.08)}
+:root[data-theme="light"] .rv-tx-name{color:#1a0520}
+:root[data-theme="light"] .rv-tx-date{color:rgba(80,10,40,.5)}
+
+/* ── PIGGY BANK ── */
+.piggy-tx{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;border-radius:var(--r2);
+  background:var(--s1);border:1px solid transparent;
+  margin-bottom:5px;animation:cardIn .15s ease both;
+}
+.piggy-side-bar{width:3px;border-radius:4px;align-self:stretch;flex-shrink:0;margin-right:2px}
+.piggy-side-bar.in{background:linear-gradient(180deg,var(--m1),var(--m2))}
+.piggy-side-bar.out{background:linear-gradient(180deg,var(--c1),var(--c2))}
+.piggy-tx.in{border-color:rgba(255,176,133,.15)}
+.piggy-tx.out{border-color:rgba(255,61,135,.12)}
+.piggy-ico{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.piggy-ico.in{background:rgba(255,176,133,.15)}
+.piggy-ico.out{background:rgba(255,61,135,.1)}
+.piggy-info{flex:1;min-width:0}
+.piggy-label{font-size:13px;font-weight:700;color:var(--ink)}
+.piggy-date{font-size:11px;color:var(--ink3);margin-top:1px}
+.piggy-amt{font-family:'Fira Code',monospace;font-size:14px;font-weight:700;flex-shrink:0}
+.piggy-amt.in{background:linear-gradient(90deg,var(--p1),var(--p2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.piggy-amt.out{background:linear-gradient(90deg,var(--c1),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+:root[data-theme="light"] .piggy-tx{background:rgba(255,255,255,.7)}
+
+/* ── BUDGET ── */
+.budget-item{
+  background:linear-gradient(145deg,rgba(255,255,255,.08),rgba(255,255,255,.03));
+  border:1px solid var(--bd);border-radius:var(--r2);
+  padding:16px;margin-bottom:8px;
+  animation:cardIn .2s ease both;
+  transition:all .18s;
+}
+.budget-item:hover{border-color:var(--bd2);background:var(--s2)}
+.budget-item.over{border-color:rgba(255,61,135,.35);background:rgba(255,61,135,.06)}
+.budget-item.warn{border-color:rgba(255,176,133,.35);background:rgba(255,176,133,.06)}
+.bi-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.bi-cat{font-size:14px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:8px}
+.bi-status{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700}
+.bi-status.ok{background:rgba(95,255,192,.12);color:var(--m2);border:1px solid rgba(95,255,192,.2)}
+.bi-status.warn{background:rgba(255,176,133,.12);color:var(--p1);border:1px solid rgba(255,176,133,.2)}
+.bi-status.over{background:rgba(255,61,135,.12);color:var(--c2);border:1px solid rgba(255,61,135,.2)}
+.bi-bar-bg{height:7px;background:rgba(255,255,255,.07);border-radius:7px;overflow:hidden;margin-bottom:7px}
+.bi-bar{height:100%;border-radius:7px;transition:width .8s cubic-bezier(.4,0,.2,1);background-size:200% auto;animation:shimmer 4s linear infinite}
+.bi-bar.ok{background:linear-gradient(90deg,var(--m1),var(--m2),var(--m1))}
+.bi-bar.warn{background:linear-gradient(90deg,var(--p1),var(--p2),var(--p1))}
+.bi-bar.over{background:linear-gradient(90deg,var(--c1),var(--c2),var(--c1))}
+.bi-nums{display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink3)}
+.bi-spent{font-family:'Fira Code',monospace;font-weight:600}
+.bi-limit{font-family:'Fira Code',monospace}
+
+/* ── AI TYPING ── */
+@keyframes aiTyping{0%,80%,100%{opacity:.3}40%{opacity:1}}
+.ai-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--v2);margin:0 2px;animation:aiTyping 1.4s ease infinite}
+.ai-dot:nth-child(2){animation-delay:.2s}
+.ai-dot:nth-child(3){animation-delay:.4s}
+
+/* Light theme budget */
+:root[data-theme="light"] .budget-item{background:rgba(255,255,255,.75);border-color:rgba(200,60,120,.12)}
+:root[data-theme="light"] .budget-item.over{border-color:rgba(255,61,135,.3);background:rgba(255,61,135,.04)}
+:root[data-theme="light"] .budget-item.warn{border-color:rgba(255,140,0,.3);background:rgba(255,140,0,.04)}
+
+/* ── RECURRING ── */
+.rp-item{
+  background:linear-gradient(145deg,rgba(255,255,255,.08),rgba(255,255,255,.03));
+  border:1px solid var(--bd);border-radius:var(--r2);
+  padding:15px;margin-bottom:8px;
+  display:flex;align-items:center;gap:12px;
+  animation:cardIn .2s ease both;
+  transition:all .18s;
+}
+.rp-item:hover{border-color:var(--bd2);background:var(--s2)}
+.rp-ico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;background:rgba(255,61,135,.1);border:1px solid rgba(255,61,135,.14)}
+.rp-mid{flex:1;min-width:0}
+.rp-name{font-size:14px;font-weight:800;color:var(--ink);margin-bottom:2px}
+.rp-meta{font-size:11px;color:var(--ink3)}
+.rp-right{text-align:right;flex-shrink:0}
+.rp-amt{font-family:'Fira Code',monospace;font-size:14px;font-weight:600;background:linear-gradient(90deg,var(--c1),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.rp-next{font-size:10.5px;color:var(--ink3);margin-top:2px}
+.rp-overdue{color:#ff6db3!important;font-weight:700}
+.rp-pay-btn{font-size:11px;padding:5px 12px;border-radius:20px;background:rgba(255,61,135,.1);border:1px solid rgba(255,61,135,.2);color:var(--c2);cursor:pointer;font-family:'Cabinet Grotesk',sans-serif;font-weight:700;transition:all .14s;margin-top:4px;display:block}
+.rp-pay-btn:hover{background:rgba(255,61,135,.22)}
+
+/* ── SETTINGS ── */
+.setup-steps{display:flex;flex-direction:column;gap:10px}
+.step{display:flex;align-items:flex-start;gap:12px}
+.step-n{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--v1),var(--v2));
+  color:#1a0030;font-size:12px;font-weight:900;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 14px rgba(199,125,255,.3);
+}
+.step-txt{font-size:13px;color:var(--ink2);line-height:1.5;padding-top:4px}
+#dbMsg.ok{color:var(--m2)}
+#dbMsg.err{color:var(--c1)}
+.sync-dot{
+  display:inline-block;width:8px;height:8px;border-radius:50%;
+  background:var(--m2);box-shadow:0 0 8px var(--m2);margin-right:6px;
+  animation:pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+
+
+
+/* ── PULL TO REFRESH ── */
+.ptr-indicator{
+  position:fixed;top:0;left:50%;transform:translateX(-50%) translateY(-60px);
+  z-index:999;
+  background:linear-gradient(135deg,var(--c1),var(--c2));
+  color:#fff;font-family:'Cabinet Grotesk',sans-serif;font-size:12px;font-weight:800;
+  padding:8px 20px;border-radius:0 0 20px 20px;
+  display:flex;align-items:center;gap:8px;
+  box-shadow:0 4px 20px rgba(255,61,135,.4);
+  transition:transform .25s cubic-bezier(.2,0,.2,1);
+  pointer-events:none;
+  white-space:nowrap;
+}
+.ptr-indicator.visible{transform:translateX(-50%) translateY(0)}
+.ptr-spinner{
+  width:14px;height:14px;border:2px solid rgba(255,255,255,.4);
+  border-top-color:#fff;border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── LOCK ── */
+.pd{
+  width:14px;height:14px;border-radius:50%;
+  background:rgba(255,255,255,.12);border:2px solid rgba(255,160,200,.25);
+  transition:all .2s;
+}
+.pd.filled{
+  background:linear-gradient(135deg,#ff3d87,#ff6db3);
+  border-color:transparent;
+  box-shadow:0 0 14px rgba(255,61,135,.5);
+  transform:scale(1.15);
+}
+.pd.shake{animation:pdShake .4s ease}
+@keyframes pdShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.np-btn{
+  aspect-ratio:1;border:none;border-radius:50%;
+  background:rgba(255,255,255,.07);
+  border:1.5px solid rgba(255,160,200,.14);
+  color:#fff0f6;font-family:'Cabinet Grotesk',sans-serif;
+  font-size:22px;font-weight:700;cursor:pointer;
+  transition:all .15s;
+  backdrop-filter:blur(8px);
+}
+.np-btn:hover{background:rgba(255,61,135,.15);border-color:rgba(255,61,135,.35);transform:scale(1.05)}
+.np-btn:active{transform:scale(.93);background:rgba(255,61,135,.25)}
+.np-del{font-size:18px;color:rgba(255,180,220,.5)}
+
+
+/* ── CREDIT WIDGET ── */
+.cw-list{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.cw-item{
+  background:linear-gradient(145deg,rgba(255,61,135,.16),rgba(199,125,255,.12));
+  border:1px solid rgba(255,140,190,.2);
+  border-radius:var(--r2);padding:16px;
+  display:flex;align-items:center;gap:14px;
+  transition:all .18s;
+  animation:cardIn .2s ease both;
+}
+.cw-item:hover{border-color:rgba(255,140,190,.35);transform:translateY(-1px)}
+.cw-left{flex:1;min-width:0}
+.cw-name{font-size:14px;font-weight:800;color:var(--ink);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cw-bank{font-size:11px;color:var(--ink3);margin-bottom:10px}
+.cw-bar-bg{height:5px;background:rgba(255,255,255,.08);border-radius:5px;overflow:hidden;margin-bottom:5px}
+.cw-bar{height:100%;border-radius:5px;background:linear-gradient(90deg,rgba(255,255,255,.6),rgba(255,255,255,.35));transition:width .8s ease}
+.cw-meta{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink3)}
+.cw-right{text-align:right;flex-shrink:0}
+.cw-debt{font-family:'Fira Code',monospace;font-size:15px;font-weight:600;color:var(--ink);margin-bottom:3px}
+.cw-pay{font-size:10.5px;color:var(--ink3)}
+.cw-total-row{
+  background:rgba(255,255,255,.05);border:1px solid var(--bd);border-radius:var(--r3);
+  padding:12px 16px;display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:14px;
+}
+.cw-total-lbl{font-size:11px;color:var(--ink3);font-weight:700;text-transform:uppercase;letter-spacing:.8px}
+.cw-total-val{font-family:'Fira Code',monospace;font-size:16px;font-weight:600;
+  background:linear-gradient(90deg,var(--c1),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+
+/* ── LIGHT THEME ── */
+:root[data-theme="light"]{
+  --bg:#fdf0f5;
+  --s1:rgba(180,0,80,.05);--s2:rgba(180,0,80,.09);--s3:rgba(180,0,80,.13);
+  --bd:rgba(200,60,120,.18);--bd2:rgba(200,60,120,.32);
+  --ink:#1a0510;--ink2:rgba(80,10,40,.65);--ink3:rgba(120,30,70,.4);
+}
+:root[data-theme="light"] body{background:#fdf0f5}
+:root[data-theme="light"] .bg-mesh{
+  background:
+    radial-gradient(ellipse 80% 60% at 15% -5%, rgba(255,100,160,.13) 0%,transparent 55%),
+    radial-gradient(ellipse 60% 50% at 85% 110%, rgba(0,200,140,.09) 0%,transparent 55%),
+    radial-gradient(ellipse 50% 40% at 70% 45%, rgba(180,100,255,.07) 0%,transparent 55%);
+}
+:root[data-theme="light"] .orb1{background:radial-gradient(circle,rgba(255,61,135,.1),transparent 65%)}
+:root[data-theme="light"] .orb2{background:radial-gradient(circle,rgba(0,200,140,.08),transparent 65%)}
+:root[data-theme="light"] .orb3{background:radial-gradient(circle,rgba(180,100,255,.07),transparent 65%)}
+:root[data-theme="light"] .glass,
+:root[data-theme="light"] .hero,
+:root[data-theme="light"] .ring-card,
+:root[data-theme="light"] .chart-card,
+:root[data-theme="light"] .aform,
+:root[data-theme="light"] .goal,
+:root[data-theme="light"] .cw-item{
+  background:linear-gradient(145deg,rgba(255,255,255,.85),rgba(255,255,255,.65));
+  border-color:rgba(200,60,120,.15);
+  box-shadow:0 2px 20px rgba(180,0,80,.06);
+}
+:root[data-theme="light"] .hero{
+  background:linear-gradient(145deg,rgba(255,180,210,.35),rgba(255,220,235,.25));
+}
+:root[data-theme="light"] .ccard{
+  background:linear-gradient(145deg,rgba(255,61,135,.75),rgba(200,80,180,.65));
+}
+:root[data-theme="light"] .tx{background:rgba(255,255,255,.7);border-color:rgba(200,60,120,.1)}
+:root[data-theme="light"] .tx:hover{background:rgba(255,255,255,.9);border-color:rgba(200,60,120,.22)}
+:root[data-theme="light"] .bnav{
+  background:rgba(253,240,245,.92);
+  border-top-color:rgba(200,60,120,.14);
+}
+:root[data-theme="light"] .bnav::after{
+  background:linear-gradient(to left,rgba(253,240,245,.92),transparent);
+}
+:root[data-theme="light"] .ntab{color:rgba(120,30,70,.45)}
+:root[data-theme="light"] .ntab:hover{background:rgba(255,61,135,.07)}
+:root[data-theme="light"] .ntab.active{color:var(--c1)}
+:root[data-theme="light"] .chip{background:rgba(255,255,255,.6);color:rgba(80,10,40,.6)}
+:root[data-theme="light"] .chip:hover{background:rgba(255,255,255,.9);color:var(--ink)}
+:root[data-theme="light"] .field input,
+:root[data-theme="light"] .field select{
+  background:rgba(255,255,255,.8);
+  border-color:rgba(200,60,120,.2);
+  color:var(--ink);
+}
+:root[data-theme="light"] .pill{background:rgba(255,255,255,.7)}
+:root[data-theme="light"] #mbox{background:linear-gradient(160deg,#fff5f9,#ffe8f0)}
+:root[data-theme="light"] #lockScreen{background:linear-gradient(160deg,#fdf0f5,#ffe0ee)}
+:root[data-theme="light"] .np-btn{background:rgba(255,255,255,.7);border-color:rgba(200,60,120,.2);color:var(--ink)}
+:root[data-theme="light"] .np-btn:hover{background:rgba(255,61,135,.1)}
+:root[data-theme="light"] .export-card{background:rgba(255,255,255,.8)}
+:root[data-theme="light"] .exp-select{background:rgba(255,255,255,.8);color:var(--ink)}
+:root[data-theme="light"] .export-preview{background:rgba(255,255,255,.6)}
+:root[data-theme="light"] .ptab{background:rgba(255,255,255,.6)}
+:root[data-theme="light"] .fbtn{background:rgba(255,255,255,.6)}
+:root[data-theme="light"] .datediv{color:rgba(120,30,70,.45)}
+:root[data-theme="light"] .empty p{color:rgba(80,10,40,.5)}
+
+/* ── LIGHT THEME: зелёный/мятный текст → тёмно-зелёный ── */
+:root[data-theme="light"]{
+  --m1:#007a50;--m2:#00955f;--m3:#00b874;
+}
+/* Баланс положительный */
+:root[data-theme="light"] .hero-bal.pos{
+  background:linear-gradient(90deg,#006e45,#00955f);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+/* Доходы в транзакциях */
+:root[data-theme="light"] .tx-amt.i{
+  background:linear-gradient(90deg,#006e45,#00955f);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+/* Кнопка добавить доход */
+:root[data-theme="light"] .btn-m{
+  background:linear-gradient(90deg,#00955f,#00b874,#00955f);
+  color:#fff;
+}
+/* Прогресс-бар целей (done) */
+:root[data-theme="light"] .done-goal .gbar{
+  background:linear-gradient(90deg,#006e45,#00955f,#006e45);
+}
+:root[data-theme="light"] .done-goal .gcurr{
+  background:linear-gradient(90deg,#006e45,#00955f);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+/* Ring зелёный */
+:root[data-theme="light"] #ringF{stroke:url(#gm)}
+/* Пилюли доходы */
+:root[data-theme="light"] .pill-dot.g{background:#00955f;box-shadow:0 0 8px rgba(0,149,95,.4)}
+:root[data-theme="light"] .pill-val{color:var(--ink)}
+/* Leg bar */
+:root[data-theme="light"] .leg-bar{background:linear-gradient(90deg,#006e45,#00955f)}
+/* Bar chart income */
+:root[data-theme="light"] .bv.i{background:linear-gradient(180deg,#00955f,rgba(0,149,95,.3))}
+/* Sync status ok */
+:root[data-theme="light"] .fbadge.i{background:rgba(0,120,70,.12);color:#006e45;border-color:rgba(0,120,70,.25)}
+/* Export mint stats */
+:root[data-theme="light"] .exp-stat-val.g{
+  background:linear-gradient(90deg,#006e45,#00955f);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+/* Goal bar active */
+:root[data-theme="light"] .active-goal .gbar{
+  background:linear-gradient(90deg,var(--p1),var(--p2),var(--p1));
+}
+/* Chip selected income */
+:root[data-theme="light"] .chip.si{
+  border-color:rgba(0,120,70,.5);background:rgba(0,120,70,.1);color:#006e45;
+  box-shadow:0 0 14px rgba(0,120,70,.1);
+}
+/* Recurring pay btn */
+:root[data-theme="light"] .rp-item{background:rgba(255,255,255,.75);border-color:rgba(200,60,120,.12)}
+:root[data-theme="light"] .rp-ico{background:rgba(255,61,135,.08);border-color:rgba(255,61,135,.15)}
+/* cw total mint */
+:root[data-theme="light"] .cw-total-row{background:rgba(255,255,255,.7)}
+/* Sync msg ok */
+:root[data-theme="light"] #syncMsg{color:rgba(80,10,40,.5)}
+/* sec-link */
+:root[data-theme="light"] .sec-link{
+  background:linear-gradient(90deg,var(--c1),var(--c2),#007a50);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+
+/* Theme toggle switch */
+.theme-toggle{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--s1);border:1.5px solid var(--bd);border-radius:var(--r2);
+  padding:14px 18px;margin-bottom:12px;cursor:pointer;
+  transition:all .15s;
+}
+.theme-toggle:hover{background:var(--s2)}
+.theme-toggle-lbl{font-size:14px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:10px}
+.toggle-switch{
+  width:44px;height:24px;border-radius:12px;
+  background:rgba(255,255,255,.12);border:1.5px solid var(--bd2);
+  position:relative;transition:background .2s;flex-shrink:0;
+}
+.toggle-switch.on{background:linear-gradient(90deg,var(--c1),var(--c2));border-color:transparent}
+.toggle-knob{
+  position:absolute;top:2px;left:2px;
+  width:18px;height:18px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.2);
+  transition:transform .2s;
+}
+.toggle-switch.on .toggle-knob{transform:translateX(20px)}
+
+/* ── EMPTY ── */
+.empty{display:flex;flex-direction:column;align-items:center;padding:42px 20px;gap:8px;text-align:center}
+.empty .ico{font-size:42px;opacity:.18;margin-bottom:4px}
+.empty p{font-size:14px;font-weight:700;color:var(--ink2)}
+.empty small{font-size:12px;color:var(--ink3)}
+
+/* ── MODAL ── */
+#movl{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);z-index:500;display:none;animation:fadeOverlay .2s ease}
+#movl{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);z-index:500;display:none;animation:fadeOverlay .2s ease}
+#mbox{
+  position:fixed;left:50%;top:50%;
+  transform:translate(-50%,-50%) scale(.94);
+  width:calc(100% - 40px);max-width:360px;
+  background:linear-gradient(160deg,#2d0e24,#1c0b1e);
+  border:1px solid rgba(255,140,190,.22);
+  border-radius:24px;
+  padding:22px 20px 20px;
+  z-index:600;display:none;
+  animation:modalPop .25s cubic-bezier(.2,0,.2,1) both;
+  box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.05) inset;
+}
+@keyframes modalPop{from{opacity:0;transform:translate(-50%,-50%) scale(.88)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+#mbox .handle{display:none}
+#mtitle{font-size:15px;font-weight:900;color:var(--ink);margin-bottom:3px}
+#msub{font-size:11.5px;color:var(--ink3);margin-bottom:14px;line-height:1.4}
+#minput-wrap{background:rgba(255,255,255,.07);border:1.5px solid var(--bd);border-radius:12px;overflow:hidden;margin-bottom:12px}
+#minput{width:100%;background:transparent;border:none;outline:none;color:var(--ink);font-family:'Fira Code',monospace;font-size:24px;font-weight:600;padding:12px 16px;text-align:center}
+#mconfirm{
+  width:100%;padding:12px;border:none;border-radius:50px;
+  background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3),var(--c2),var(--c1));
+  background-size:200% auto;animation:shimmer 3s linear infinite;
+  color:#fff;font-family:'Cabinet Grotesk',sans-serif;font-size:14px;font-weight:900;
+  cursor:pointer;box-shadow:0 4px 20px rgba(255,61,135,.35);
+}
+#mconfirm:hover{box-shadow:0 6px 28px rgba(255,61,135,.55)}
+#mconfirm-alt{display:none;width:100%;padding:11px;border:none;border-radius:50px;background:rgba(255,255,255,.07);border:1.5px solid var(--bd2);color:var(--ink2);font-family:'Cabinet Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px}
+
+/* ── MISC ── */
+.gap{height:20px}
+@media(max-width:600px){
+  .hero-bal{font-size:36px}
+  
+/* ══ HOME REDESIGN ══ */
+.h-hero{
+  position:relative;overflow:hidden;
+  border-radius:24px;
+  background:linear-gradient(145deg,rgba(255,61,135,.15) 0%,rgba(199,125,255,.1) 50%,rgba(0,229,160,.08) 100%);
+  border:1px solid rgba(255,255,255,.1);
+  padding:24px 20px 20px;
+  margin-bottom:12px;
+  animation:cardIn .4s ease both;
+}
+.h-hero-glow{
+  position:absolute;top:-40px;right:-40px;width:180px;height:180px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,61,135,.3),transparent 65%);
+  filter:blur(30px);pointer-events:none;
+  animation:pulse 4s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.1)}}
+.h-hero-inner{position:relative;z-index:1}
+.h-hero-label{
+  display:flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:800;color:rgba(255,255,255,.45);
+  text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;
+}
+.h-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--m2);
+  box-shadow:0 0 8px var(--m2);
+  animation:pulse 2s ease-in-out infinite;
+}
+.h-hero-bal{
+  font-family:'Fira Code',monospace;
+  font-size:clamp(28px,8vw,42px);
+  font-weight:900;letter-spacing:-1px;
+  line-height:1;margin-bottom:8px;
+  transition:all .4s ease;
+}
+.h-hero-bal.pos{background:linear-gradient(90deg,#00e5a0,#5fffc0,#00e5a0);background-size:200% auto;animation:shimmer 3s linear infinite;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.h-hero-bal.neg{background:linear-gradient(90deg,#ff3d87,#ff6db3);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.h-hero-bal.zero{color:rgba(255,255,255,.3)}
+.h-hero-sub{font-size:12.5px;color:rgba(255,255,255,.4);margin-bottom:18px;font-weight:500}
+.h-hero-row{display:flex;align-items:center;gap:0;background:rgba(0,0,0,.2);border-radius:16px;padding:12px 16px}
+.h-stat{display:flex;align-items:center;gap:10px;flex:1}
+.h-stat-ico{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0}
+.inc-bg{background:rgba(0,229,160,.15);color:var(--m2)}
+.exp-bg{background:rgba(255,61,135,.15);color:var(--c1)}
+.sav-bg{background:rgba(255,176,133,.15)}
+.h-stat-lbl{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.8px;margin-bottom:2px}
+.h-stat-val{font-family:'Fira Code',monospace;font-size:13px;font-weight:700}
+.inc-col{color:var(--m2)}
+.exp-col{color:var(--c1)}
+.sav-col{background:linear-gradient(90deg,var(--p1),var(--p2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.h-divider{width:1px;height:36px;background:rgba(255,255,255,.08);margin:0 4px;flex-shrink:0}
+
+/* Quick stats */
+.h-stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.h-mini-card{
+  background:var(--s1);border:1px solid var(--bd);border-radius:16px;
+  padding:12px 8px;text-align:center;cursor:pointer;
+  transition:all .18s ease;animation:cardIn .35s ease both;
+}
+.h-mini-card:hover{background:var(--s2);border-color:var(--bd2);transform:translateY(-2px)}
+.h-mini-card:nth-child(1){animation-delay:.05s}
+.h-mini-card:nth-child(2){animation-delay:.1s}
+.h-mini-card:nth-child(3){animation-delay:.15s}
+.h-mini-card:nth-child(4){animation-delay:.2s}
+.h-mini-ico{font-size:18px;margin-bottom:4px}
+.h-mini-val{font-family:'Fira Code',monospace;font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.h-mini-lbl{font-size:9.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px}
+
+/* Ring + chart */
+.h-ring-chart{
+  display:flex;gap:12px;margin-bottom:12px;
+  background:var(--s1);border:1px solid var(--bd);border-radius:20px;
+  padding:16px;animation:cardIn .4s .1s ease both;
+}
+.h-ring-side{flex:0 0 120px;display:flex;flex-direction:column;align-items:center}
+.h-chart-side{flex:1;display:flex;flex-direction:column;justify-content:flex-end;min-width:0}
+
+/* Top categories */
+.h-cats-card{
+  background:var(--s1);border:1px solid var(--bd);border-radius:20px;
+  padding:16px;margin-bottom:12px;
+  animation:cardIn .4s .15s ease both;
+}
+.h-cats-title{font-size:12px;font-weight:800;color:var(--ink2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
+
+/* Light theme */
+:root[data-theme="light"] .h-hero{background:linear-gradient(145deg,rgba(255,61,135,.08),rgba(199,125,255,.06),rgba(0,180,120,.05))}
+:root[data-theme="light"] .h-stat-lbl{color:rgba(80,10,40,.45)!important}
+:root[data-theme="light"] .h-stat-val.sav-col{background:linear-gradient(90deg,var(--p1),var(--p2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+:root[data-theme="light"] .h-hero-label{color:rgba(80,10,40,.4)}
+:root[data-theme="light"] .h-hero-sub{color:rgba(80,10,40,.4)}
+:root[data-theme="light"] .h-hero-row{background:rgba(0,0,0,.04)}
+:root[data-theme="light"] .h-stat-lbl{color:rgba(80,10,40,.35)}
+:root[data-theme="light"] .h-mini-card{background:rgba(255,255,255,.8)}
+:root[data-theme="light"] .h-ring-chart{background:rgba(255,255,255,.8)}
+:root[data-theme="light"] .h-cats-card{background:rgba(255,255,255,.8)}
+
+.ring-card{flex-direction:column}
+  .g3{grid-template-columns:1fr 1fr}
+  .cc-debt{font-size:22px}
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d0515">
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+
+<div class="ptr-indicator" id="ptrIndicator"><div class="ptr-spinner" id="ptrSpinner"></div><span id="ptrText">Потяните вниз</span></div>
+
+<!-- LOCK SCREEN -->
+<div id="lockScreen" style="display:none;position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(160deg,#0d0515 0%,#1a0820 50%,#0d0515 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:'Cabinet Grotesk',sans-serif;">
+  <div style="position:absolute;inset:0;pointer-events:none">
+    <div style="position:absolute;width:400px;height:400px;border-radius:50%;
+      background:radial-gradient(circle,rgba(255,61,135,.2),transparent 65%);
+      top:-100px;left:-100px;filter:blur(60px)"></div>
+    <div style="position:absolute;width:350px;height:350px;border-radius:50%;
+      background:radial-gradient(circle,rgba(199,125,255,.15),transparent 65%);
+      bottom:-80px;right:-80px;filter:blur(60px)"></div>
+  </div>
+  <div style="position:relative;z-index:1;text-align:center;width:100%;max-width:320px;padding:0 24px">
+    <div style="font-size:52px;margin-bottom:16px;filter:drop-shadow(0 0 20px rgba(255,61,135,.4))">🔐</div>
+    <div style="font-size:28px;font-weight:900;color:#fff0f6;margin-bottom:6px;letter-spacing:-.5px">Монет</div>
+    <div style="font-size:13px;color:rgba(255,180,220,.4);margin-bottom:40px;font-weight:500">Введите PIN-код</div>
+
+    <!-- PIN dots -->
+    <div id="pinDots" style="display:flex;justify-content:center;gap:14px;margin-bottom:36px">
+      <div class="pd"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div>
+    </div>
+
+    <!-- Error msg -->
+    <div id="pinErr" style="font-size:13px;color:#ff6db3;min-height:18px;margin-bottom:20px;font-weight:600"></div>
+
+    <!-- Numpad -->
+    <div id="numpad" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:260px;margin:0 auto">
+      <button class="np-btn" onclick="pinPress('1')">1</button>
+      <button class="np-btn" onclick="pinPress('2')">2</button>
+      <button class="np-btn" onclick="pinPress('3')">3</button>
+      <button class="np-btn" onclick="pinPress('4')">4</button>
+      <button class="np-btn" onclick="pinPress('5')">5</button>
+      <button class="np-btn" onclick="pinPress('6')">6</button>
+      <button class="np-btn" onclick="pinPress('7')">7</button>
+      <button class="np-btn" onclick="pinPress('8')">8</button>
+      <button class="np-btn" onclick="pinPress('9')">9</button>
+      <div></div>
+      <button class="np-btn" onclick="pinPress('0')">0</button>
+      <button class="np-btn np-del" onclick="pinDel()">⌫</button>
+    </div>
+
+    <div id="pinSetupHint" style="font-size:12px;color:rgba(255,180,220,.3);margin-top:28px;line-height:1.5"></div>
+  </div>
+</div>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="hrow">
+      <div class="app-name">Монет</div>
+      <div class="hdate" id="hdate"></div>
+    </div>
+    <div class="greeting">Финансы <em id="greet-word">сегодня</em></div>
+  </div>
+
+  <!-- SCROLL -->
+  <div class="scroll" id="scrl">
+
+    <!-- HOME -->
+    <div id="sc-home" class="screen active">
+
+      <!-- ── HERO BALANCE CARD ── -->
+      <div class="h-hero">
+        <div class="h-hero-glow"></div>
+        <div class="h-hero-inner">
+          <div class="h-hero-label">
+            <span class="h-dot"></span>Общий баланс
+          </div>
+          <div class="h-hero-bal zero" id="hbal">0 CA$</div>
+          <div class="h-hero-sub" id="hsub">Начните добавлять операции</div>
+          <div class="h-hero-row">
+            <div class="h-stat">
+              <div class="h-stat-ico inc-bg">↑</div>
+              <div>
+                <div class="h-stat-lbl">Доходы</div>
+                <div class="h-stat-val inc-col" id="pinc">0 CA$</div>
+              </div>
+            </div>
+            <div class="h-divider"></div>
+            <div class="h-stat">
+              <div class="h-stat-ico exp-bg">↓</div>
+              <div>
+                <div class="h-stat-lbl">Расходы</div>
+                <div class="h-stat-val exp-col" id="pexp">0 CA$</div>
+              </div>
+            </div>
+            <div class="h-divider"></div>
+            <div class="h-stat">
+              <div class="h-stat-ico sav-bg">💰</div>
+              <div>
+                <div class="h-stat-lbl">Копилка</div>
+                <div class="h-stat-val sav-col" id="hPiggyBal">0 CA$</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── QUICK STATS ROW ── -->
+      <div class="h-stats-row">
+        <div class="h-mini-card" onclick="show('budget')">
+          <div class="h-mini-ico">📊</div>
+          <div class="h-mini-val" id="hBudgetPct">—</div>
+          <div class="h-mini-lbl">бюджет</div>
+        </div>
+        <div class="h-mini-card" onclick="show('credits')">
+          <div class="h-mini-ico">💳</div>
+          <div class="h-mini-val" id="hDebt">0</div>
+          <div class="h-mini-lbl">долг</div>
+        </div>
+        <div class="h-mini-card" onclick="show('recurring')">
+          <div class="h-mini-ico">📅</div>
+          <div class="h-mini-val" id="hUpcoming">0</div>
+          <div class="h-mini-lbl">платежей</div>
+        </div>
+        <div class="h-mini-card" onclick="show('goals')">
+          <div class="h-mini-ico">🎯</div>
+          <div class="h-mini-val" id="hGoals">0</div>
+          <div class="h-mini-lbl">целей</div>
+        </div>
+      </div>
+
+      <!-- ── RING + CHART ── -->
+      <div class="h-ring-chart">
+        <div class="h-ring-side">
+          <div class="ring-wrap">
+            <svg width="108" height="108" viewBox="0 0 108 108">
+              <defs>
+                <linearGradient id="gm" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00e5a0"/><stop offset="100%" stop-color="#5fffc0"/></linearGradient>
+                <linearGradient id="gr" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#ff3d87"/><stop offset="100%" stop-color="#ff6db3"/></linearGradient>
+              </defs>
+              <circle class="ring-bg-c" cx="54" cy="54" r="44"/>
+              <circle id="ringF" class="ring-fill" cx="54" cy="54" r="44" stroke="url(#gm)" stroke-dasharray="276" stroke-dashoffset="276"/>
+            </svg>
+            <div class="ring-center"><div class="ring-pct" id="rpct">0%</div><div class="ring-lbl">трат</div></div>
+          </div>
+          <div style="font-size:11px;color:var(--ink3);text-align:center;margin-top:6px" id="rdesc">—</div>
+        </div>
+        <div class="h-chart-side">
+          <div style="font-size:10.5px;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">6 месяцев</div>
+          <div class="bars" id="hchart"></div>
+          <div class="blbls" id="hchart-l"></div>
+        </div>
+      </div>
+
+      <!-- ── TOP CATEGORIES ── -->
+      <div class="h-cats-card">
+        <div class="h-cats-title">Топ расходов <span style="color:var(--ink3);font-weight:500">этот месяц</span></div>
+        <div id="rlegend"></div>
+      </div>
+
+      <!-- OVERDUE RECURRING WIDGET -->
+      <div id="overdueWidget" style="display:none;margin-bottom:4px"></div>
+
+      <!-- CREDITS WIDGET -->
+      <div class="sec-title" id="creditWidgetTitle" style="display:none">Кредиты <span class="sec-link" onclick="show('credits')">Все →</span></div>
+      <div id="creditWidget"></div>
+
+      <div class="sec-title">Последние операции <span class="sec-link" onclick="show('txs')">Все →</span></div>
+      <div class="tx-list" id="rtx"></div>
+      <div class="gap"></div>
+    </div>
+
+    <!-- TXS -->
+    <div id="sc-txs" class="screen">
+      <div style="height:16px"></div>
+      <div class="ptabs">
+        <div class="ptab active" onclick="setPeriod('all',this)">Все</div>
+        <div class="ptab" onclick="setPeriod('month',this)">Месяц</div>
+        <div class="ptab" onclick="setPeriod('week',this)">Неделя</div>
+      </div>
+      <div class="frow" id="txfilter"></div>
+      <div id="txlist"></div>
+
+      <!-- EXPORT SECTION -->
+      <div class="export-card">
+        <div class="export-title">📊 Выгрузка по месяцам</div>
+        <div class="export-sub">Скачайте отчёт в Excel за выбранный период</div>
+        <div class="export-row">
+          <select id="expMonth" class="exp-select"></select>
+          <select id="expYear" class="exp-select" style="width:90px"></select>
+        </div>
+        <div class="export-preview" id="expPreview"></div>
+        <button class="btn btn-m" onclick="exportXLSX()" style="margin-top:4px">
+          ⬇ Скачать Excel
+        </button>
+      </div>
+
+      <div class="gap"></div>
+    </div>
+
+    <!-- ADD -->
+    <div id="sc-add" class="screen">
+      <div style="height:16px"></div>
+      <div class="type-toggle">
+        <button class="btn btn-m" id="btnI" onclick="setType('inc')" style="border-radius:16px;font-size:14px;padding:14px">💹 Доход</button>
+        <button class="btn btn-g" id="btnE" onclick="setType('exp')" style="border-radius:16px;font-size:14px;padding:14px">🧾 Расход</button>
+      </div>
+
+      <div class="aform fi" id="fInc">
+        <div class="ftitle">Новый доход <span class="fbadge i">+ поступление</span></div>
+        <div class="field"><label>Сумма (CA$)</label><input type="number" id="iA" class="fm" placeholder="0" style="font-size:26px;font-family:'Fira Code',monospace;font-weight:600"></div>
+        <div class="field"><label>Дата</label><input type="date" id="iD"></div>
+        <div class="field"><label>Категория</label></div>
+        <div class="chips" id="iChips"></div>
+        <!-- Destination toggle -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+          <button id="destBalance" class="dest-btn dest-active" onclick="setDest('balance')">💳 В баланс</button>
+          <button id="destPiggy" class="dest-btn" onclick="setDest('piggy')">💰 В копилку</button>
+        </div>
+        <button class="btn btn-m" onclick="addI()">↑ Добавить доход</button>
+      </div>
+
+      <div class="aform fe" id="fExp" style="display:none">
+        <div class="ftitle">Новый расход <span class="fbadge e">− трата</span></div>
+        <div class="field"><label>Сумма (CA$)</label><input type="number" id="eA" placeholder="0" style="font-size:26px;font-family:'Fira Code',monospace;font-weight:600"></div>
+        <div class="g2"><div class="field"><label>Дата</label><input type="date" id="eD"></div><div class="field"><label>Категория</label><select id="eCatSel"></select></div></div>
+        <div class="chips" id="eChips"></div>
+        <button class="btn btn-r" onclick="addE()">↓ Добавить расход</button>
+      </div>
+      <div class="gap"></div>
+    </div>
+
+    <!-- GOALS -->
+    <div id="sc-goals" class="screen">
+      <div style="height:16px"></div>
+      <div class="aform fg">
+        <div class="ftitle">Новая цель <span class="fbadge g">🎯 цель</span></div>
+        <div class="g2"><div class="field"><label>Название</label><input id="gN" placeholder="MacBook, отпуск..."></div><div class="field"><label>Цель (CA$)</label><input type="number" id="gT" placeholder="0"></div></div>
+        <div class="g3"><div class="field"><label>Накоплено</label><input type="number" id="gC" placeholder="0"></div><div class="field"><label>Дедлайн</label><input type="date" id="gDL"></div><div class="field"><label>Иконка</label><select id="gE" style="font-size:16px"><option value="🎯">🎯</option><option value="🏠">🏠</option><option value="🚗">🚗</option><option value="✈️">✈️</option><option value="💻">💻</option><option value="📚">📚</option><option value="💍">💍</option><option value="🎓">🎓</option><option value="👶">👶</option><option value="🏋️">🏋️</option><option value="🎮">🎮</option><option value="🌊">🌊</option></select></div></div>
+        <button class="btn btn-p" onclick="addGoal()">✦ Создать цель</button>
+      </div>
+      <div class="sec-title">Мои цели <span id="gcnt" style="font-weight:500;color:var(--ink3)"></span></div>
+      <div class="goals-list" id="glist"></div>
+      <div class="gap"></div>
+    </div>
+
+    <!-- CREDITS -->
+    <div id="sc-credits" class="screen">
+      <div style="height:16px"></div>
+      <div class="aform fc">
+        <div class="ftitle">Новый кредит <span class="fbadge c">💳 кредит</span></div>
+        <div class="g2"><div class="field"><label>Название</label><input id="cN" placeholder="Ипотека..."></div><div class="field"><label>Банк</label><input id="cBk" placeholder="TD Bank..."></div></div>
+        <div class="g3"><div class="field"><label>Долг (CA$)</label><input type="number" id="cT" placeholder="0"></div><div class="field"><label>Ставка % / год</label><input type="number" id="cR" placeholder="5.5"></div><div class="field"><label>Платёж / мес</label><input type="number" id="cP" placeholder="0"></div></div>
+        <div class="field"><label>Следующий платёж</label><input type="date" id="cDu"></div>
+        <button class="btn btn-v" onclick="addCredit()">▭ Добавить кредит</button>
+      </div>
+      <div class="sec-title">Мои кредиты</div>
+      <div class="cstack" id="clist"></div>
+      <div class="gap"></div>
+    </div>
+
+
+    <!-- SETTINGS -->
+    <div id="sc-settings" class="screen">
+      <div style="height:16px"></div>
+
+      <!-- Notifications -->
+      <div class="aform" style="border-color:rgba(199,125,255,.2);margin-bottom:12px">
+        <div class="ftitle">🔔 Уведомления</div>
+        <div style="font-size:12.5px;color:var(--ink3);margin-bottom:14px;line-height:1.6">
+          Уведомления о платежах, превышении бюджета и операциях
+        </div>
+        <button id="notifBtn" class="btn btn-v" onclick="requestNotifPermission()" style="margin-bottom:10px">🔔 Включить уведомления</button>
+        <div id="notifStatus" style="font-size:12px;text-align:center;color:var(--ink3)"></div>
+      </div>
+
+      <!-- Theme Toggle -->
+      <div class="theme-toggle" onclick="toggleTheme()">
+        <div class="theme-toggle-lbl"><span id="themeIco">🌙</span><span id="themeLbl">Тёмная тема</span></div>
+        <div class="toggle-switch" id="themeSwitch"><div class="toggle-knob"></div></div>
+      </div>
+
+      <!-- DB Connect Card -->
+      <div class="aform fc" id="dbCard">
+        <div class="ftitle">🗄 База данных <span class="fbadge c" id="dbStatusBadge">отключена</span></div>
+        <div style="font-size:12.5px;color:var(--ink3);margin-bottom:18px;line-height:1.6">
+          Подключите <strong style="color:var(--ink2)">Supabase</strong> для синхронизации данных между устройствами.<br>
+          Создайте бесплатный проект на <span style="color:var(--v2)">supabase.com</span>
+        </div>
+        <div class="field"><label>Supabase URL</label><input id="dbUrl" placeholder="https://xxxx.supabase.co" autocomplete="off"></div>
+        <div class="field"><label>Anon Key</label><input id="dbKey" type="password" placeholder="eyJhbGciOiJIUzI1NiIs..." autocomplete="off"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+          <button class="btn btn-v" onclick="connectDB()">🔌 Подключить</button>
+          <button class="btn btn-g" onclick="disconnectDB()" id="btnDisconnect" style="display:none">Отключить</button>
+        </div>
+        <div id="dbMsg" style="font-size:12.5px;min-height:18px;text-align:center"></div>
+      </div>
+
+      <!-- Sync Card -->
+      <div class="aform fg" id="syncCard">
+        <div class="ftitle">☁️ Синхронизация <span class="fbadge g" id="syncStatus">авто</span></div>
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:12px">Последнее сохранение: <span id="lastSync">—</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+          <button class="btn btn-m" onclick="forcePush()">⬆ Загрузить всё</button>
+          <button class="btn btn-p" onclick="forcePull()">⬇ Скачать всё</button>
+        </div>
+        <div id="syncMsg" style="font-size:12px;min-height:16px;color:var(--ink3);text-align:center"></div>
+        <div style="font-size:11px;color:var(--ink3);border-top:1px solid var(--bd);padding-top:10px;margin-top:6px">
+          Авто-сохранение при каждом изменении · Загрузить — принудительно отправить · Скачать — получить с другого устройства
+        </div>
+      </div>
+
+      <!-- Setup Guide -->
+      <div class="aform" style="border-color:rgba(199,125,255,.2)">
+        <div class="ftitle" style="font-size:14px">📋 Как подключить Supabase</div>
+        <div class="setup-steps">
+          <div class="step"><div class="step-n">1</div><div class="step-txt">Зайдите на <strong>supabase.com</strong> и создайте бесплатный аккаунт</div></div>
+          <div class="step"><div class="step-n">2</div><div class="step-txt">Создайте новый проект (выберите ближайший регион)</div></div>
+          <div class="step"><div class="step-n">3</div><div class="step-txt">В Project Settings → API скопируйте <strong>Project URL</strong> и <strong>anon public key</strong></div></div>
+          <div class="step"><div class="step-n">4</div><div class="step-txt">Выполните SQL для создания таблицы (кнопка ниже)</div></div>
+          <div class="step"><div class="step-n">5</div><div class="step-txt">Вставьте URL и Key выше и нажмите Подключить</div></div>
+        </div>
+        <button class="btn btn-g" style="margin-top:14px" onclick="copySQL()">📋 Скопировать SQL для таблицы</button>
+        <div id="sqlCopyMsg" style="font-size:12px;color:var(--m2);text-align:center;margin-top:8px;height:16px"></div>
+      </div>
+
+      <!-- Local storage info -->
+      <div class="aform" style="border-color:rgba(255,160,200,.1)">
+        <div class="ftitle" style="font-size:14px">💾 Локальное хранилище</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+          <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:12px;text-align:center">
+            <div style="font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px">Операций</div>
+            <div id="statTx" style="font-family:'Fira Code',monospace;font-size:20px;font-weight:600;color:var(--ink)">0</div>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:12px;text-align:center">
+            <div style="font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px">Целей + кредитов</div>
+            <div id="statGC" style="font-family:'Fira Code',monospace;font-size:20px;font-weight:600;color:var(--ink)">0</div>
+          </div>
+        </div>
+        <button class="btn btn-g" onclick="clearLocalConfirm()">🗑 Очистить все данные</button>
+      </div>
+
+      <div class="gap"></div>
+    </div>
+
+    <!-- RECURRING -->
+    <div id="sc-recurring" class="screen">
+      <!-- Add recurring form -->
+      <div class="aform fe">
+        <div class="ftitle">Новый регулярный платёж <span class="fbadge e">📅 авто</span></div>
+        <div class="g2">
+          <div class="field"><label>Название</label><input id="rpName" placeholder="Netflix, аренда..."></div>
+          <div class="field"><label>Сумма (CA$)</label><input type="number" id="rpAmt" placeholder="0"></div>
+        </div>
+        <div class="g2">
+          <div class="field"><label>Частота</label>
+            <select id="rpFreq">
+              <option value="monthly">Ежемесячно</option>
+              <option value="weekly">Еженедельно</option>
+              <option value="yearly">Ежегодно</option>
+              <option value="biweekly">Раз в 2 недели</option>
+            </select>
+          </div>
+          <div class="field"><label>Дата следующего</label><input type="date" id="rpDate"></div>
+        </div>
+        <div class="field"><label>Категория</label>
+          <select id="rpCat">
+            <option value="Подписки">📱 Подписки</option>
+            <option value="ЖКХ">🏠 ЖКХ</option>
+            <option value="Транспорт">🚇 Транспорт</option>
+            <option value="Здоровье">💊 Здоровье</option>
+            <option value="Развлечения">🎬 Развлечения</option>
+            <option value="Другое">✨ Другое</option>
+          </select>
+        </div>
+        <button class="btn btn-r" onclick="addRecurring()">+ Добавить платёж</button>
+      </div>
+
+      <!-- Summary -->
+      <div id="rpSummary" style="display:none;margin-bottom:12px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
+          <div class="aform" style="padding:14px;text-align:center;margin-bottom:0">
+            <div style="font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">В месяц</div>
+            <div id="rpMonthly" style="font-family:'Fira Code',monospace;font-size:16px;font-weight:600;background:linear-gradient(90deg,var(--c1),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent"></div>
+          </div>
+          <div class="aform" style="padding:14px;text-align:center;margin-bottom:0">
+            <div style="font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">В год</div>
+            <div id="rpYearly" style="font-family:'Fira Code',monospace;font-size:16px;font-weight:600;background:linear-gradient(90deg,var(--p1),var(--p2));-webkit-background-clip:text;-webkit-text-fill-color:transparent"></div>
+          </div>
+          <div class="aform" style="padding:14px;text-align:center;margin-bottom:0">
+            <div style="font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Платежей</div>
+            <div id="rpCount" style="font-family:'Fira Code',monospace;font-size:20px;font-weight:600;color:var(--ink)"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-title">Регулярные платежи</div>
+      <div id="rpList"></div>
+      <div class="gap"></div>
+    </div>
+
+
+    <!-- BUDGET -->
+    <div id="sc-budget" class="screen">
+      <div style="height:16px"></div>
+
+      <!-- Add budget limit -->
+      <div class="aform fe">
+        <div class="ftitle">Лимит по категории <span class="fbadge e">📊 бюджет</span></div>
+        <div class="g2">
+          <div class="field"><label>Категория</label>
+            <select id="bCat">
+              <option value="Продукты">🛒 Продукты</option>
+              <option value="Транспорт">🚇 Транспорт</option>
+              <option value="Кафе">☕ Кафе</option>
+              <option value="ЖКХ">🏠 ЖКХ</option>
+              <option value="Одежда">👕 Одежда</option>
+              <option value="Здоровье">💊 Здоровье</option>
+              <option value="Развлечения">🎬 Развлечения</option>
+              <option value="Подписки">📱 Подписки</option>
+              <option value="Другое">✨ Другое</option>
+            </select>
+          </div>
+          <div class="field"><label>Лимит (CA$)</label><input type="number" id="bAmt" placeholder="500"></div>
+        </div>
+        <button class="btn btn-r" onclick="addBudget()">+ Установить лимит</button>
+      </div>
+
+      <!-- Budget overview -->
+      <div id="budgetSummary" style="display:none;margin-bottom:12px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="aform" style="padding:14px;text-align:center;margin-bottom:0">
+            <div style="font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Лимит / мес</div>
+            <div id="bTotalLimit" style="font-family:'Fira Code',monospace;font-size:16px;font-weight:600;color:var(--ink)"></div>
+          </div>
+          <div class="aform" style="padding:14px;text-align:center;margin-bottom:0">
+            <div style="font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Потрачено</div>
+            <div id="bTotalSpent" style="font-family:'Fira Code',monospace;font-size:16px;font-weight:600"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-title">Категории</div>
+      <div id="budgetList"></div>
+      <div class="gap"></div>
+    </div>
+    </div>
+
+    <!-- PIGGY BANK -->
+    <div id="sc-piggy" class="screen" style="display:none;flex-direction:column;height:calc(100vh - 120px)">
+      <!-- BALANCE HERO -->
+      <div class="rv-hero">
+        <div class="rv-hero-bg"></div>
+        <div class="rv-hero-label">Копилка</div>
+        <div id="piggyBal" class="rv-hero-bal">0 CA$</div>
+        <div class="rv-hero-stats">
+          <div class="rv-stat">
+            <div class="rv-stat-val" id="piggyTotalIn">0</div>
+            <div class="rv-stat-lbl">положено</div>
+          </div>
+          <div class="rv-stat-div"></div>
+          <div class="rv-stat">
+            <div class="rv-stat-val" id="piggyTotalOut">0</div>
+            <div class="rv-stat-lbl">взято</div>
+          </div>
+          <div class="rv-stat-div"></div>
+          <div class="rv-stat">
+            <div class="rv-stat-val" id="piggyDepCount">0</div>
+            <div class="rv-stat-lbl">операций</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="rv-actions">
+        <button class="rv-act-btn rv-act-in" onclick="rv_openPanel('in')">
+          <div class="rv-act-ico">↑</div>
+          <span>Положить</span>
+        </button>
+        <button class="rv-act-btn rv-act-out" onclick="rv_openPanel('out')">
+          <div class="rv-act-ico">↓</div>
+          <span>Взять</span>
+        </button>
+      </div>
+
+      <!-- INPUT PANEL -->
+      <div class="rv-panel" id="rv-panel" style="display:none">
+        <div class="rv-panel-top">
+          <div class="rv-panel-title" id="rv-panel-title">Пополнение</div>
+          <button class="rv-panel-close" onclick="rv_closePanel()">✕</button>
+        </div>
+        <input type="number" id="piggyIn" class="rv-input" placeholder="0" style="display:none">
+        <input type="number" id="piggyOut" class="rv-input" placeholder="0" style="display:none">
+        <div id="rv-active-input"></div>
+        <button class="rv-confirm" id="rv-confirm-btn">Подтвердить</button>
+      </div>
+
+      <!-- HISTORY -->
+      <div class="rv-hist-head">
+        <span class="rv-hist-title">История</span>
+        <span class="rv-hist-clr" onclick="clearPiggy()">Очистить</span>
+      </div>
+      <div id="piggyHistory" style="flex:1;overflow-y:auto;padding-bottom:8px"></div>
+    </div>
+
+  </div><!-- /scroll -->
+</div><!-- /app -->
+
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <button class="ntab active" id="tab-home" onclick="show('home')"><div class="tico">🏠</div><span>Главная</span></button>
+  <button class="ntab" id="tab-txs" onclick="show('txs')"><div class="tico">📋</div><span>Операции</span></button>
+  <button class="ntab ntab-add-center" id="tab-add" onclick="toggleWheel()"><div class="tico tico-add" id="wheelPlusIco">＋</div><span></span></button>
+  <button class="ntab" id="tab-credits" onclick="show('credits')"><div class="tico">💳</div><span>Кредиты</span></button>
+  <button class="ntab" id="tab-piggy" onclick="show('piggy')"><div class="tico">💰</div><span>Копилка</span></button>
+
+
+</nav>
+
+
+
+
+<!-- MODAL -->
+<div id="movl" onclick="closeM()"></div>
+<div id="mbox">
+  <div class="handle"></div>
+  <div id="mtitle"></div>
+  <div id="msub"></div>
+  <div id="minput-wrap"><input id="minput" type="number" placeholder="0 CA$" onkeydown="if(event.key==='Enter')confirmM()"></div>
+  <button id="mconfirm" onclick="confirmM()">Подтвердить</button>
+  <button id="mconfirm-alt" onclick="confirmAlt()"></button>
+</div>
+
+<script>
+// ── STATE ──
+var S={income:[],expense:[],goals:[],credits:[],recurring:[],budgets:{},piggy:[]};
+try{var _d=localStorage.getItem('monet8');if(_d){var _p=JSON.parse(_d);S=Object.assign(S,_p);}}catch(e){}
+if(!S.budgets)S.budgets={};
+if(!S.income)S.income=[];
+if(!S.expense)S.expense=[];
+if(!S.goals)S.goals=[];
+if(!S.credits)S.credits=[];
+var sv=function(){
+  S._ts=Date.now();
+  try{localStorage.setItem('monet8',JSON.stringify(S));}catch(e){}
+  if(DB.connected&&DB.url&&DB.key){
+    clearTimeout(sv._t);
+    sv._t=setTimeout(function(){
+      var payload={id:'main',data:JSON.stringify(S),updated_at:new Date().toISOString()};
+      fetch(DB.url+'/rest/v1/monet_data',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','apikey':DB.key,'Authorization':'Bearer '+DB.key,'Prefer':'resolution=merge-duplicates,return=minimal'},
+        body:JSON.stringify(payload)
+      }).then(function(){
+        var t=new Date().toLocaleTimeString('ru');
+        localStorage.setItem('monetLastSync',t);
+        var el=document.getElementById('lastSync');if(el)el.textContent=t;
+        var sm=document.getElementById('syncStatus');if(sm){sm.textContent='авто ✓';sm.className='fbadge i';}
+      }).catch(function(){
+        var sm=document.getElementById('syncStatus');if(sm){sm.textContent='нет связи';sm.className='fbadge e';}
+      });
+    },1200);
+  }
+};
+
+// ── UTILS ──
+var fmt=function(n){return new Intl.NumberFormat('en-CA').format(Math.round(n))+' CA$';};
+var fmtK=function(n){if(n>=1e6)return (n/1e6).toFixed(1)+'M CA$';if(n>=1e3)return Math.round(n/1e3)+'K CA$';return Math.round(n)+' CA$';};
+var fD=function(d){return d?new Date(d).toLocaleDateString('en-CA',{day:'2-digit',month:'short'}):''};
+var fDL=function(d){return d?new Date(d).toLocaleDateString('en-CA',{day:'numeric',month:'long'}):''};
+var td=function(){return new Date().toISOString().split('T')[0];};
+var esc=function(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+var pulse=function(id){var el=document.getElementById(id);if(!el)return;el.style.borderColor='rgba(255,61,135,.6)';el.focus();setTimeout(function(){el.style.borderColor='';},1400);};
+
+// ── BALANCE ──
+var getBal=function(){
+  var totInc=S.income.reduce(function(s,i){return s+i.a;},0);
+  var totExp=S.expense.reduce(function(s,i){return s+i.a;},0);
+  return totInc-totExp;
+};
+
+// ── INIT HEADER ──
+var _now=new Date();
+document.getElementById('hdate').textContent=_now.toLocaleDateString('en-CA',{day:'numeric',month:'long',year:'numeric'});
+var _h=_now.getHours();
+document.getElementById('greet-word').textContent=_h<12?'утром':_h<18?'днём':'вечером';
+
+// ── CATS ──
+var iCats=[{e:'💼',l:'Зарплата'},{e:'💻',l:'Фриланс'},{e:'📈',l:'Инвестиции'},{e:'🏠',l:'Аренда'},{e:'🎁',l:'Подарок'},{e:'✨',l:'Другое'}];
+var eCats=[{e:'🛒',l:'Продукты'},{e:'🚇',l:'Транспорт'},{e:'☕',l:'Кафе'},{e:'🏠',l:'ЖКХ'},{e:'👕',l:'Одежда'},{e:'💊',l:'Здоровье'},{e:'🎬',l:'Развлечения'},{e:'📱',l:'Подписки'},{e:'✨',l:'Другое'}];
+var selICat='Зарплата',selECat='Продукты';
+
+function buildChips(wid,cats,cur,cls,fn){
+  document.getElementById(wid).innerHTML=cats.map(function(c){
+    return '<div class="chip '+(c.l===cur?cls:'')+'" onclick="'+fn+'(this,\''+c.l+'\')">'+c.e+' '+c.l+'</div>';
+  }).join('');
+}
+function buildSelect(wid,cats,cur){
+  document.getElementById(wid).innerHTML=cats.map(function(c){
+    return '<option value="'+c.l+'"'+(c.l===cur?' selected':'')+'>'+c.e+' '+c.l+'</option>';
+  }).join('');
+}
+function selIC(el,l){selICat=l;document.querySelectorAll('#iChips .chip').forEach(function(c){c.className='chip';});el.className='chip si';}
+function selEC(el,l){selECat=l;document.querySelectorAll('#eChips .chip').forEach(function(c){c.className='chip';});el.className='chip se';buildSelect('eCatSel',eCats,l);}
+
+buildChips('iChips',iCats,selICat,'si','selIC');
+buildChips('eChips',eCats,selECat,'se','selEC');
+buildSelect('eCatSel',eCats,selECat);
+document.querySelectorAll('input[type=date]').forEach(function(el){el.value=td();});
+
+// ── TYPE TOGGLE ──
+var addType='inc';
+function setType(t){
+  addType=t;
+  document.getElementById('fInc').style.display=t==='inc'?'':'none';
+  document.getElementById('fExp').style.display=t==='exp'?'':'none';
+  document.getElementById('btnI').className='btn '+(t==='inc'?'btn-m':'btn-g');
+  document.getElementById('btnE').className='btn '+(t==='exp'?'btn-r':'btn-g');
+  document.getElementById('btnI').style.cssText='border-radius:16px;font-size:14px;padding:14px';
+  document.getElementById('btnE').style.cssText='border-radius:16px;font-size:14px;padding:14px';
+}
+
+// ── MODAL ──
+var _mcb=null,_maltcb=null;
+function openM(title,sub,cb,altLabel,altCb){
+  _mcb=cb;_maltcb=altCb||null;
+  document.getElementById('mtitle').textContent=title;
+  document.getElementById('msub').textContent=sub;
+  document.getElementById('minput').value='';
+  document.getElementById('minput-wrap').style.display='';
+  document.getElementById('mconfirm').textContent='Подтвердить';
+  var altBtn=document.getElementById('mconfirm-alt');
+  if(altLabel&&altCb){altBtn.style.display='';altBtn.textContent=altLabel;}
+  else{altBtn.style.display='none';}
+  document.getElementById('movl').style.display='block';
+  document.getElementById('mbox').style.display='block';
+  setTimeout(function(){document.getElementById('minput').focus();},120);
+}
+function openConfirm(title,sub,yesCb,yesTxt,noCb,noTxt){
+  _mcb=null;_maltcb=null;
+  document.getElementById('mtitle').textContent=title;
+  document.getElementById('msub').textContent=sub;
+  document.getElementById('minput-wrap').style.display='none';
+  document.getElementById('mconfirm').textContent=yesTxt||'Да, удалить';
+  _mcb=function(){closeM();if(yesCb)yesCb();};
+  var altBtn=document.getElementById('mconfirm-alt');
+  if(noCb){altBtn.style.display='';altBtn.textContent=noTxt||'Оставить';_maltcb=function(){closeM();if(noCb)noCb();};}
+  else{altBtn.style.display='none';}
+  document.getElementById('movl').style.display='block';
+  document.getElementById('mbox').style.display='block';
+}
+function closeM(){
+  document.getElementById('movl').style.display='none';
+  document.getElementById('mbox').style.display='none';
+  document.getElementById('minput-wrap').style.display='';
+  _mcb=null;_maltcb=null;
+}
+function confirmM(){
+  var n=parseFloat(document.getElementById('minput').value);
+  var cb=_mcb;closeM();if(cb)cb(n);
+}
+function confirmAlt(){
+  var cb=_maltcb;closeM();if(cb)cb();
+}
+
+// ── NAVIGATION ──
+var SCR={home:'sc-home',txs:'sc-txs',add:'sc-add',goals:'sc-goals',credits:'sc-credits',recurring:'sc-recurring',budget:'sc-budget',piggy:'sc-piggy',settings:'sc-settings'};
+var TABS={home:'tab-home',txs:'tab-txs',add:'tab-add',goals:'tab-goals',credits:'tab-credits',recurring:'tab-recurring',budget:'tab-budget',piggy:'tab-piggy',settings:'tab-settings'};
+var cur='home';
+var LABELS={home:'сегодня',txs:'операции',add:'новая запись',goals:'мои цели',credits:'кредиты',recurring:'платежи',budget:'бюджет',piggy:'копилка',settings:'настройки'};
+
+function showCredits(){show("credits");}
+function showTxs(){show("txs");}
+function show(s){
+  var prev=document.getElementById(SCR[cur]);
+  if(prev){prev.classList.remove('active');prev.classList.add('leaving');setTimeout(function(){prev.classList.remove('leaving');},250);}
+  document.getElementById(TABS[cur])?.classList.remove('active');
+  cur=s;
+  document.getElementById(SCR[s])?.classList.add('active');
+  document.getElementById(TABS[s])?.classList.add('active');
+  // sync more-menu active state
+  document.querySelectorAll('.more-item').forEach(function(el){el.classList.remove('active');});
+  var moreScreens=['goals','credits','recurring','budget','settings'];
+  if(moreScreens.indexOf(s)>=0){
+    document.querySelectorAll('.more-item').forEach(function(el){
+      if(el.getAttribute('onclick')&&el.getAttribute('onclick').indexOf("'"+s+"'")>=0)el.classList.add('active');
+    });
+    // highlight the ☰ button too
+    document.getElementById('tab-more')?.classList.add('active');
+  } else {
+    document.getElementById('tab-more')?.classList.remove('active');
+  }
+  document.getElementById('scrl').scrollTop=0;
+  // Scroll active nav tab into view
+  setTimeout(function(){
+    var activeTab=document.getElementById(TABS[s]);
+    if(activeTab){activeTab.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});}
+  },50);
+  document.getElementById('greet-word').textContent=LABELS[s]||'финансы';
+  var scrlEl=document.getElementById('scrl');if(scrlEl)scrlEl.scrollTop=0;
+  if(s==='home')renderHome();
+  if(s==='txs'){renderTxs();setTimeout(initExportSelects,50);}
+  if(s==='goals')renderGoals();
+  if(s==='credits')renderCredits();
+  if(s==='recurring')renderRecurring();
+  if(s==='budget')renderBudget();
+  if(s==='piggy'){renderPiggy();setTimeout(renderPiggy,100);}
+  if(s==='settings')renderSettings();
+}
+
+// ── MONTH DATA ──
+function monthData(){
+  var n=new Date();
+  var mf=function(arr){return arr.filter(function(i){var d=new Date(i.date);return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();});};
+  var mInc=mf(S.income).reduce(function(s,i){return s+i.a;},0);
+  var mExp=mf(S.expense).reduce(function(s,i){return s+i.a;},0);
+  var tInc=S.income.reduce(function(s,i){return s+i.a;},0);
+  var tExp=S.expense.reduce(function(s,i){return s+i.a;},0);
+  return{mInc:mInc,mExp:mExp,tInc:tInc,tExp:tExp,bal:tInc-tExp};
+}
+
+// ── HOME ──
+function renderHome(){
+  var md=monthData();
+  var hb=document.getElementById('hbal');
+  if(hb){hb.textContent=fmt(md.bal);hb.className='h-hero-bal '+(md.bal>0?'pos':md.bal<0?'neg':'zero');}
+  var subEl=document.getElementById('hsub');
+  if(subEl)subEl.textContent=md.bal>0?'Всё хорошо · заработано '+fmtK(md.tInc):md.bal<0?'Перерасход на '+fmt(Math.abs(md.bal)):'Начните добавлять операции';
+  var pincEl=document.getElementById('pinc');if(pincEl)pincEl.textContent=fmt(md.mInc);
+  var pexpEl=document.getElementById('pexp');if(pexpEl)pexpEl.textContent=fmt(md.mExp);
+  // Piggy balance
+  var piggyEl=document.getElementById('hPiggyBal');if(piggyEl)piggyEl.textContent=fmt(piggyBalance());
+  // Mini cards
+  var budgetPct=0;
+  if(S.budgets&&Object.keys(S.budgets).length){
+    var totalLim=Object.values(S.budgets).reduce(function(s,v){return s+v;},0);
+    var totalSpent=Object.keys(S.budgets).reduce(function(s,cat){return s+getCatSpentThisMonth(cat);},0);
+    budgetPct=totalLim>0?Math.round(totalSpent/totalLim*100):0;
+  }
+  var bpEl=document.getElementById('hBudgetPct');
+  if(bpEl){bpEl.textContent=S.budgets&&Object.keys(S.budgets).length?budgetPct+'%':'—';bpEl.style.color=budgetPct>80?'var(--c1)':budgetPct>50?'var(--p1)':'var(--m2)';}
+  var debtEl=document.getElementById('hDebt');
+  if(debtEl){var totalDebt=S.credits?S.credits.reduce(function(s,c){return s+c.total;},0):0;debtEl.textContent=totalDebt>0?fmtK(totalDebt):'0';}
+  var upEl=document.getElementById('hUpcoming');
+  if(upEl){var upcoming=S.recurring?S.recurring.length:0;upEl.textContent=upcoming;}
+  var goalsEl=document.getElementById('hGoals');
+  if(goalsEl){goalsEl.textContent=S.goals?S.goals.length:0;}
+
+  // Ring
+  var pct=md.mInc>0?Math.min(100,Math.round(md.mExp/md.mInc*100)):0;
+  var dash=276-(276*(pct/100));
+  var ring=document.getElementById('ringF');
+  ring.style.strokeDashoffset=dash;
+  ring.setAttribute('stroke',pct>80?'url(#gr)':'url(#gm)');
+  document.getElementById('rpct').textContent=pct+'%';
+  document.getElementById('rdesc').textContent=pct===0?'Нет данных за месяц':pct<=50?'Отлично! Тратите '+pct+'% доходов':pct<=80?'Умеренно, '+pct+'% ушло':pct<=100?'Осторожно! '+pct+'% израсходовано':'Перерасход на '+fmt(md.mExp-md.mInc);
+
+  // Legend
+  var cats={};
+  var n=new Date();
+  S.expense.filter(function(i){var d=new Date(i.date);return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();}).forEach(function(i){cats[i.cat]=(cats[i.cat]||0)+i.a;});
+  var sorted=Object.entries(cats).sort(function(a,b){return b[1]-a[1];}).slice(0,3);
+  var mx=sorted[0]?sorted[0][1]:1;
+  document.getElementById('rlegend').innerHTML=sorted.map(function(kv){
+    var cat=[].concat(iCats,eCats).find(function(c){return c.l===kv[0];});
+    return '<div class="leg-row"><div class="leg-label">'+(cat?cat.e:'•')+' '+kv[0]+'</div><div class="leg-bar-bg"><div class="leg-bar" style="width:'+Math.round(kv[1]/mx*100)+'%"></div></div><div class="leg-val">'+fmtK(kv[1])+'</div></div>';
+  }).join('')||'<div style="font-size:12px;color:var(--ink3)">Расходов пока нет</div>';
+
+  renderChart('hchart','hchart-l');
+  renderCreditWidget();
+  renderOverdueWidget();
+
+  // Recent
+  var recent=[].concat(
+    S.income.map(function(i){return Object.assign({},i,{type:'inc'});}),
+    S.expense.map(function(i){return Object.assign({},i,{type:'exp'});})
+  ).sort(function(a,b){return new Date(b.date)-new Date(a.date);}).slice(0,6);
+  var rEl=document.getElementById('rtx');
+  if(!recent.length){rEl.innerHTML='<div class="empty"><div class="ico">🌸</div><p>Нет операций</p><small>Добавьте первую запись</small></div>';return;}
+  rEl.innerHTML=recent.map(function(i){return txHtml(i,i.type,true);}).join('');
+}
+
+function renderChart(cid,lid){
+  var n=new Date();
+  var months=Array.from({length:6},function(_,i){var d=new Date(n.getFullYear(),n.getMonth()-5+i,1);return{m:d.getMonth(),y:d.getFullYear(),label:d.toLocaleDateString('en-CA',{month:'short'})};});
+  var vals=months.map(function(m){
+    return{
+      inc:S.income.filter(function(i){var d=new Date(i.date);return d.getMonth()===m.m&&d.getFullYear()===m.y;}).reduce(function(s,i){return s+i.a;},0),
+      exp:S.expense.filter(function(i){var d=new Date(i.date);return d.getMonth()===m.m&&d.getFullYear()===m.y;}).reduce(function(s,i){return s+i.a;},0),
+      label:m.label
+    };
+  });
+  var mx=Math.max.apply(null,vals.map(function(v){return Math.max(v.inc,v.exp);}).concat([1]));
+  document.getElementById(cid).innerHTML=vals.map(function(v){
+    return '<div class="bg"><div class="bv i" style="height:'+Math.max(3,Math.round(v.inc/mx*68))+'px;flex:1" title="'+fmt(v.inc)+'"></div><div class="bv e" style="height:'+Math.max(3,Math.round(v.exp/mx*68))+'px;flex:1" title="'+fmt(v.exp)+'"></div></div>';
+  }).join('');
+  document.getElementById(lid).innerHTML=vals.map(function(v){return '<div class="blbl">'+v.label+'</div>';}).join('');
+}
+
+// ── TX HTML ──
+function txHtml(i,type,showDel){
+  var cats=type==='inc'?iCats:eCats;
+  var cat=cats.find(function(c){return c.l===i.cat;})||{e:'•'};
+  var delFn=type==='inc'?'dI':'dE';
+  var sign=type==='inc'?'+':'−';
+  return '<div class="tx"><div class="tx-ico '+type+'">'+cat.e+'</div><div class="tx-mid"><div class="tx-name">'+esc(i.name)+'</div><div class="tx-cat">'+i.cat+'</div></div><div class="tx-r"><div class="tx-amt '+type+'">'+sign+fmt(i.a)+'</div><div class="tx-date">'+fD(i.date)+'</div>'+(showDel?'<button class="tx-del" onclick="'+delFn+'('+i.id+')">удалить</button>':'')+'</div></div>';
+}
+
+// ── TXS SCREEN ──
+var txPeriod='all',txCat='Все';
+function setPeriod(p,el){txPeriod=p;document.querySelectorAll('.ptab').forEach(function(t){t.classList.remove('active');});el.classList.add('active');renderTxs();}
+function setTxCat(c){txCat=c;renderTxs();}
+function renderTxs(){
+  var n=new Date();
+  var inPeriod=function(date){
+    var d=new Date(date);
+    if(txPeriod==='month')return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();
+    if(txPeriod==='week'){var w=new Date(n);w.setDate(n.getDate()-7);return d>=w;}
+    return true;
+  };
+  var all=[].concat(
+    S.income.filter(function(i){return inPeriod(i.date);}).map(function(i){return Object.assign({},i,{type:'inc'});}),
+    S.expense.filter(function(i){return inPeriod(i.date);}).map(function(i){return Object.assign({},i,{type:'exp'});})
+  ).sort(function(a,b){return new Date(b.date)-new Date(a.date);});
+  if(txCat!=='Все')all=all.filter(function(i){return i.cat===txCat;});
+  var cats=['Все'].concat(Array.from(new Set(all.map(function(i){return i.cat;}))));
+  document.getElementById('txfilter').innerHTML=cats.map(function(c){return '<button class="fbtn '+(c===txCat?'active':'')+'" onclick="setTxCat(\''+c+'\')">'+c+'</button>';}).join('');
+  var el=document.getElementById('txlist');
+  if(!all.length){el.innerHTML='<div class="empty"><div class="ico">🌸</div><p>Нет операций</p><small>Попробуйте другой период</small></div>';return;}
+  var byDate={};
+  all.forEach(function(i){var k=i.date||'';(byDate[k]||(byDate[k]=[])).push(i);});
+  el.innerHTML=Object.entries(byDate).sort(function(a,b){return new Date(b[0])-new Date(a[0]);}).map(function(kv){
+    return '<div class="datediv">'+fDL(kv[0])+'</div><div class="tx-list">'+kv[1].map(function(i){return txHtml(i,i.type,true);}).join('')+'</div>';
+  }).join('');
+}
+
+// ── ADD INCOME ──
+var _incDest='balance';
+function setDest(t){
+  _incDest=t;
+  document.getElementById('destBalance').className='dest-btn'+(t==='balance'?' dest-active':'');
+  document.getElementById('destPiggy').className='dest-btn'+(t==='piggy'?' dest-active':'');
+}
+function addI(){
+  var a=parseFloat(document.getElementById('iA').value);
+  var d=document.getElementById('iD').value||td();
+  if(!a||a<=0){pulse('iA');return;}
+  if(_incDest==='piggy'){
+    // В копилку — не трогаем баланс
+    if(!S.piggy)S.piggy=[];
+    S.piggy.push({id:Date.now(),type:'in',a:a,date:d,note:selICat||'Доход'});
+    sv();renderHome();renderPiggy();
+    document.getElementById('iA').value='';
+    show('piggy');
+  } else {
+    // В баланс — обычный доход
+    S.income.unshift({id:Date.now(),name:selICat,a:a,cat:selICat,date:d});
+    sv();renderHome();
+    notifTx('income', selICat, a);
+    document.getElementById('iA').value='';
+    show('home');
+  }
+}
+
+// ── ADD EXPENSE ──
+function addE(){
+  var a=parseFloat(document.getElementById('eA').value);
+  var d=document.getElementById('eD').value||td();
+  var cat=document.getElementById('eCatSel').value||selECat;
+  if(!a||a<=0){pulse('eA');return;}
+  var n=cat||'Расход';
+  S.expense.unshift({id:Date.now(),name:n,a:a,cat:cat,date:d});
+  sv();renderHome();
+  notifTx('expense', cat, a);
+  // Check budget after adding expense
+  if(S.budgets&&S.budgets[cat]){
+    var spent=getCatSpentThisMonth(cat);
+    checkBudgetNotif(cat, spent, S.budgets[cat]);
+  }
+  document.getElementById('eA').value='';
+  show('home');
+}
+
+function dI(id){S.income=S.income.filter(function(i){return i.id!==id;});sv();renderHome();if(cur==='txs')renderTxs();}
+function dE(id){S.expense=S.expense.filter(function(i){return i.id!==id;});sv();renderHome();if(cur==='txs')renderTxs();}
+
+// ── GOALS ──
+function addGoal(){
+  var n=document.getElementById('gN').value.trim();
+  var t=parseFloat(document.getElementById('gT').value);
+  var c=parseFloat(document.getElementById('gC').value)||0;
+  var e=document.getElementById('gE').value;
+  var dl=document.getElementById('gDL').value;
+  if(!n||!t||t<=0){pulse('gT');return;}
+  S.goals.push({id:Date.now(),name:n,target:t,current:c,emoji:e,deadline:dl});
+  sv();renderGoals();
+  document.getElementById('gN').value='';document.getElementById('gT').value='';document.getElementById('gC').value='';
+}
+
+function depositGoal(id){
+  var g=S.goals.find(function(g){return g.id===id;});if(!g)return;
+  var bal=getBal();
+  var maxDep=Math.min(g.target-g.current,bal);
+  if(bal<=0){
+    openConfirm('Недостаточно средств','Баланс: '+fmt(bal)+'. Пополните доходы.','Закрыть',null,null,null);
+    // quick fix: reuse openM for info
+    openM('Недостаточно средств','Баланс: '+fmt(bal)+'. Пополните доходы.',function(){});
+    return;
+  }
+  openM(
+    'Пополнить цель',
+    '"'+g.name+'" · баланс '+fmt(bal)+' · осталось '+fmt(g.target-g.current),
+    function(n){
+      if(!n||n<=0)return;
+      if(n>bal){openM('⚠️ Мало средств','Максимум '+fmt(bal),function(n2){if(!n2||n2<=0||n2>bal)return;doDeposit(g,n2);});return;}
+      if(n>g.target-g.current){openM('⚠️ Лишнее','Осталось накопить '+fmt(g.target-g.current),function(n2){if(!n2||n2<=0)return;doDeposit(g,Math.min(n2,g.target-g.current,bal));});return;}
+      doDeposit(g,n);
+    }
+  );
+}
+function doDeposit(g,n){
+  var prevPct=Math.min(100,Math.round(g.current/g.target*100));
+  S.expense.unshift({id:Date.now(),name:'Цель: '+g.name,a:n,cat:'Цели',date:td()});
+  g.current=Math.min(g.target,g.current+n);
+  sv();renderGoals();renderHome();
+  checkGoalComplete(g,prevPct);
+}
+
+function deleteGoal(id){S.goals=S.goals.filter(function(g){return g.id!==id;});sv();renderGoals();}
+
+
+function fireConfetti(x, y){
+  var colors=['#ff3d87','#c77dff','#6c3bff','#00e5a0','#ffd166','#06d6a0','#ff6b6b','#4cc9f0'];
+  var count = 80;
+  for(var i=0;i<count;i++){
+    (function(i){
+      setTimeout(function(){
+        var el=document.createElement('div');
+        el.className='confetti-piece';
+        var color=colors[Math.floor(Math.random()*colors.length)];
+        var fx=(Math.random()-0.5)*400+'px';
+        var fy=(Math.random()*-600-100)+'px';
+        var rot=(Math.random()*720-360)+'deg';
+        var dur=(0.8+Math.random()*0.8)+'s';
+        var size=(6+Math.random()*10)+'px';
+        el.style.cssText='left:'+x+'px;top:'+y+'px;background:'+color+
+          ';width:'+size+';height:'+size+
+          ';--fx:'+fx+';--fy:'+fy+';--rot:'+rot+';--dur:'+dur+
+          ';border-radius:'+(Math.random()>0.5?'50%':'2px')+';';
+        document.body.appendChild(el);
+        setTimeout(function(){el.remove();},1800);
+      }, i*12);
+    })(i);
+  }
+  // Ring burst
+  var ring=document.createElement('div');
+  ring.className='goal-blast';
+  ring.innerHTML='<div class="goal-blast-ring"></div>';
+  document.body.appendChild(ring);
+  setTimeout(function(){ring.remove();},700);
+  // Big emoji
+  var em=document.createElement('div');
+  em.className='goal-blast-emoji';
+  em.textContent='🎉';
+  em.style.cssText='left:'+Math.max(20,x-30)+'px;top:'+Math.max(20,y-40)+'px;';
+  document.body.appendChild(em);
+  setTimeout(function(){
+    em.style.animation='blastEmojiOut .4s ease forwards';
+    setTimeout(function(){em.remove();},400);
+  },1200);
+}
+
+function checkGoalComplete(g, prevPct){
+  var p=Math.min(100,Math.round(g.current/g.target*100));
+  if(p>=100 && prevPct<100){
+    setTimeout(function(){
+      var cx=window.innerWidth/2, cy=window.innerHeight/2;
+      fireConfetti(cx,cy);
+      // Extra bursts
+      setTimeout(function(){fireConfetti(cx-100,cy+50);},200);
+      setTimeout(function(){fireConfetti(cx+100,cy+50);},350);
+    },100);
+  }
+}
+
+function renderGoals(){
+  document.getElementById('gcnt').textContent=S.goals.length?'· '+S.goals.length:'';
+  var el=document.getElementById('glist');
+  if(!S.goals.length){el.innerHTML='<div class="empty"><div class="ico">🎯</div><p>Нет целей</p><small>Создайте первую финансовую цель</small></div>';return;}
+  el.innerHTML=S.goals.map(function(g,idx){
+    var p=Math.min(100,Math.round(g.current/g.target*100)),done=p>=100;
+    var left=g.target-g.current;
+    var barColor=done?'linear-gradient(90deg,#00e5a0,#00b4d8)':p>=60?'linear-gradient(90deg,#6c3bff,#a855f7)':'linear-gradient(90deg,#ff3d87,#c77dff)';
+    return '<div class="gl-card '+(done?'gl-done':'gl-active')+'" style="animation-delay:'+(idx*.07)+'s">'+
+      '<div class="gl-top">'+
+        '<div class="gl-ico">'+g.emoji+'</div>'+
+        '<div class="gl-info">'+
+          '<div class="gl-name">'+esc(g.name)+'</div>'+
+          '<div class="gl-dead">'+(g.deadline?'до '+fD(g.deadline):'без срока')+'</div>'+
+        '</div>'+
+        '<div class="gl-pct-badge" style="background:'+(done?'rgba(0,229,160,.15)':'rgba(199,125,255,.12)')+';color:'+(done?'#00e5a0':'#c77dff')+'">'+
+          (done?'✓ Готово':p+'%')+
+        '</div>'+
+      '</div>'+
+      '<div class="gl-amounts">'+
+        '<div class="gl-curr">'+fmt(g.current)+'</div>'+
+        '<div class="gl-target">/ '+fmt(g.target)+'</div>'+
+      '</div>'+
+      '<div class="gl-bar-wrap">'+
+        '<div class="gl-bar-bg">'+
+          '<div class="gl-bar-fill" style="width:'+p+'%;background:'+barColor+'"></div>'+
+        '</div>'+
+        '<div class="gl-bar-info">'+
+          '<span class="gl-bar-lbl">'+(done?'🎉 Цель достигнута!':'осталось '+fmt(left))+'</span>'+
+          '<span class="gl-bar-pct">'+p+'%</span>'+
+        '</div>'+
+      '</div>'+
+      '<div class="gl-acts">'+
+        (!done?'<button class="gl-btn-add" onclick="depositGoal('+g.id+')">+ Пополнить</button>':'')+
+        '<button class="gl-btn-del" onclick="deleteGoal('+g.id+')">Удалить</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+// ── CREDITS ──
+function addCredit(){
+  var n=document.getElementById('cN').value.trim(),bk=document.getElementById('cBk').value.trim();
+  var t=parseFloat(document.getElementById('cT').value),r=parseFloat(document.getElementById('cR').value)||0;
+  var p=parseFloat(document.getElementById('cP').value)||0,du=document.getElementById('cDu').value;
+  if(!n||!t||t<=0){pulse('cT');return;}
+  S.credits.push({id:Date.now(),name:n,bank:bk,total:t,orig:t,rate:r,pay:p,due:du});
+  sv();renderCredits();
+  ['cN','cBk','cT','cR','cP'].forEach(function(id){document.getElementById(id).value='';});
+}
+
+function payCredit(id){
+  var c=S.credits.find(function(c){return c.id===id;});if(!c)return;
+  var bal=getBal();
+  if(bal<=0){
+    openM('Недостаточно средств','Баланс: '+fmt(bal)+'. Пополните доходы.',function(){});
+    return;
+  }
+  var maxPay=Math.min(c.total,bal);
+  openM(
+    'Внести платёж',
+    c.name+' · долг '+fmt(c.total)+' · баланс '+fmt(bal),
+    function(n){
+      if(!n||n<=0)return;
+      if(n>bal){
+        openM('⚠️ Мало средств','Максимум '+fmt(bal),function(n2){
+          if(!n2||n2<=0||n2>bal)return;
+          doPayCredit(c,Math.min(n2,c.total),id);
+        });
+        return;
+      }
+      if(n>c.total){
+        openM('⚠️ Много','Максимум '+fmt(c.total),function(n2){
+          if(!n2||n2<=0)return;
+          doPayCredit(c,Math.min(n2,c.total,bal),id);
+        });
+        return;
+      }
+      doPayCredit(c,n,id);
+    }
+  );
+}
+function doPayCredit(c,n,id){
+  // Deduct from balance
+  S.expense.unshift({id:Date.now(),name:'Кредит: '+c.name,a:n,cat:'Кредиты',date:td()});
+  c.total=c.total-n;
+  if(c.total<=0){
+    c.total=0;
+    sv();renderCredits();renderHome();
+    openConfirm('🎉 Кредит погашен!','Хотите удалить его из списка?',
+      function(){S.credits=S.credits.filter(function(x){return x.id!==id;});sv();renderCredits();},
+      'Да, удалить',
+      function(){sv();renderCredits();},
+      'Оставить'
+    );
+  } else {
+    sv();renderCredits();renderHome();
+  }
+}
+
+function deleteCredit(id){S.credits=S.credits.filter(function(c){return c.id!==id;});sv();renderCredits();}
+
+function renderCredits(){
+  var el=document.getElementById('clist');
+  if(!S.credits.length){el.innerHTML='<div class="empty"><div class="ico">💳</div><p>Нет кредитов</p><small>Добавьте свои долги</small></div>';return;}
+
+  var totalDebt=S.credits.reduce(function(s,c){return s+c.total;},0);
+  var totalPay=S.credits.reduce(function(s,c){return s+(c.pay||0);},0);
+
+  // Gradients per card index
+  var gradients=[
+    'linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)',
+    'linear-gradient(135deg,#1a0a28 0%,#2d0b55 50%,#4a0080 100%)',
+    'linear-gradient(135deg,#0d1f1a 0%,#0a3d2e 50%,#005f46 100%)',
+    'linear-gradient(135deg,#1f0a0a 0%,#3d0b0b 50%,#600000 100%)',
+    'linear-gradient(135deg,#1a1200 0%,#3d2e00 50%,#6b5000 100%)',
+  ];
+  var accentColors=['#4cc9f0','#c77dff','#00e5a0','#ff6b6b','#ffd166'];
+
+  var items=S.credits.map(function(c,idx){
+    var orig=c.orig||c.total,paid=orig-c.total,pp=Math.round(paid/orig*100);
+    var intM=Math.round(c.total*(c.rate/100/12));
+    var grad=gradients[idx%gradients.length];
+    var accent=accentColors[idx%accentColors.length];
+    var dots='●●●●&nbsp;&nbsp;●●●●&nbsp;&nbsp;●●●●';
+    return '<div class="bc-card" style="background:'+grad+';animation-delay:'+(idx*.08)+'s">'+
+      '<div class="bc-shine"></div>'+
+      // Top row
+      '<div class="bc-top">'+
+        '<div class="bc-bank">'+esc(c.bank||'Bank')+'</div>'+
+        '<div class="bc-rate-badge" style="color:'+accent+';border-color:'+accent+'">'+c.rate+'% /год</div>'+
+      '</div>'+
+      // Card number dots
+      '<div class="bc-dots">'+dots+'</div>'+
+      // Balance
+      '<div class="bc-bal-lbl">Остаток долга</div>'+
+      '<div class="bc-bal">'+fmt(c.total)+'</div>'+
+      // Progress bar
+      '<div class="bc-prog-wrap">'+
+        '<div class="bc-prog-track">'+
+          '<div class="bc-prog-fill" style="width:'+pp+'%;background:'+accent+'"></div>'+
+        '</div>'+
+        '<div class="bc-prog-meta">'+
+          '<span style="color:'+accent+'">'+pp+'% погашено</span>'+
+          '<span>из '+fmt(orig)+'</span>'+
+        '</div>'+
+      '</div>'+
+      // Bottom row
+      '<div class="bc-bottom">'+
+        '<div class="bc-stat"><div class="bc-sl">Платёж/мес</div><div class="bc-sv">'+(c.pay?fmt(c.pay):'—')+'</div></div>'+
+        '<div class="bc-stat"><div class="bc-sl">Проценты</div><div class="bc-sv">'+fmt(intM)+'</div></div>'+
+        '<div class="bc-chip">'+
+          '<div class="bc-chip-h"></div><div class="bc-chip-v"></div>'+
+        '</div>'+
+      '</div>'+
+      (c.due?'<div class="bc-due">📅 '+fD(c.due)+'</div>':'')+
+      '<div class="bc-acts">'+
+        '<button class="bc-pay" onclick="payCredit('+c.id+')">Внести платёж</button>'+
+        '<button class="bc-del" onclick="deleteCredit('+c.id+')">✕</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+
+  // Summary strip
+  var summary='<div class="bc-summary">'+
+    '<div class="bc-sum-item"><div class="bc-sum-lbl">Всего долгов</div><div class="bc-sum-val">'+fmt(totalDebt)+'</div></div>'+
+    (totalPay?'<div class="bc-sum-div"></div><div class="bc-sum-item"><div class="bc-sum-lbl">Платежей/мес</div><div class="bc-sum-val" style="color:var(--c1)">'+fmt(totalPay)+'</div></div>':'')+
+    '<div class="bc-sum-div"></div><div class="bc-sum-item"><div class="bc-sum-lbl">Кредитов</div><div class="bc-sum-val">'+S.credits.length+'</div></div>'+
+  '</div>';
+
+  el.innerHTML=summary+items;
+}
+
+
+
+// ── CREDIT WIDGET (Home) ──
+function renderCreditWidget(){
+  var el=document.getElementById('creditWidget');
+  var titleEl=document.getElementById('creditWidgetTitle');
+  if(!el)return;
+  if(!S.credits||!S.credits.length){
+    el.innerHTML='';
+    if(titleEl)titleEl.style.display='none';
+    return;
+  }
+  if(titleEl)titleEl.style.display='';
+  var totalDebt=S.credits.reduce(function(s,c){return s+c.total;},0);
+  var totalPay=S.credits.reduce(function(s,c){return s+(c.pay||0);},0);
+
+  var items=S.credits.map(function(c,idx){
+    var orig=c.orig||c.total;
+    var paid=orig-c.total;
+    var pp=orig>0?Math.round(paid/orig*100):0;
+    return '<div class="cw-item" style="animation-delay:'+(idx*.05)+'s" onclick="showCredits()">'+
+      '<div class="cw-left">'+
+        '<div class="cw-name">'+esc(c.name)+'</div>'+
+        '<div class="cw-bank">'+esc(c.bank||'Банк')+' · '+c.rate+'%/год</div>'+
+        '<div class="cw-bar-bg"><div class="cw-bar" style="width:'+(100-pp)+'%"></div></div>'+
+        '<div class="cw-meta"><span>'+pp+'% погашено</span><span>из '+fmt(orig)+'</span></div>'+
+      '</div>'+
+      '<div class="cw-right">'+
+        '<div class="cw-debt">'+fmt(c.total)+'</div>'+
+        '<div class="cw-pay">'+(c.pay?fmt(c.pay)+'/мес':'—')+'</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+
+  el.innerHTML='<div class="cw-list">'+items+'</div>'+
+    '<div class="cw-total-row">'+
+      '<div class="cw-total-lbl">Общий долг</div>'+
+      '<div class="cw-total-val">'+fmt(totalDebt)+'</div>'+
+    '</div>'+
+    (totalPay>0?
+      '<div class="cw-total-row" style="margin-bottom:14px">'+
+        '<div class="cw-total-lbl">Платежей / мес</div>'+
+        '<div class="cw-total-val" style="background:linear-gradient(90deg,var(--p1),var(--p2));-webkit-background-clip:text;-webkit-text-fill-color:transparent">'+fmt(totalPay)+'</div>'+
+      '</div>':''
+    );
+}
+
+
+
+// ── THEME ──
+var _theme = localStorage.getItem('monetTheme') || 'dark';
+function applyTheme(t){
+  _theme = t;
+  document.documentElement.setAttribute('data-theme', t==='light'?'light':'');
+  var sw = document.getElementById('themeSwitch');
+  var lbl = document.getElementById('themeLbl');
+  var ico = document.getElementById('themeIco');
+  if(sw) sw.className = 'toggle-switch' + (t==='light'?' on':'');
+  if(lbl) lbl.textContent = t==='light'?'Светлая тема':'Тёмная тема';
+  if(ico) ico.textContent = t==='light'?'☀️':'🌙';
+  localStorage.setItem('monetTheme', t);
+}
+function toggleTheme(){
+  applyTheme(_theme==='light'?'dark':'light');
+}
+applyTheme(_theme);
+
+// ── RECURRING PAYMENTS ──
+var RP_FREQS = {monthly:'Ежемесячно',weekly:'Еженедельно',yearly:'Ежегодно',biweekly:'Раз в 2 недели'};
+var RP_ICONS = {'Подписки':'📱','ЖКХ':'🏠','Транспорт':'🚇','Здоровье':'💊','Развлечения':'🎬','Другое':'✨','Цели':'🎯','Кредиты':'💳'};
+
+function rpMonthlyAmt(rp){
+  if(rp.freq==='monthly') return rp.a;
+  if(rp.freq==='weekly') return rp.a*4.33;
+  if(rp.freq==='biweekly') return rp.a*2.17;
+  if(rp.freq==='yearly') return rp.a/12;
+  return rp.a;
+}
+
+function addRecurring(){
+  var name = document.getElementById('rpName').value.trim();
+  var amt = parseFloat(document.getElementById('rpAmt').value);
+  var freq = document.getElementById('rpFreq').value;
+  var date = document.getElementById('rpDate').value || td();
+  var cat = document.getElementById('rpCat').value;
+  if(!name||!amt||amt<=0){pulse('rpAmt');return;}
+  if(!S.recurring) S.recurring=[];
+  S.recurring.push({id:Date.now(),name:name,a:amt,freq:freq,next:date,cat:cat,active:true});
+  sv(); renderRecurring();
+  document.getElementById('rpName').value='';
+  document.getElementById('rpAmt').value='';
+}
+
+function payRecurring(id){
+  id=Number(id);
+  if(!S.recurring) return;
+  var rp = S.recurring.find(function(r){return Number(r.id)===id;});
+  if(!rp) return;
+  var bal = getBal();
+  if(bal < rp.a){
+    openM('Недостаточно средств','Баланс: '+fmt(bal),function(){});
+    return;
+  }
+  // Add expense
+  S.expense.unshift({id:Date.now(),name:rp.name,a:rp.a,cat:rp.cat,date:td()});
+  // Advance next date
+  var d = new Date(rp.next||td());
+  if(rp.freq==='monthly') d.setMonth(d.getMonth()+1);
+  else if(rp.freq==='weekly') d.setDate(d.getDate()+7);
+  else if(rp.freq==='biweekly') d.setDate(d.getDate()+14);
+  else if(rp.freq==='yearly') d.setFullYear(d.getFullYear()+1);
+  rp.next = d.toISOString().split('T')[0];
+  sv(); renderRecurring(); renderHome();
+}
+
+function deleteRecurring(id){
+  id=Number(id);
+  openConfirm('Удалить платёж?','Регулярный платёж будет удалён.',
+    function(){
+      S.recurring = S.recurring.filter(function(r){return Number(r.id)!==id;});
+      sv(); renderRecurring();
+    },'Удалить',null,null
+  );
+}
+
+function renderRecurring(){
+  if(!S.recurring) S.recurring=[];
+  var list = S.recurring;
+  var el = document.getElementById('rpList');
+  var sumEl = document.getElementById('rpSummary');
+  if(!el) return;
+
+  if(!list.length){
+    el.innerHTML='<div class="empty"><div class="ico">📅</div><p>Нет регулярных платежей</p><small>Добавьте подписки и аренду</small></div>';
+    if(sumEl) sumEl.style.display='none';
+    return;
+  }
+
+  // Summary
+  var totalMonthly = list.reduce(function(s,r){return s+rpMonthlyAmt(r);},0);
+  if(sumEl){
+    sumEl.style.display='';
+    var mEl=document.getElementById('rpMonthly');
+    var yEl=document.getElementById('rpYearly');
+    var cEl=document.getElementById('rpCount');
+    if(mEl) mEl.textContent=fmt(totalMonthly);
+    if(yEl) yEl.textContent=fmt(totalMonthly*12);
+    if(cEl) cEl.textContent=list.length;
+  }
+
+  var today = new Date(); today.setHours(0,0,0,0);
+  el.innerHTML = list.map(function(rp,idx){
+    var nextD = rp.next ? new Date(rp.next) : today;
+    nextD.setHours(0,0,0,0);
+    var diff = Math.round((nextD-today)/(1000*86400));
+    var overdue = diff < 0;
+    var dueToday = diff === 0;
+    var nextTxt = overdue ? 'Просрочен на '+Math.abs(diff)+' дн.' : dueToday ? 'Сегодня!' : 'Через '+diff+' дн. · '+fD(rp.next);
+    var ico = RP_ICONS[rp.cat]||'💳';
+    return '<div class="rp-item" style="animation-delay:'+(idx*.04)+'s">'+
+      '<div class="rp-ico">'+ico+'</div>'+
+      '<div class="rp-mid">'+
+        '<div class="rp-name">'+esc(rp.name)+'</div>'+
+        '<div class="rp-meta">'+RP_FREQS[rp.freq]+' · '+rp.cat+'</div>'+
+        '<button class="rp-pay-btn" onclick="payRecurring('+rp.id+')">✓ Оплатить</button>'+
+      '</div>'+
+      '<div class="rp-right">'+
+        '<div class="rp-amt">'+fmt(rp.a)+'</div>'+
+        '<div class="rp-next'+(overdue||dueToday?' rp-overdue':'')+'">'+nextTxt+'</div>'+
+        '<div style="font-size:10px;color:var(--ink3);cursor:pointer;margin-top:6px;text-align:right" onclick="deleteRecurring('+rp.id+')">удалить</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+// Show overdue recurring on home if any
+function getOverdueRecurring(){
+  if(!S.recurring||!S.recurring.length) return [];
+  var today = new Date(); today.setHours(0,0,0,0);
+  return S.recurring.filter(function(r){
+    var d = r.next ? new Date(r.next) : today;
+    d.setHours(0,0,0,0);
+    return d <= today;
+  });
+}
+
+
+
+function renderOverdueWidget(){
+  var el = document.getElementById('overdueWidget');
+  if(!el) return;
+  var overdue = getOverdueRecurring();
+  if(!overdue.length){el.style.display='none';el.innerHTML='';return;}
+  el.style.display='';
+  el.innerHTML = '<div style="background:linear-gradient(145deg,rgba(255,61,135,.18),rgba(255,109,179,.1));border:1px solid rgba(255,61,135,.25);border-radius:var(--r2);padding:14px 16px;margin-bottom:4px">'+
+    '<div style="font-size:11px;font-weight:800;color:var(--c2);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">⚠️ Ожидают оплаты</div>'+
+    overdue.map(function(r){
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06)">'+
+        '<div style="font-size:13px;font-weight:700;color:var(--ink)">'+esc(r.name)+'</div>'+
+        '<div style="display:flex;align-items:center;gap:8px">'+
+          '<div style="font-family:monospace;font-size:13px;color:var(--c2)">'+fmt(r.a)+'</div>'+
+          '<button onclick="payRecurring('+r.id+')" style="font-size:11px;padding:4px 10px;border-radius:14px;background:rgba(255,61,135,.2);border:1px solid rgba(255,61,135,.3);color:var(--c2);cursor:pointer;font-weight:700">Оплатить</button>'+
+        '</div>'+
+      '</div>';
+    }).join('')+
+  '</div>';
+}
+
+
+// ── BUDGET ──
+var B_ICONS={'Продукты':'🛒','Транспорт':'🚇','Кафе':'☕','ЖКХ':'🏠','Одежда':'👕','Здоровье':'💊','Развлечения':'🎬','Подписки':'📱','Другое':'✨','Цели':'🎯','Кредиты':'💳'};
+
+function addBudget(){
+  var cat=document.getElementById('bCat').value;
+  var amt=parseFloat(document.getElementById('bAmt').value);
+  if(!amt||amt<=0){pulse('bAmt');return;}
+  if(!S.budgets)S.budgets={};
+  S.budgets[cat]=amt;
+  sv();renderBudget();
+  document.getElementById('bAmt').value='';
+}
+
+function deleteBudget(cat){
+  if(!S.budgets)return;
+  delete S.budgets[cat];
+  sv();renderBudget();
+}
+
+function getCatSpentThisMonth(cat){
+  var n=new Date();
+  return S.expense.filter(function(i){
+    var d=new Date(i.date);
+    return i.cat===cat&&d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();
+  }).reduce(function(s,i){return s+i.a;},0);
+}
+
+function renderBudget(){
+  if(!S.budgets)S.budgets={};
+  var budgets=Object.entries(S.budgets);
+  var el=document.getElementById('budgetList');
+  var sumEl=document.getElementById('budgetSummary');
+  if(!el)return;
+
+  if(!budgets.length){
+    el.innerHTML='<div class="empty"><div class="ico">📊</div><p>Нет лимитов</p><small>Установите лимиты по категориям</small></div>';
+    if(sumEl)sumEl.style.display='none';
+    return;
+  }
+
+  var totalLimit=0,totalSpent=0;
+  var items=budgets.map(function(kv,idx){
+    var cat=kv[0],limit=kv[1];
+    var spent=getCatSpentThisMonth(cat);
+    var pct=Math.min(100,Math.round(spent/limit*100));
+    totalLimit+=limit;totalSpent+=spent;
+    var cls=pct>=100?'over':pct>=80?'warn':'ok';
+    var statusTxt=pct>=100?'Превышен!':pct>=80?'Почти лимит':Math.round(pct)+'% использовано';
+    return '<div class="budget-item '+cls+'" style="animation-delay:'+(idx*.05)+'s">'+
+      '<div class="bi-top">'+
+        '<div class="bi-cat">'+(B_ICONS[cat]||'•')+' '+cat+'</div>'+
+        '<div class="bi-status '+cls+'">'+statusTxt+'</div>'+
+      '</div>'+
+      '<div class="bi-bar-bg"><div class="bi-bar '+cls+'" style="width:'+pct+'%"></div></div>'+
+      '<div class="bi-nums">'+
+        '<span class="bi-spent">'+fmt(spent)+' <span style="color:var(--ink3);font-weight:400">потрачено</span></span>'+
+        '<span style="display:flex;align-items:center;gap:8px"><span class="bi-limit">из '+fmt(limit)+'</span>'+
+        '<span style="font-size:10px;cursor:pointer;color:var(--ink3);padding:2px 8px;border-radius:8px;border:1px solid var(--bd)" onclick="deleteBudget(\''+cat+'\')">удалить</span></span>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+
+  el.innerHTML=items;
+  if(sumEl){
+    sumEl.style.display='';
+    var tlEl=document.getElementById('bTotalLimit');
+    var tsEl=document.getElementById('bTotalSpent');
+    if(tlEl)tlEl.textContent=fmt(totalLimit);
+    if(tsEl){
+      tsEl.textContent=fmt(totalSpent);
+      var overBudget=totalSpent>totalLimit;
+      tsEl.style.background=overBudget?'linear-gradient(90deg,var(--c1),var(--c2))':'linear-gradient(90deg,var(--m1),var(--m2))';
+      tsEl.style.webkitBackgroundClip='text';tsEl.style.webkitTextFillColor='transparent';
+    }
+  }
+}
+
+// Show budget alerts on home
+function getBudgetAlerts(){
+  if(!S.budgets)return[];
+  return Object.entries(S.budgets).filter(function(kv){
+    return getCatSpentThisMonth(kv[0])>=kv[1]*0.8;
+  }).map(function(kv){
+    var spent=getCatSpentThisMonth(kv[0]);
+    return{cat:kv[0],limit:kv[1],spent:spent,over:spent>=kv[1]};
+  });
+}
+
+
+
+// ── PIGGY BANK ──
+function piggyBalance(){
+  if(!S.piggy)return 0;
+  return S.piggy.reduce(function(s,t){return t.type==='in'?s+t.a:s-t.a;},0);
+}
+
+function piggyDeposit(){
+  var a=parseFloat(document.getElementById('piggyIn').value);
+  if(!a||a<=0){pulse('piggyIn');return;}
+  if(!S.piggy)S.piggy=[];
+  S.piggy.push({id:Date.now(),type:'in',a:a,date:td(),note:'Пополнение'});
+  sv();
+  renderPiggy();
+  document.getElementById('piggyIn').value='';
+  rv_closePanel();
+}
+
+function piggyWithdraw(){
+  var a=parseFloat(document.getElementById('piggyOut').value);
+  if(!a||a<=0){pulse('piggyOut');return;}
+  var pigBal=piggyBalance();
+  if(a>pigBal){
+    openM('Недостаточно средств в копилке','В копилке: '+fmt(pigBal),function(){});
+    return;
+  }
+  if(!S.piggy)S.piggy=[];
+  S.income.unshift({id:Date.now(),name:'Снятие из копилки',a:a,cat:'Доход',date:td()});
+  S.piggy.push({id:Date.now()+1,type:'out',a:a,date:td(),note:'Снятие'});
+  sv();renderHome();
+  renderPiggy();
+  document.getElementById('piggyOut').value='';
+  rv_closePanel();
+}
+
+
+var _rvMode = null;
+function rv_openPanel(mode){
+  _rvMode = mode;
+  var panel = document.getElementById('rv-panel');
+  var title = document.getElementById('rv-panel-title');
+  var inEl = document.getElementById('piggyIn');
+  var outEl = document.getElementById('piggyOut');
+  var btn = document.getElementById('rv-confirm-btn');
+  var wrap = document.getElementById('rv-active-input');
+
+  panel.style.display = 'block';
+  if(mode==='in'){
+    title.textContent = '↑ Пополнение копилки';
+    title.style.color = '#a855f7';
+    btn.textContent = '+ Положить';
+    btn.style.background = 'linear-gradient(135deg,#6c3bff,#a855f7)';
+    inEl.style.display = 'block';
+    outEl.style.display = 'none';
+    inEl.value = '';
+    setTimeout(function(){inEl.focus();},100);
+  } else {
+    title.textContent = '↓ Снятие из копилки';
+    title.style.color = '#ec4899';
+    btn.textContent = '− Взять';
+    btn.style.background = 'linear-gradient(135deg,#ec4899,#f97316)';
+    outEl.style.display = 'block';
+    inEl.style.display = 'none';
+    outEl.value = '';
+    setTimeout(function(){outEl.focus();},100);
+  }
+  btn.onclick = function(){ _rvMode==='in' ? piggyDeposit() : piggyWithdraw(); };
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function rv_closePanel(){
+  var panel = document.getElementById('rv-panel');
+  if(panel) panel.style.display = 'none';
+  _rvMode = null;
+}
+
+function openPiggyHistory(){
+  var m=document.getElementById('piggyHistModal');
+  if(m){m.style.display='flex';renderPiggy();}
+}
+function closePiggyHistory(){
+  var m=document.getElementById('piggyHistModal');
+  if(m)m.style.display='none';
+}
+
+function clearPiggy(){
+  openConfirm('Очистить копилку?','Вся история будет удалена, баланс копилки станет 0.',
+    function(){
+      S.piggy=[];
+      sv();renderPiggy();
+    },'Очистить',null,null
+  );
+}
+
+function deletePiggy(id){
+  id=Number(id);
+  openConfirm('Удалить запись?','Запись будет удалена из истории копилки.',
+    function(){
+      S.piggy=S.piggy.filter(function(t){return Number(t.id)!==id;});
+      sv();renderPiggy();
+    },'Удалить',null,null
+  );
+}
+
+function renderPiggy(){
+  if(!S.piggy)S.piggy=[];
+  var bal=piggyBalance();
+  var totalIn=S.piggy.filter(function(t){return t.type==='in';}).reduce(function(s,t){return s+t.a;},0);
+  var totalOut=S.piggy.filter(function(t){return t.type==='out';}).reduce(function(s,t){return s+t.a;},0);
+  var depCount=S.piggy.filter(function(t){return t.type==='in';}).length;
+
+  var balEl=document.getElementById('piggyBal');
+  var dcEl=document.getElementById('piggyDepCount');
+  var tiEl=document.getElementById('piggyTotalIn');
+  var toEl=document.getElementById('piggyTotalOut');
+  var histEl=document.getElementById('piggyHistory');
+
+  if(balEl)balEl.textContent=fmt(bal);
+
+  if(dcEl)dcEl.textContent=depCount;
+  if(tiEl)tiEl.textContent=fmt(totalIn);
+  if(toEl)toEl.textContent=fmt(totalOut);
+
+  if(!histEl)return;
+  if(!S.piggy.length){
+    histEl.innerHTML='<div style="padding:32px;text-align:center;color:var(--ink3);font-size:13px">🪙 История пуста — начните копить!</div>';
+    return;
+  }
+  var sorted=[].concat(S.piggy).reverse();
+  histEl.innerHTML=sorted.map(function(t,idx){
+    var isIn=t.type==='in';
+    return '<div class="rv-tx" style="animation-delay:'+(idx*.06)+'s">'+
+      '<div class="rv-tx-ico '+(t.type)+'">'+(isIn?'💰':'💸')+'</div>'+
+      '<div class="rv-tx-mid">'+
+        '<div class="rv-tx-name">'+(t.note||(isIn?'Пополнение':'Снятие'))+'</div>'+
+        '<div class="rv-tx-date">'+fD(t.date)+'</div>'+
+      '</div>'+
+      '<div class="rv-tx-right">'+
+        '<div class="rv-tx-amt '+(t.type)+'">'+(isIn?'+':'-')+fmt(t.a)+'</div>'+
+        '<button class="rv-tx-del" onclick="deletePiggy('+t.id+')">✕</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+
+// ── NOTIFICATIONS ──
+var _notifGranted = false;
+
+function requestNotifPermission(){
+  if(!('Notification' in window)) return;
+  if(Notification.permission === 'granted'){ _notifGranted=true; return; }
+  if(Notification.permission !== 'denied'){
+    Notification.requestPermission().then(function(p){
+      _notifGranted = p==='granted';
+      updateNotifUI();
+    });
+  }
+}
+
+function sendNotif(title, body, tag){
+  if(!_notifGranted||!('Notification' in window)) return;
+  try{
+    new Notification(title, {
+      body: body,
+      icon: '/icon-192.png',
+      badge: '/icon-192.png',
+      tag: tag||'monet',
+      renotify: true,
+      vibrate: [200,100,200]
+    });
+  }catch(e){}
+}
+
+function updateNotifUI(){
+  var btn = document.getElementById('notifBtn');
+  var status = document.getElementById('notifStatus');
+  if(!btn||!status) return;
+  var p = ('Notification' in window) ? Notification.permission : 'unsupported';
+  if(p==='granted'){
+    btn.textContent='🔔 Уведомления включены';
+    btn.className='btn btn-m';
+    status.textContent='Уведомления активны ✓';
+    status.style.color='var(--m2)';
+    _notifGranted=true;
+  } else if(p==='denied'){
+    btn.textContent='🔕 Заблокированы в браузере';
+    btn.className='btn btn-g';
+    status.textContent='Разрешите в настройках браузера';
+    status.style.color='var(--c1)';
+  } else if(p==='unsupported'){
+    btn.textContent='⚠️ Не поддерживается';
+    btn.className='btn btn-g';
+    status.textContent='';
+  } else {
+    btn.textContent='🔔 Включить уведомления';
+    btn.className='btn btn-v';
+    status.textContent='Нажмите чтобы разрешить';
+    status.style.color='var(--ink3)';
+  }
+}
+
+// Check budget on every expense add
+function checkBudgetNotif(cat, spent, limit){
+  if(!_notifGranted) return;
+  var pct = spent/limit*100;
+  if(pct>=100){
+    sendNotif('⚠️ Бюджет превышен!', 'Категория "'+cat+'": потрачено '+Math.round(spent)+' CA$ из '+Math.round(limit)+' CA$', 'budget-'+cat);
+  } else if(pct>=80){
+    sendNotif('⚠️ Лимит близко', 'Категория "'+cat+'": '+Math.round(pct)+'% бюджета использовано', 'budget-warn-'+cat);
+  }
+}
+
+// Notify on income/expense add
+function notifTx(type, name, amt){
+  if(!_notifGranted) return;
+  if(type==='income'){
+    sendNotif('💚 Доход добавлен', '+'+Math.round(amt)+' CA$ · '+name, 'tx-in');
+  } else {
+    sendNotif('🔴 Расход добавлен', '-'+Math.round(amt)+' CA$ · '+name, 'tx-out');
+  }
+}
+
+// Check recurring payments (due today or overdue)
+function checkRecurringNotifs(){
+  if(!_notifGranted||!S.recurring||!S.recurring.length) return;
+  var today = new Date(); today.setHours(0,0,0,0);
+  S.recurring.forEach(function(r){
+    var d = r.next ? new Date(r.next) : today;
+    d.setHours(0,0,0,0);
+    var diff = Math.round((d-today)/(1000*86400));
+    if(diff===0){
+      sendNotif('📅 Платёж сегодня!', r.name+' · '+fmt(r.a), 'rec-'+r.id);
+    } else if(diff===-1){
+      sendNotif('⚠️ Просроченный платёж', r.name+' · '+fmt(r.a)+' · вчера', 'rec-over-'+r.id);
+    }
+  });
+}
+
+// Run recurring check every hour
+setInterval(checkRecurringNotifs, 60*60*1000);
+// Also check on app open
+setTimeout(function(){
+  if(Notification.permission==='granted'){_notifGranted=true; checkRecurringNotifs();}
+}, 2000);
+
+
+// ── EXPORT ──
+var MONTHS_RU=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+var MONTHS_EN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function initExportSelects(){
+  var now=new Date();
+  var mSel=document.getElementById('expMonth');
+  var ySel=document.getElementById('expYear');
+  if(!mSel||!ySel)return;
+  mSel.innerHTML=MONTHS_RU.map(function(m,i){return '<option value="'+i+'"'+(i===now.getMonth()?' selected':'')+'>'+m+'</option>';}).join('');
+  var years=[];
+  var allDates=[].concat(S.income,S.expense).map(function(i){return new Date(i.date).getFullYear();}).filter(Boolean);
+  var minY=allDates.length?Math.min.apply(null,allDates):now.getFullYear();
+  for(var y=minY;y<=now.getFullYear();y++)years.push(y);
+  if(!years.length)years=[now.getFullYear()];
+  ySel.innerHTML=years.map(function(y){return '<option value="'+y+'"'+(y===now.getFullYear()?' selected':'')+'>'+y+'</option>';}).join('');
+  mSel.onchange=ySel.onchange=updatePreview;
+  updatePreview();
+}
+
+function getExportData(){
+  var m=parseInt(document.getElementById('expMonth').value);
+  var y=parseInt(document.getElementById('expYear').value);
+  var inc=S.income.filter(function(i){var d=new Date(i.date);return d.getMonth()===m&&d.getFullYear()===y;});
+  var exp=S.expense.filter(function(i){var d=new Date(i.date);return d.getMonth()===m&&d.getFullYear()===y;});
+  var totInc=inc.reduce(function(s,i){return s+i.a;},0);
+  var totExp=exp.reduce(function(s,i){return s+i.a;},0);
+  return{m:m,y:y,inc:inc,exp:exp,totInc:totInc,totExp:totExp,bal:totInc-totExp};
+}
+
+function updatePreview(){
+  var d=getExportData();
+  var el=document.getElementById('expPreview');
+  if(!el)return;
+  el.innerHTML=
+    '<div class="exp-stat"><div class="exp-stat-lbl">Доходы</div><div class="exp-stat-val g">'+fmtK(d.totInc)+'</div></div>'+
+    '<div class="exp-stat"><div class="exp-stat-lbl">Расходы</div><div class="exp-stat-val r">'+fmtK(d.totExp)+'</div></div>'+
+    '<div class="exp-stat"><div class="exp-stat-lbl">Баланс</div><div class="exp-stat-val b" style="'+(d.bal>=0?'background:linear-gradient(90deg,var(--m1),var(--m2));-webkit-background-clip:text;-webkit-text-fill-color:transparent':'background:linear-gradient(90deg,var(--c1),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent')+'">'+fmtK(d.bal)+'</div></div>';
+}
+
+function exportXLSX(){
+  if(typeof XLSX==='undefined'){alert('Библиотека Excel не загружена. Проверьте интернет-соединение.');return;}
+  var d=getExportData();
+  var monthName=MONTHS_EN[d.m];
+  var wb=XLSX.utils.book_new();
+
+  // ── Sheet 1: Summary ──
+  var summaryData=[
+    ['Монет — Финансовый отчёт'],
+    ['Период:', monthName+' '+d.y],
+    ['Дата создания:', new Date().toLocaleDateString('en-CA')],
+    [],
+    ['СВОДКА',''],
+    ['Доходы за месяц (CA$)', d.totInc],
+    ['Расходы за месяц (CA$)', d.totExp],
+    ['Баланс (CA$)', d.bal],
+    [],
+    ['ЦЕЛИ','Накоплено','Цель','%'],
+  ];
+  S.goals.forEach(function(g){
+    summaryData.push([g.name,g.current,g.target,Math.round(g.current/g.target*100)+'%']);
+  });
+  summaryData.push([]);
+  summaryData.push(['КРЕДИТЫ','Остаток','Ставка %','Платёж/мес']);
+  S.credits.forEach(function(c){
+    summaryData.push([c.name,c.total,c.rate,c.pay]);
+  });
+  var wsSummary=XLSX.utils.aoa_to_sheet(summaryData);
+  wsSummary['!cols']=[{wch:30},{wch:18},{wch:18},{wch:12}];
+  XLSX.utils.book_append_sheet(wb,wsSummary,'Сводка');
+
+  // ── Sheet 2: Income ──
+  var incRows=[['Дата','Категория','Сумма (CA$)']];
+  d.inc.sort(function(a,b){return new Date(a.date)-new Date(b.date);}).forEach(function(i){
+    incRows.push([i.date,i.cat,i.a]);
+  });
+  incRows.push([]);
+  incRows.push(['ИТОГО','',d.totInc]);
+  var wsInc=XLSX.utils.aoa_to_sheet(incRows);
+  wsInc['!cols']=[{wch:14},{wch:18},{wch:16}];
+  XLSX.utils.book_append_sheet(wb,wsInc,'Доходы');
+
+  // ── Sheet 3: Expenses ──
+  var expRows=[['Дата','Название','Категория','Сумма (CA$)']];
+  d.exp.sort(function(a,b){return new Date(a.date)-new Date(b.date);}).forEach(function(i){
+    expRows.push([i.date,i.name,i.cat,i.a]);
+  });
+  expRows.push([]);
+  expRows.push(['ИТОГО','','',d.totExp]);
+  var wsExp=XLSX.utils.aoa_to_sheet(expRows);
+  wsExp['!cols']=[{wch:14},{wch:22},{wch:16},{wch:16}];
+  XLSX.utils.book_append_sheet(wb,wsExp,'Расходы');
+
+  // ── Sheet 4: By Category ──
+  var cats={};
+  d.exp.forEach(function(i){cats[i.cat]=(cats[i.cat]||0)+i.a;});
+  var catRows=[['Категория','Сумма (CA$)','% от расходов']];
+  Object.entries(cats).sort(function(a,b){return b[1]-a[1];}).forEach(function(kv){
+    catRows.push([kv[0],kv[1],d.totExp>0?Math.round(kv[1]/d.totExp*100)+'%':'0%']);
+  });
+  var wsCat=XLSX.utils.aoa_to_sheet(catRows);
+  wsCat['!cols']=[{wch:20},{wch:16},{wch:18}];
+  XLSX.utils.book_append_sheet(wb,wsCat,'По категориям');
+
+  XLSX.writeFile(wb,'Монет_'+monthName+'_'+d.y+'.xlsx');
+}
+
+
+
+// ── DATABASE (SUPABASE) ──
+var DB={
+  url:'https://kuxodokpfsjxfgvzjdlx.supabase.co',
+  key:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt1eG9kb2twZnNqeGZndnpqZGx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzQzNTksImV4cCI6MjA4ODE1MDM1OX0.BgZUZOuc2i_2Et0WmwzBQGyJNRejYIeGsRRie6xqiO0',
+  connected:true
+};
+try{var _db=localStorage.getItem('monetDB');if(_db){var _dbo=JSON.parse(_db);if(_dbo.url&&_dbo.key)DB=_dbo;}}catch(e){}
+
+var saveDBCfg=function(){try{localStorage.setItem('monetDB',JSON.stringify(DB));}catch(e){}};
+
+function dbHeaders(){
+  return{'Content-Type':'application/json','apikey':DB.key,'Authorization':'Bearer '+DB.key,'Prefer':'return=minimal'};
+}
+
+async function connectDB(){
+  var url=document.getElementById('dbUrl').value.trim();
+  var key=document.getElementById('dbKey').value.trim();
+  if(!url||!key){setDbMsg('Заполните URL и Key','err');return;}
+  setDbMsg('Проверяем подключение...','');
+  try{
+    var res=await fetch(url+'/rest/v1/monet_data?select=id&limit=1',{
+      headers:{'apikey':key,'Authorization':'Bearer '+key}
+    });
+    if(res.status===401){setDbMsg('Неверный API Key','err');return;}
+    if(res.status===404){setDbMsg('Таблица не найдена — выполните SQL','err');return;}
+    if(!res.ok&&res.status!==200&&res.status!==406){setDbMsg('Ошибка '+res.status+': '+res.statusText,'err');return;}
+    DB={url:url,key:key,connected:true};
+    saveDBCfg();
+    setDbMsg('✓ Подключено!','ok');
+    updateDBUI();
+  }catch(e){setDbMsg('Ошибка: '+e.message,'err');}
+}
+
+function disconnectDB(){
+  DB={url:'',key:'',connected:false};
+  saveDBCfg();
+  updateDBUI();
+  document.getElementById('dbUrl').value='';
+  document.getElementById('dbKey').value='';
+  setDbMsg('Отключено','');
+}
+
+function pushDB(){ sv(); }
+
+async function forcePush(){
+  if(!DB.connected||!DB.url||!DB.key){setSyncMsg('Supabase не подключён','err');return;}
+  setSyncMsg('Загружаем...','');
+  S._ts=Date.now();
+  try{localStorage.setItem('monet8',JSON.stringify(S));}catch(e){}
+  var payload={id:'main',data:JSON.stringify(S),updated_at:new Date().toISOString()};
+  try{
+    var res=await fetch(DB.url+'/rest/v1/monet_data',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':DB.key,'Authorization':'Bearer '+DB.key,'Prefer':'resolution=merge-duplicates,return=minimal'},
+      body:JSON.stringify(payload)
+    });
+    if(res.ok||res.status===201||res.status===204){
+      var t=new Date().toLocaleTimeString('ru');
+      localStorage.setItem('monetLastSync',t);
+      var el=document.getElementById('lastSync');if(el)el.textContent=t;
+      setSyncMsg('✓ Все данные загружены · '+t,'ok');
+      var sm=document.getElementById('syncStatus');if(sm){sm.textContent='авто ✓';sm.className='fbadge i';}
+    } else { setSyncMsg('Ошибка '+res.status,'err'); }
+  }catch(e){setSyncMsg('Ошибка: '+e.message,'err');}
+}
+
+async function forcePull(){
+  if(!DB.connected||!DB.url||!DB.key){setSyncMsg('Supabase не подключён','err');return;}
+  setSyncMsg('Скачиваем...','');
+  try{
+    var res=await fetch(DB.url+'/rest/v1/monet_data?id=eq.main&select=data',{
+      headers:{'apikey':DB.key,'Authorization':'Bearer '+DB.key}
+    });
+    if(!res.ok){setSyncMsg('Ошибка '+res.status,'err');return;}
+    var rows=await res.json();
+    if(!rows||!rows.length){setSyncMsg('В облаке нет данных','err');return;}
+    S=JSON.parse(rows[0].data);
+    if(!S.recurring)S.recurring=[];
+    if(!S.budgets)S.budgets={};
+    try{localStorage.setItem('monet8',JSON.stringify(S));}catch(e){}
+    var t=new Date().toLocaleTimeString('ru');
+    localStorage.setItem('monetLastSync',t);
+    var el=document.getElementById('lastSync');if(el)el.textContent=t;
+    setSyncMsg('✓ Данные получены · '+t,'ok');
+    renderHome();renderSettings();
+    if(cur==='recurring')renderRecurring();
+    if(cur==='goals')renderGoals();
+    if(cur==='credits')renderCredits();
+    if(cur==='budget')renderBudget();
+    if(cur==='piggy')renderPiggy();
+    if(cur==='txs')renderTxs();
+  }catch(e){setSyncMsg('Ошибка: '+e.message,'err');}
+}
+
+function setSyncMsg(msg,cls){
+  var el=document.getElementById('syncMsg');
+  if(!el)return;
+  el.textContent=msg;
+  el.style.color=cls==='ok'?'var(--m2)':cls==='err'?'var(--c1)':'var(--ink3)';
+}
+
+
+// ── SUPABASE REALTIME ──
+var _realtimeChannel = null;
+
+function connectRealtime(){
+  if(!DB.connected||!DB.url||!DB.key) return;
+  if(_realtimeChannel) return;
+
+  var wsUrl = DB.url.replace('https://','wss://').replace('http://','ws://')
+    + '/realtime/v1/websocket?apikey=' + DB.key + '&vsn=1.0.0';
+
+  try{
+    var ws = new WebSocket(wsUrl);
+    _realtimeChannel = ws;
+    var _ref = 0;
+    var _heartbeat = null;
+
+    function send(obj){ ws.send(JSON.stringify(obj)); }
+
+    ws.onopen = function(){
+      // Правильный формат подписки Supabase Realtime v2
+      send({
+        topic: 'realtime:public:monet_data',
+        event: 'phx_join',
+        payload: {
+          config: {
+            postgres_changes: [{
+              event: '*',
+              schema: 'public',
+              table: 'monet_data'
+            }]
+          }
+        },
+        ref: String(++_ref)
+      });
+
+      // Heartbeat каждые 20 сек чтобы не разрывалось
+      _heartbeat = setInterval(function(){
+        send({topic:'phoenix',event:'heartbeat',payload:{},ref:String(++_ref)});
+      }, 20000);
+
+      var sm=document.getElementById('syncStatus');
+      if(sm){sm.textContent='🟢 онлайн';sm.className='fbadge i';}
+    };
+
+    ws.onmessage = function(e){
+      try{
+        var msg = JSON.parse(e.data);
+
+        // Supabase v2 postgres_changes event
+        var isChange = (msg.event==='postgres_changes')||
+                       (msg.payload&&msg.payload.data&&msg.payload.data.type==='UPDATE')||
+                       (msg.payload&&msg.payload.record);
+
+        if(!isChange) return;
+
+        // Извлекаем данные из разных форматов ответа
+        var record = (msg.payload&&msg.payload.data&&msg.payload.data.record)
+                  || (msg.payload&&msg.payload.record)
+                  || null;
+
+        var newData = record && record.data;
+        if(!newData) return;
+
+        var remote = JSON.parse(newData);
+        if(!remote.recurring)remote.recurring=[];
+        if(!remote.budgets)remote.budgets={};
+        if(!remote.piggy)remote.piggy=[];
+
+        if((remote._ts||0) > (S._ts||0)){
+          var oldBal = getBal();
+          S = remote;
+          try{localStorage.setItem('monet8',JSON.stringify(S));}catch(e){}
+
+          renderHome();
+          if(cur==='recurring')renderRecurring();
+          if(cur==='budget')renderBudget();
+          if(cur==='piggy')renderPiggy();
+          if(cur==='txs')renderTxs();
+          if(cur==='goals')renderGoals();
+          if(cur==='credits')renderCredits();
+
+          var newBal = getBal();
+          var diff = newBal - oldBal;
+          if(Math.abs(diff) > 0 && _notifGranted){
+            if(diff < 0){
+              sendNotif('💸 Новый расход', 'Баланс: -'+fmt(Math.abs(diff)), 'realtime-tx');
+            } else {
+              sendNotif('💚 Новый доход', 'Баланс: +'+fmt(diff), 'realtime-tx');
+            }
+          }
+        }
+      }catch(ex){}
+    };
+
+    ws.onclose = function(){
+      _realtimeChannel = null;
+      if(_heartbeat){clearInterval(_heartbeat);_heartbeat=null;}
+      var sm=document.getElementById('syncStatus');
+      if(sm){sm.textContent='авто';sm.className='fbadge g';}
+      setTimeout(function(){if(DB.connected)connectRealtime();}, 5000);
+    };
+
+    ws.onerror = function(){ ws.close(); };
+
+  }catch(ex){ console.log('Realtime error:',ex); }
+}
+
+
+// Автозагрузка при старте
+async function pullDB(){
+  if(!DB.connected||!DB.url||!DB.key)return;
+  try{
+    var res=await fetch(DB.url+'/rest/v1/monet_data?id=eq.main&select=data,updated_at',{
+      headers:{'apikey':DB.key,'Authorization':'Bearer '+DB.key}
+    });
+    if(!res.ok)return;
+    var rows=await res.json();
+    if(!rows||!rows.length){forcePush();return;}
+
+    var remote=JSON.parse(rows[0].data);
+
+    // ── УМНОЕ СЛИЯНИЕ: берём самый новый список по каждому полю ──
+    function mergeArr(local,rem){
+      // Объединяем по id, предпочитая более новые записи
+      local=local||[];rem=rem||[];
+      if(!rem.length)return local;
+      if(!local.length)return rem;
+      // Берём тот массив у которого больше записей
+      return local.length>=rem.length?local:rem;
+    }
+    function mergeObj(local,rem){
+      local=local||{};rem=rem||{};
+      if(!Object.keys(rem).length)return local;
+      if(!Object.keys(local).length)return rem;
+      return Object.assign({},rem,local); // локальные перекрывают remote
+    }
+
+    var merged={
+      income:   mergeArr(S.income,   remote.income),
+      expense:  mergeArr(S.expense,  remote.expense),
+      goals:    mergeArr(S.goals,    remote.goals),
+      credits:  mergeArr(S.credits,  remote.credits),
+      recurring:mergeArr(S.recurring,remote.recurring),
+      piggy:    mergeArr(S.piggy,    remote.piggy),
+      budgets:  mergeObj(S.budgets,  remote.budgets),
+      _ts:      Math.max(S._ts||0,   remote._ts||0)
+    };
+
+    S=merged;
+    try{localStorage.setItem('monet8',JSON.stringify(S));}catch(e){}
+
+    // Если локальные данные были новее — отправляем слияние в облако
+    if((S._ts||0)>=(remote._ts||0)){forcePush();}
+
+    // Перерисовываем текущий экран
+    renderHome();
+    if(cur==='recurring')renderRecurring();
+    if(cur==='budget')renderBudget();
+    if(cur==='txs')renderTxs();
+    if(cur==='goals')renderGoals();
+    if(cur==='credits')renderCredits();
+
+    var t=new Date().toLocaleTimeString('ru');
+    localStorage.setItem('monetLastSync',t);
+    var lsEl=document.getElementById('lastSync');if(lsEl)lsEl.textContent=t;
+    var sm=document.getElementById('syncStatus');if(sm){sm.textContent='авто ✓';sm.className='fbadge i';}
+  }catch(e){
+    var sm=document.getElementById('syncStatus');if(sm){sm.textContent='нет связи';sm.className='fbadge e';}
+  }
+}
+
+// Auto-pull every 30 seconds when app is open
+setInterval(function(){
+  if(DB.connected&&document.visibilityState!=='hidden') pullDB();
+},30000);
+
+// Pull when tab becomes visible again
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='visible'&&DB.connected) pullDB();
+});
+
+function setDbMsg(msg,cls){
+  var el=document.getElementById('dbMsg');
+  if(!el)return;
+  el.textContent=msg;el.className=cls;
+}
+function setSyncMsg(msg,cls){
+  var el=document.getElementById('syncMsg');
+  if(!el)return;
+  el.textContent=msg;
+  el.style.color=cls==='ok'?'var(--m2)':cls==='err'?'var(--c1)':'var(--ink3)';
+}
+function setSyncStatus(msg,cls){
+  var el=document.getElementById('syncStatus');
+  if(!el)return;
+  el.textContent=msg;
+  el.className='fbadge '+(cls==='ok'?'i':cls==='err'?'e':'g');
+}
+
+function updateDBUI(){
+  var connected=DB.connected;
+  var badge=document.getElementById('dbStatusBadge');
+  var syncCard=document.getElementById('syncCard');
+  var btnDis=document.getElementById('btnDisconnect');
+  var urlI=document.getElementById('dbUrl');
+  var keyI=document.getElementById('dbKey');
+  if(badge){
+    badge.textContent=connected?'подключена':'отключена';
+    badge.className='fbadge '+(connected?'i':'c');
+  }
+  if(syncCard)syncCard.style.display='';  /* always visible */
+  if(btnDis)btnDis.style.display=connected?'':'none';
+  if(urlI&&DB.url)urlI.value=DB.url;
+  if(keyI&&DB.key)keyI.value=DB.key;
+  var ls=localStorage.getItem('monetLastSync');
+  var lsEl=document.getElementById('lastSync');
+  if(ls&&lsEl)lsEl.textContent=ls;
+}
+
+function copySQL(){
+  var sql="CREATE TABLE IF NOT EXISTS monet_data (\n  id TEXT PRIMARY KEY,\n  data TEXT NOT NULL,\n  updated_at TIMESTAMPTZ DEFAULT NOW()\n);\n\n-- Enable Row Level Security (optional but recommended)\nALTER TABLE monet_data ENABLE ROW LEVEL SECURITY;\n\n-- Allow all access via anon key\nCREATE POLICY \"allow_all\" ON monet_data FOR ALL USING (true) WITH CHECK (true);";
+  navigator.clipboard.writeText(sql).then(function(){
+    var el=document.getElementById('sqlCopyMsg');
+    if(el){el.textContent='SQL скопирован!';setTimeout(function(){el.textContent='';},2500);}
+  }).catch(function(){
+    var el=document.getElementById('sqlCopyMsg');
+    if(el)el.textContent='Не удалось скопировать — скопируйте вручную';
+  });
+}
+
+function clearLocalConfirm(){
+  openConfirm(
+    '🗑 Удалить все данные?',
+    'Это действие нельзя отменить. Все операции, цели и кредиты будут удалены.',
+    function(){
+      S={income:[],expense:[],goals:[],credits:[],recurring:[],budgets:{},piggy:[]};
+      // Только локально — НЕ синхронизируем в облако
+      try{localStorage.setItem('monet8',JSON.stringify(S));}catch(e){}
+      renderHome();renderSettings();
+    },
+    'Да, удалить всё',
+    null,null
+  );
+}
+
+function renderSettings(){
+  updateDBUI();
+  var txCount=S.income.length+S.expense.length;
+  var gcCount=S.goals.length+S.credits.length;
+  var stEl=document.getElementById('statTx');
+  var gcEl=document.getElementById('statGC');
+  if(stEl)stEl.textContent=txCount;
+  if(gcEl)gcEl.textContent=gcCount;
+}
+
+
+
+// ── PIN / LOCK ──
+var PIN_KEY='monetPIN';
+var pinInput='';
+var pinMode=''; // 'enter' | 'setup' | 'confirm'
+var pinTemp='';
+
+function hashPin(p){
+  // simple djb2 hash — good enough for local PIN
+  var h=5381;
+  for(var i=0;i<p.length;i++) h=((h<<5)+h)+p.charCodeAt(i);
+  return (h>>>0).toString(36);
+}
+
+function initLock(){
+  // PIN hardcoded: 7777
+  pinMode='enter';
+  var ls=document.getElementById('lockScreen');
+  ls.style.display='flex';
+  document.getElementById('pinSetupHint').textContent='';
+  updateDots();
+}
+
+function pinPress(d){
+  if(pinInput.length>=4) return;
+  pinInput+=d;
+  updateDots();
+  if(pinInput.length===4) setTimeout(pinSubmit,120);
+}
+
+function pinDel(){
+  pinInput=pinInput.slice(0,-1);
+  updateDots();
+  document.getElementById('pinErr').textContent='';
+}
+
+function updateDots(){
+  var dots=document.querySelectorAll('.pd');
+  dots.forEach(function(dot,i){
+    dot.classList.toggle('filled', i<pinInput.length);
+    dot.classList.remove('shake');
+  });
+}
+
+function pinShake(){
+  var dots=document.querySelectorAll('.pd');
+  dots.forEach(function(dot){dot.classList.add('shake');});
+  setTimeout(function(){dots.forEach(function(dot){dot.classList.remove('shake');});},500);
+}
+
+function pinSubmit(){
+  if(pinInput==='7777'){
+    var ls=document.getElementById('lockScreen');
+    ls.style.transition='opacity .3s ease';
+    ls.style.opacity='0';
+    setTimeout(function(){ls.style.display='none';},300);
+  } else {
+    document.getElementById('pinErr').textContent='Неверный PIN';
+    pinShake();
+    pinInput='';
+    updateDots();
+  }
+}
+
+// Keyboard support
+document.addEventListener('keydown',function(e){
+  if(document.getElementById('lockScreen').style.display==='none') return;
+  if(e.key>='0'&&e.key<='9') pinPress(e.key);
+  if(e.key==='Backspace') pinDel();
+});
+
+// Settings: change PIN button helper
+function resetPIN(){
+  openConfirm('Сменить PIN?','Вам нужно будет задать новый PIN-код при следующем открытии.',
+    function(){
+      localStorage.removeItem(PIN_KEY);
+      var sm=document.getElementById('pinChangeMsg');
+      if(sm){sm.textContent='PIN удалён — задайте новый при следующем открытии';sm.style.color='var(--m2)';}
+    },
+    'Да, сбросить',null,null
+  );
+}
+
+
+
+// ── PULL TO REFRESH ──
+(function(){
+  var scrl=null;
+  var startY=0,startScroll=0;
+  var pulling=false,triggered=false;
+  var THRESHOLD=65;
+
+  function getScrl(){return document.getElementById('scrl');}
+  function getInd(){return document.getElementById('ptrIndicator');}
+  function getTxt(){return document.getElementById('ptrText');}
+
+  document.addEventListener('touchstart',function(e){
+    scrl=getScrl();
+    if(!scrl)return;
+    startY=e.touches[0].clientY;
+    startScroll=scrl.scrollTop;
+    pulling=false;triggered=false;
+  },{passive:true});
+
+  document.addEventListener('touchmove',function(e){
+    scrl=getScrl();
+    if(!scrl)return;
+    var y=e.touches[0].clientY;
+    var dy=y-startY;
+    // Only trigger if at top of scroll AND pulling down
+    if(scrl.scrollTop>2||dy<0)return;
+    pulling=true;
+    var progress=Math.min(dy/THRESHOLD,1);
+    var ind=getInd();var txt=getTxt();
+    if(!ind)return;
+    if(dy>10){
+      ind.classList.add('visible');
+      if(progress>=1&&!triggered){
+        if(txt)txt.textContent='Отпустите для обновления';
+        ind.style.background='linear-gradient(135deg,#00e5a0,#5fffc0)';
+      } else {
+        if(txt)txt.textContent='Потяните вниз для обновления';
+        ind.style.background='linear-gradient(135deg,var(--c1),var(--c2))';
+      }
+    }
+  },{passive:true});
+
+  document.addEventListener('touchend',function(e){
+    if(!pulling)return;
+    var ind=getInd();var txt=getTxt();var spn=document.getElementById('ptrSpinner');
+    var y=e.changedTouches[0].clientY;
+    var dy=y-startY;
+    if(dy>=THRESHOLD&&!triggered){
+      triggered=true;
+      if(txt)txt.textContent='Обновляем...';
+      if(spn)spn.style.display='block';
+      if(ind)ind.style.background='linear-gradient(135deg,var(--v1),var(--v2))';
+      // Do refresh
+      pullDB().then(function(){
+        renderHome();
+        if(txt)txt.textContent='Обновлено ✓';
+        if(ind)ind.style.background='linear-gradient(135deg,#00e5a0,#5fffc0)';
+        if(spn)spn.style.display='none';
+        setTimeout(function(){if(ind)ind.classList.remove('visible');},1000);
+      }).catch(function(){
+        renderHome();
+        if(txt)txt.textContent='Обновлено';
+        setTimeout(function(){if(ind)ind.classList.remove('visible');},800);
+      });
+    } else {
+      if(ind)ind.classList.remove('visible');
+    }
+    pulling=false;
+  },{passive:true});
+})();
+
+// ── INIT ──
+renderHome();
+if(Notification.permission==='granted'){_notifGranted=true;}
+if(DB.connected){updateDBUI();pullDB();setTimeout(connectRealtime,2000);}
+initLock();
+initExportSelects();
+
+
+
+
+var _wheelOpen = false;
+
+function toggleWheel(){
+  _wheelOpen ? closeWheel() : openWheel();
+}
+
+function openWheel(){
+  _wheelOpen = true;
+  document.getElementById('wheelOverlay').style.display = 'block';
+  document.getElementById('wheelPlusIco').classList.add('spinning');
+
+  // 6 items arranged in a semicircle above the button
+  // angles from 210deg to 330deg (spread above center)
+  var items = document.querySelectorAll('.wheel-item');
+  var count = items.length;
+  // spread from left to right in a fan above nav
+  var angles = [-80, -40, 0, 40, 80]; // degrees from straight up (270)
+  var radius = 100;
+
+  items.forEach(function(item, i){
+    var angleDeg = -90 + angles[i]; // -90 = straight up
+    var rad = angleDeg * Math.PI / 180;
+    var x = Math.round(Math.cos(rad) * radius);
+    var y = Math.round(Math.sin(rad) * radius);
+    item.style.left = x + 'px';
+    item.style.top = y + 'px';
+    item.style.transitionDelay = (i * 35) + 'ms';
+    item.classList.add('visible');
+  });
+}
+
+function closeWheel(){
+  _wheelOpen = false;
+  document.getElementById('wheelOverlay').style.display = 'none';
+  document.getElementById('wheelPlusIco').classList.remove('spinning');
+  document.querySelectorAll('.wheel-item').forEach(function(item, i){
+    item.style.transitionDelay = ((5-i) * 25) + 'ms';
+    item.classList.remove('visible');
+  });
+}
+
+function wheelGo(screen){
+  closeWheel();
+  setTimeout(function(){ show(screen); }, 150);
+}
+
+function openMoreMenu(){
+  document.getElementById('moreMenuOverlay').style.display='block';
+  document.getElementById('moreMenuPanel').classList.add('open');
+}
+function closeMoreMenu(){
+  document.getElementById('moreMenuOverlay').style.display='none';
+  document.getElementById('moreMenuPanel').classList.remove('open');
+}
+// Swipe up on nav to open more menu - deferred until DOM ready
+window.addEventListener('load',function(){
+  var startY=0,startTime=0;
+  var nav=document.querySelector('.bnav');
+  if(nav){
+    nav.addEventListener('touchstart',function(e){startY=e.touches[0].clientY;startTime=Date.now();},{passive:true});
+    nav.addEventListener('touchend',function(e){
+      var dy=startY-e.changedTouches[0].clientY;
+      var dt=Date.now()-startTime;
+      if(dy>30&&dt<300)openMoreMenu();
+    },{passive:true});
+  }
+  var panel=document.getElementById('moreMenuPanel');
+  if(panel){
+    panel.addEventListener('touchstart',function(e){startY=e.touches[0].clientY;},{passive:true});
+    panel.addEventListener('touchend',function(e){
+      var dy=e.changedTouches[0].clientY-startY;
+      if(dy>50)closeMoreMenu();
+    },{passive:true});
+  }
+});
+</script>
+
+<!-- MORE MENU -->
+<div id="moreMenuOverlay" onclick="closeMoreMenu()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;backdrop-filter:blur(4px)"></div>
+<div id="moreMenuPanel" class="more-panel">
+  <div class="more-handle"></div>
+  <div class="more-title">Меню</div>
+  <div class="more-grid">
+    <button class="more-item" id="tab-goals" onclick="show('goals');closeMoreMenu()"><div class="more-ico">🎯</div><span>Цели</span></button>
+    <button class="more-item" id="tab-credits" onclick="show('credits');closeMoreMenu()"><div class="more-ico">💳</div><span>Кредиты</span></button>
+    <button class="more-item" id="tab-recurring" onclick="show('recurring');closeMoreMenu()"><div class="more-ico">📅</div><span>Платежи</span></button>
+    <button class="more-item" id="tab-budget" onclick="show('budget');closeMoreMenu()"><div class="more-ico">📊</div><span>Бюджет</span></button>
+    <button class="more-item" id="tab-settings" onclick="show('settings');closeMoreMenu()"><div class="more-ico">⚙️</div><span>Настройки</span></button>
+  </div>
+</div>
+
+<div id="sideNavPanel" class="snav-panel">
+  <div class="snav-header">
+    <div class="snav-logo">🪙 Монет</div>
+    <div class="snav-sub">Личные финансы</div>
+  </div>
+  <div class="snav-section-lbl">Разделы</div>
+  <button class="snav-item" onclick="show('home');closeSideNav()"><div class="snav-ico">🏠</div><span>Главная</span></button>
+  <button class="snav-item" onclick="show('txs');closeSideNav()"><div class="snav-ico">📋</div><span>Операции</span></button>
+  <button class="snav-item" onclick="show('goals');closeSideNav()"><div class="snav-ico">🎯</div><span>Цели</span></button>
+  <button class="snav-item" onclick="show('credits');closeSideNav()"><div class="snav-ico">💳</div><span>Кредиты</span></button>
+  <button class="snav-item" onclick="show('recurring');closeSideNav()"><div class="snav-ico">📅</div><span>Платежи</span></button>
+  <button class="snav-item" onclick="show('budget');closeSideNav()"><div class="snav-ico">📊</div><span>Бюджет</span></button>
+  <button class="snav-item" onclick="show('piggy');closeSideNav()"><div class="snav-ico">💰</div><span>Копилка</span></button>
+  <div class="snav-divider"></div>
+  <div class="snav-section-lbl">Прочее</div>
+  <button class="snav-item" onclick="show('settings');closeSideNav()"><div class="snav-ico">⚙️</div><span>Настройки</span></button>
+</div>
+
+<!-- WHEEL MENU -->
+<div id="wheelOverlay" onclick="closeWheel()" style="display:none;position:fixed;inset:0;z-index:490;background:rgba(0,0,0,.45);backdrop-filter:blur(4px)"></div>
+<div id="wheelMenu" class="wheel-menu">
+  <button class="wheel-item" id="wi0" onclick="wheelGo('goals')">
+    <div class="wheel-ico">🎯</div><span>Цели</span>
+  </button>
+  <button class="wheel-item" id="wi1" onclick="wheelGo('credits')">
+    <div class="wheel-ico">💳</div><span>Кредиты</span>
+  </button>
+  <button class="wheel-item" id="wi2" onclick="wheelGo('budget')">
+    <div class="wheel-ico">📊</div><span>Бюджет</span>
+  </button>
+  <button class="wheel-item" id="wi3" onclick="wheelGo('recurring')">
+    <div class="wheel-ico">📅</div><span>Платежи</span>
+  </button>
+  <button class="wheel-item" id="wi4" onclick="wheelGo('settings')">
+    <div class="wheel-ico">⚙️</div><span>Настройки</span>
+  </button>
+</div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('sw.js');
+  });
+}
+</script>
+
+</body>
+</html>
