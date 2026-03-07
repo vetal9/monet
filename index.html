@@ -641,18 +641,25 @@ body{
 
 
 .ntab-add-center {
-  min-width: 20px;
+  position: relative;
+  flex: 0 0 auto;
+  min-width: 60px; /* Уменьшил ширину */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .ntab-add-center .tico-add {
-  top: -5; /* Возвращаем в центр */
-  transform: scale(0.80); /* Делаем сам плюс чуть меньше */
+  position: relative;
+  top: 10px; /* Убрал отступ сверху */
+  margin-bottom: 2px; /* Небольшой зазор до текста */
 }
 
 .ntab-add-center span {
-  margin-top: 0;
+  margin-top: 0; /* Убрал наезд на иконку */
+  font-size: 10px;
 }
-
 /* ════ MORE MENU PANEL ════ */
 .more-panel{
   position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);
@@ -2027,7 +2034,7 @@ body{
   <button class="ntab" id="tab-txs" onclick="show('txs')"><div class="tico">📋</div><span>Операции</span></button>
   <button class="ntab" id="tab-piggy" onclick="show('piggy')"><div class="tico">💰</div><span>Копилка</span></button>
   <button class="ntab ntab-add-center" id="tab-add" onclick="show('add')"><div class="tico tico-add">＋</div><span>Добавить</span></button>
- <button class="ntab" id="tab-goals" onclick="show('goals')"><div class="more-ico">🎯</div><span>Цели</span></button>
+ <button class="ntab" id="tab-goals" onclick="show('goals')"><div class="tico">🎯</div><span>Цели</span></button>
   <button class="ntab" id="tab-more" onclick="openMoreMenu()"><div class="tico">☰</div><span>Ещё</span></button>
 
 
