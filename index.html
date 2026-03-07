@@ -610,7 +610,7 @@ body{
   pointer-events:none;z-index:201;
 }
 .ntab{
-  flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  flex:0 0 auto;min-width:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:4px;cursor:pointer;border:none;background:transparent;
   color:var(--ink3);font-family:'Cabinet Grotesk',sans-serif;
   font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;
@@ -642,7 +642,7 @@ body{
 
 .ntab-add-center{
   position:relative;
-  flex:1.2;
+  flex:0 0 auto;min-width:72px;
 }
 .ntab-add-center .tico-add{
   position:relative;top:-10px;
@@ -651,47 +651,6 @@ body{
   margin-top:-6px;
 }
 
-
-
-
-/* ════ WHEEL MENU ════ */
-.wheel-menu{
-  position:fixed;
-  bottom:calc(var(--nav) + 10px);
-  left:50%;transform:translateX(-50%);
-  width:0;height:0;
-  z-index:491;pointer-events:none;
-}
-.wheel-item{
-  position:absolute;
-  width:64px;height:64px;border-radius:50%;
-  background:var(--s1);border:1.5px solid var(--bd);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:3px;cursor:pointer;
-  font-family:'Cabinet Grotesk',sans-serif;
-  font-size:9px;font-weight:800;color:var(--ink2);
-  text-transform:uppercase;letter-spacing:.4px;
-  box-shadow:0 8px 30px rgba(0,0,0,.4);
-  opacity:0;
-  transform:translate(-50%,-50%) scale(0);
-  transition:opacity .25s ease, transform .25s cubic-bezier(.34,1.56,.64,1), background .15s;
-  pointer-events:none;
-}
-.wheel-item.visible{
-  opacity:1;transform:translate(-50%,-50%) scale(1);
-  pointer-events:all;
-}
-.wheel-item:hover{
-  background:rgba(255,61,135,.15);border-color:var(--c1);color:var(--c1);
-}
-.wheel-ico{font-size:22px;line-height:1}
-/* Rotate plus icon when open */
-.tico-add.spinning{
-  transform:rotate(45deg);
-  background:linear-gradient(135deg,#ff3d87,#c77dff) !important;
-  animation:none !important;
-}
-:root[data-theme="light"] .wheel-item{background:#fff;border-color:rgba(0,0,0,.1)}
 
 /* ════ MORE MENU PANEL ════ */
 .more-panel{
@@ -2065,9 +2024,9 @@ body{
 <nav class="bnav">
   <button class="ntab active" id="tab-home" onclick="show('home')"><div class="tico">🏠</div><span>Главная</span></button>
   <button class="ntab" id="tab-txs" onclick="show('txs')"><div class="tico">📋</div><span>Операции</span></button>
-  <button class="ntab ntab-add-center" id="tab-add" onclick="toggleWheel()"><div class="tico tico-add" id="wheelPlusIco">＋</div><span></span></button>
-  <button class="ntab" id="tab-credits" onclick="show('credits')"><div class="tico">💳</div><span>Кредиты</span></button>
+  <button class="ntab ntab-add-center" id="tab-add" onclick="show('add')"><div class="tico tico-add">＋</div><span>Добавить</span></button>
   <button class="ntab" id="tab-piggy" onclick="show('piggy')"><div class="tico">💰</div><span>Копилка</span></button>
+  <button class="ntab" id="tab-more" onclick="openMoreMenu()"><div class="tico">☰</div><span>Ещё</span></button>
 
 
 </nav>
@@ -3886,54 +3845,6 @@ initLock();
 initExportSelects();
 
 
-
-
-var _wheelOpen = false;
-
-function toggleWheel(){
-  _wheelOpen ? closeWheel() : openWheel();
-}
-
-function openWheel(){
-  _wheelOpen = true;
-  document.getElementById('wheelOverlay').style.display = 'block';
-  document.getElementById('wheelPlusIco').classList.add('spinning');
-
-  // 6 items arranged in a semicircle above the button
-  // angles from 210deg to 330deg (spread above center)
-  var items = document.querySelectorAll('.wheel-item');
-  var count = items.length;
-  // spread from left to right in a fan above nav
-  var angles = [-80, -40, 0, 40, 80]; // degrees from straight up (270)
-  var radius = 100;
-
-  items.forEach(function(item, i){
-    var angleDeg = -90 + angles[i]; // -90 = straight up
-    var rad = angleDeg * Math.PI / 180;
-    var x = Math.round(Math.cos(rad) * radius);
-    var y = Math.round(Math.sin(rad) * radius);
-    item.style.left = x + 'px';
-    item.style.top = y + 'px';
-    item.style.transitionDelay = (i * 35) + 'ms';
-    item.classList.add('visible');
-  });
-}
-
-function closeWheel(){
-  _wheelOpen = false;
-  document.getElementById('wheelOverlay').style.display = 'none';
-  document.getElementById('wheelPlusIco').classList.remove('spinning');
-  document.querySelectorAll('.wheel-item').forEach(function(item, i){
-    item.style.transitionDelay = ((5-i) * 25) + 'ms';
-    item.classList.remove('visible');
-  });
-}
-
-function wheelGo(screen){
-  closeWheel();
-  setTimeout(function(){ show(screen); }, 150);
-}
-
 function openMoreMenu(){
   document.getElementById('moreMenuOverlay').style.display='block';
   document.getElementById('moreMenuPanel').classList.add('open');
@@ -3942,27 +3853,25 @@ function closeMoreMenu(){
   document.getElementById('moreMenuOverlay').style.display='none';
   document.getElementById('moreMenuPanel').classList.remove('open');
 }
-// Swipe up on nav to open more menu - deferred until DOM ready
-window.addEventListener('load',function(){
+// Swipe up on nav to open more menu
+(function(){
   var startY=0,startTime=0;
   var nav=document.querySelector('.bnav');
-  if(nav){
-    nav.addEventListener('touchstart',function(e){startY=e.touches[0].clientY;startTime=Date.now();},{passive:true});
-    nav.addEventListener('touchend',function(e){
-      var dy=startY-e.changedTouches[0].clientY;
-      var dt=Date.now()-startTime;
-      if(dy>30&&dt<300)openMoreMenu();
-    },{passive:true});
-  }
+  if(!nav)return;
+  nav.addEventListener('touchstart',function(e){startY=e.touches[0].clientY;startTime=Date.now();},{passive:true});
+  nav.addEventListener('touchend',function(e){
+    var dy=startY-e.changedTouches[0].clientY;
+    var dt=Date.now()-startTime;
+    if(dy>30&&dt<300)openMoreMenu();
+  },{passive:true});
   var panel=document.getElementById('moreMenuPanel');
-  if(panel){
-    panel.addEventListener('touchstart',function(e){startY=e.touches[0].clientY;},{passive:true});
-    panel.addEventListener('touchend',function(e){
-      var dy=e.changedTouches[0].clientY-startY;
-      if(dy>50)closeMoreMenu();
-    },{passive:true});
-  }
-});
+  if(!panel)return;
+  panel.addEventListener('touchstart',function(e){startY=e.touches[0].clientY;},{passive:true});
+  panel.addEventListener('touchend',function(e){
+    var dy=e.changedTouches[0].clientY-startY;
+    if(dy>50)closeMoreMenu();
+  },{passive:true});
+})();
 </script>
 
 <!-- MORE MENU -->
@@ -3977,44 +3886,6 @@ window.addEventListener('load',function(){
     <button class="more-item" id="tab-budget" onclick="show('budget');closeMoreMenu()"><div class="more-ico">📊</div><span>Бюджет</span></button>
     <button class="more-item" id="tab-settings" onclick="show('settings');closeMoreMenu()"><div class="more-ico">⚙️</div><span>Настройки</span></button>
   </div>
-</div>
-
-<div id="sideNavPanel" class="snav-panel">
-  <div class="snav-header">
-    <div class="snav-logo">🪙 Монет</div>
-    <div class="snav-sub">Личные финансы</div>
-  </div>
-  <div class="snav-section-lbl">Разделы</div>
-  <button class="snav-item" onclick="show('home');closeSideNav()"><div class="snav-ico">🏠</div><span>Главная</span></button>
-  <button class="snav-item" onclick="show('txs');closeSideNav()"><div class="snav-ico">📋</div><span>Операции</span></button>
-  <button class="snav-item" onclick="show('goals');closeSideNav()"><div class="snav-ico">🎯</div><span>Цели</span></button>
-  <button class="snav-item" onclick="show('credits');closeSideNav()"><div class="snav-ico">💳</div><span>Кредиты</span></button>
-  <button class="snav-item" onclick="show('recurring');closeSideNav()"><div class="snav-ico">📅</div><span>Платежи</span></button>
-  <button class="snav-item" onclick="show('budget');closeSideNav()"><div class="snav-ico">📊</div><span>Бюджет</span></button>
-  <button class="snav-item" onclick="show('piggy');closeSideNav()"><div class="snav-ico">💰</div><span>Копилка</span></button>
-  <div class="snav-divider"></div>
-  <div class="snav-section-lbl">Прочее</div>
-  <button class="snav-item" onclick="show('settings');closeSideNav()"><div class="snav-ico">⚙️</div><span>Настройки</span></button>
-</div>
-
-<!-- WHEEL MENU -->
-<div id="wheelOverlay" onclick="closeWheel()" style="display:none;position:fixed;inset:0;z-index:490;background:rgba(0,0,0,.45);backdrop-filter:blur(4px)"></div>
-<div id="wheelMenu" class="wheel-menu">
-  <button class="wheel-item" id="wi0" onclick="wheelGo('goals')">
-    <div class="wheel-ico">🎯</div><span>Цели</span>
-  </button>
-  <button class="wheel-item" id="wi1" onclick="wheelGo('credits')">
-    <div class="wheel-ico">💳</div><span>Кредиты</span>
-  </button>
-  <button class="wheel-item" id="wi2" onclick="wheelGo('budget')">
-    <div class="wheel-ico">📊</div><span>Бюджет</span>
-  </button>
-  <button class="wheel-item" id="wi3" onclick="wheelGo('recurring')">
-    <div class="wheel-ico">📅</div><span>Платежи</span>
-  </button>
-  <button class="wheel-item" id="wi4" onclick="wheelGo('settings')">
-    <div class="wheel-ico">⚙️</div><span>Настройки</span>
-  </button>
 </div>
 </body>
 </html>
