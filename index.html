@@ -640,17 +640,18 @@ body{
 
 
 
-.ntab-add-center{
-  position:relative;
-  flex:0 0 auto;min-width:72px;
-}
-.ntab-add-center .tico-add{
-  position:relative;top:-10px;
-}
-.ntab-add-center span{
-  margin-top:-6px;
+.ntab-add-center {
+  min-width: 40px;
 }
 
+.ntab-add-center .tico-add {
+  top: 0; /* Возвращаем в центр */
+  transform: scale(0.85); /* Делаем сам плюс чуть меньше */
+}
+
+.ntab-add-center span {
+  margin-top: 0;
+}
 
 /* ════ MORE MENU PANEL ════ */
 .more-panel{
