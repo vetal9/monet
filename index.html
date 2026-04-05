@@ -469,73 +469,96 @@ body{
 
 /* ── OLD GOALS HIDDEN ──
 
-/* ════ BANK CARD CREDITS ════ */
-.bc-summary{
-  display:flex;align-items:center;
+/* ╠╦╦ CREDITS REDESIGN — piggy style ╠╦╦ */
+.cr-hero{
+  position:relative;overflow:hidden;border-radius:28px;
+  padding:28px 24px 24px;margin-bottom:14px;margin-top:-4px;
+  background:linear-gradient(135deg,#1a0038 0%,#3d0080 35%,#7b1fa2 65%,#c2185b 100%);
+  box-shadow:0 16px 48px rgba(61,0,128,.45);
+}
+.cr-hero-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 80% 60% at 100% 0%,rgba(255,255,255,.13),transparent),
+             radial-gradient(ellipse 60% 50% at 0% 100%,rgba(0,0,0,.25),transparent);
+}
+.cr-hero-label{position:relative;font-size:12px;font-weight:800;color:rgba(255,255,255,.65);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+.cr-hero-bal{position:relative;font-family:'Fira Code',monospace;font-size:clamp(34px,9vw,52px);font-weight:900;color:#fff;letter-spacing:-1.5px;text-shadow:0 4px 24px rgba(0,0,0,.2);margin-bottom:20px;line-height:1}
+.cr-hero-stats{position:relative;display:flex;align-items:center;background:rgba(0,0,0,.22);border-radius:16px;padding:12px 16px;backdrop-filter:blur(10px)}
+.cr-hs{flex:1;text-align:center}
+.cr-hs-val{font-family:'Fira Code',monospace;font-size:14px;font-weight:800;color:#fff;margin-bottom:3px}
+.cr-hs-lbl{font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.8px}
+.cr-hs-div{width:1px;height:30px;background:rgba(255,255,255,.18);flex-shrink:0}
+
+.cr-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.cr-item{
+  border-radius:20px;padding:0;overflow:hidden;
   background:var(--s1);border:1px solid var(--bd);
-  border-radius:16px;padding:14px 18px;margin-bottom:14px;gap:0;
+  transition:all .18s;animation:cardIn .2s ease both;
 }
-.bc-sum-item{flex:1;text-align:center}
-.bc-sum-lbl{font-size:9px;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
-.bc-sum-val{font-family:'Fira Code',monospace;font-size:16px;font-weight:900;color:var(--ink)}
-.bc-sum-div{width:1px;height:32px;background:var(--bd);flex-shrink:0}
+.cr-item:hover{border-color:var(--bd2);transform:translateY(-1px)}
+.cr-item-head{display:flex;align-items:center;gap:13px;padding:15px 17px;cursor:pointer;user-select:none}
+.cr-ico-wrap{
+  width:44px;height:44px;border-radius:14px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+  background:linear-gradient(135deg,rgba(108,59,255,.25),rgba(168,85,247,.25));
+  border:1px solid rgba(168,85,247,.2);
+}
+.cr-head-mid{flex:1;min-width:0}
+.cr-name{font-size:14px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
+.cr-chips{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.cr-chip{font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px}
+.cr-chip-bank{background:var(--s2);color:var(--ink2)}
+.cr-chip-rate{background:rgba(168,85,247,.12);color:#a855f7}
+.cr-chip-overdue{background:rgba(255,61,135,.12);color:var(--c2)}
+.cr-head-right{text-align:right;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.cr-debt-val{font-family:'Fira Code',monospace;font-size:16px;font-weight:800;background:linear-gradient(90deg,#a855f7,#7b1fa2);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.cr-pct-lbl{font-size:10.5px;color:var(--ink3);font-weight:600}
+.cr-chevron{font-size:10px;color:var(--ink3);transition:transform .22s}
+.cr-item.open .cr-chevron{transform:rotate(180deg)}
 
-/* The card itself */
-.bc-card{
-  position:relative;overflow:hidden;
-  border-radius:22px;padding:22px 22px 16px;
-  margin-bottom:14px;
-  box-shadow:0 20px 50px rgba(0,0,0,.5);
-  animation:cardIn .25s ease both;
-}
-.bc-shine{
-  position:absolute;top:-80%;left:-30%;width:60%;height:220%;
-  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.07) 50%,transparent 60%);
-  transform:skewX(-15deg);pointer-events:none;
-  animation:cardShine 7s ease-in-out infinite 1s;
-}
-.bc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
-.bc-bank{font-size:13px;font-weight:900;color:rgba(255,255,255,.8);letter-spacing:.5px}
-.bc-rate-badge{font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;border:1px solid;letter-spacing:.5px}
-.bc-dots{font-size:12px;color:rgba(255,255,255,.35);letter-spacing:2px;margin-bottom:12px;font-family:'Fira Code',monospace}
-.bc-bal-lbl{font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
-.bc-bal{font-family:'Fira Code',monospace;font-size:clamp(24px,7vw,34px);font-weight:900;color:#fff;margin-bottom:14px;letter-spacing:-1px}
-.bc-prog-wrap{margin-bottom:14px}
-.bc-prog-track{height:6px;background:rgba(255,255,255,.12);border-radius:6px;overflow:hidden;margin-bottom:5px}
-.bc-prog-fill{height:100%;border-radius:6px;transition:width .8s ease;box-shadow:0 0 8px currentColor}
-.bc-prog-meta{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.4)}
-.bc-bottom{display:flex;align-items:flex-end;gap:0;margin-bottom:14px}
-.bc-stat{flex:1}
-.bc-sl{font-size:9px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
-.bc-sv{font-family:'Fira Code',monospace;font-size:13px;font-weight:700;color:#fff}
-/* Gold chip */
-.bc-chip{
-  width:38px;height:30px;border-radius:5px;margin-left:auto;flex-shrink:0;
-  background:linear-gradient(135deg,#c8a96e,#f0d080,#a07840);
-  position:relative;overflow:hidden;
-}
-.bc-chip-h{position:absolute;top:50%;left:0;right:0;height:1px;background:rgba(0,0,0,.2);transform:translateY(-50%)}
-.bc-chip-v{position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(0,0,0,.2);transform:translateX(-50%)}
-.bc-due{font-size:11px;color:rgba(255,255,255,.55);margin-bottom:10px}
-.bc-acts{display:flex;gap:8px}
-.bc-pay{
-  flex:1;padding:10px;border:none;border-radius:12px;cursor:pointer;
-  font-family:'Cabinet Grotesk',sans-serif;font-size:13px;font-weight:900;
-  background:rgba(255,255,255,.15);color:#fff;
-  border:1px solid rgba(255,255,255,.2);
-  backdrop-filter:blur(10px);transition:all .15s;
-}
-.bc-pay:hover{background:rgba(255,255,255,.25)}
-.bc-del{
-  width:40px;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.15);
-  background:rgba(255,0,0,.15);color:rgba(255,100,100,.8);cursor:pointer;
-  font-size:14px;transition:all .15s;
-}
-.bc-del:hover{background:rgba(255,0,0,.3)}
+.cr-bar-wrap{padding:0 17px 13px}
+.cr-bar-track{height:5px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden;margin-bottom:5px}
+.cr-bar-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#6c3bff,#a855f7,#c2185b);background-size:200% auto;animation:shimmer 4s linear infinite;transition:width .9s cubic-bezier(.4,0,.2,1)}
+.cr-bar-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--ink3)}
 
-/* Light theme — keep cards dark (they're bank cards!) */
-:root[data-theme="light"] .bc-summary{background:#fff;border-color:rgba(0,0,0,.08)}
+.cr-detail{display:none;border-top:1px solid var(--bd);padding:14px 17px 17px}
+.cr-item.open .cr-detail{display:block}
+.cr-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.cr-dg-cell{
+  border-radius:14px;padding:12px 14px;
+  background:linear-gradient(135deg,rgba(108,59,255,.1),rgba(168,85,247,.07));
+  border:1px solid rgba(168,85,247,.15);
+}
+.cr-dg-lbl{font-size:9.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px}
+.cr-dg-val{font-family:'Fira Code',monospace;font-size:15px;font-weight:800;color:var(--ink)}
+.cr-due-tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:5px 12px;border-radius:10px;background:var(--s2);color:var(--ink3);margin-bottom:12px}
+.cr-due-tag.overdue{background:rgba(255,61,135,.12);color:var(--c2);border:1px solid rgba(255,61,135,.2)}
+.cr-detail-acts{display:flex;gap:8px}
+.cr-btn-pay{
+  flex:1;padding:12px;border-radius:14px;border:none;cursor:pointer;
+  font-family:'Cabinet Grotesk',sans-serif;font-size:14px;font-weight:900;
+  background:linear-gradient(135deg,#6c3bff,#a855f7,#c2185b);
+  background-size:200% auto;animation:shimmer 3s linear infinite;
+  color:#fff;box-shadow:0 6px 20px rgba(108,59,255,.35);transition:all .15s;
+}
+.cr-btn-pay:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(108,59,255,.5)}
+.cr-btn-del{
+  padding:12px 18px;border-radius:14px;border:1.5px solid var(--bd);
+  background:none;color:var(--ink3);cursor:pointer;
+  font-family:'Cabinet Grotesk',sans-serif;font-size:14px;font-weight:700;transition:all .15s;
+}
+.cr-btn-del:hover{border-color:var(--c1);color:var(--c1)}
 
+:root[data-theme="light"] .cr-hero{background:linear-gradient(135deg,#ede7f6,#f3e5f5,#fce4ec)}
+:root[data-theme="light"] .cr-hero-label{color:rgba(74,0,130,.5)}
+:root[data-theme="light"] .cr-hero-bal{color:#4a0082;text-shadow:none}
+:root[data-theme="light"] .cr-hero-stats{background:rgba(0,0,0,.06)}
+:root[data-theme="light"] .cr-hs-val{color:#4a0082}
+:root[data-theme="light"] .cr-hs-lbl{color:rgba(74,0,130,.4)}
+:root[data-theme="light"] .cr-hs-div{background:rgba(0,0,0,.12)}
+:root[data-theme="light"] .cr-item{background:#fff}
+:root[data-theme="light"] .cr-ico-wrap{background:rgba(108,59,255,.08);border-color:rgba(108,59,255,.15)}
+:root[data-theme="light"] .cr-dg-cell{background:rgba(108,59,255,.05);border-color:rgba(108,59,255,.12)}
 /* ── CREDIT CARDS ── */
 .cstack{display:flex;flex-direction:column;gap:14px;margin-bottom:14px}
 .ccard{
@@ -1773,13 +1796,21 @@ body{
       <div style="height:16px"></div>
       <div class="aform fc">
         <div class="ftitle">Новый кредит <span class="fbadge c">💳 кредит</span></div>
-        <div class="g2"><div class="field"><label>Название</label><input id="cN" placeholder="Ипотека..."></div><div class="field"><label>Банк</label><input id="cBk" placeholder="TD Bank..."></div></div>
-        <div class="g3"><div class="field"><label>Долг (CA$)</label><input type="number" id="cT" placeholder="0"></div><div class="field"><label>Ставка % / год</label><input type="number" id="cR" placeholder="5.5"></div><div class="field"><label>Платёж / мес</label><input type="number" id="cP" placeholder="0"></div></div>
-        <div class="field"><label>Следующий платёж</label><input type="date" id="cDu"></div>
-        <button class="btn btn-v" onclick="addCredit()">▭ Добавить кредит</button>
+        <div class="g2">
+          <div class="field"><label>Название</label><input id="cN" placeholder="Ипотека, авто..."></div>
+          <div class="field"><label>Банк</label><input id="cBk" placeholder="TD Bank..."></div>
+        </div>
+        <div class="g2">
+          <div class="field"><label>Сумма долга (CA$)</label><input type="number" id="cT" placeholder="0" style="font-size:20px;font-family:'Fira Code',monospace;font-weight:700"></div>
+          <div class="field"><label>Ставка % / год</label><input type="number" id="cR" placeholder="5.5"></div>
+        </div>
+        <div class="g2">
+          <div class="field"><label>Платёж / мес (CA$)</label><input type="number" id="cP" placeholder="0"></div>
+          <div class="field"><label>Следующий платёж</label><input type="date" id="cDu"></div>
+        </div>
+        <button class="btn btn-v" onclick="addCredit()">💳 Добавить кредит</button>
       </div>
-      <div class="sec-title">Мои кредиты</div>
-      <div class="cstack" id="clist"></div>
+      <div id="clist"></div>
       <div class="gap"></div>
     </div>
 
@@ -2614,75 +2645,106 @@ function doPayCredit(c,n,id){
 
 function deleteCredit(id){S.credits=S.credits.filter(function(c){return c.id!==id;});sv();renderCredits();}
 
+function toggleCredit(id){
+  var item=document.getElementById('cr-item-'+id);
+  if(!item)return;
+  item.classList.toggle('open');
+}
+
 function renderCredits(){
   var el=document.getElementById('clist');
-  if(!S.credits.length){el.innerHTML='<div class="empty"><div class="ico">💳</div><p>Нет кредитов</p><small>Добавьте свои долги</small></div>';return;}
+  if(!el)return;
+  if(!S.credits.length){
+    el.innerHTML='<div class="empty"><div class="ico">💳</div><p>Нет кредитов</p><small>Добавьте ипотеку, авто или другой долг</small></div>';
+    return;
+  }
 
   var totalDebt=S.credits.reduce(function(s,c){return s+c.total;},0);
+  var totalOrig=S.credits.reduce(function(s,c){return s+(c.orig||c.total);},0);
   var totalPay=S.credits.reduce(function(s,c){return s+(c.pay||0);},0);
+  var totalPaid=totalOrig-totalDebt;
+  var totalPct=totalOrig>0?Math.round(totalPaid/totalOrig*100):0;
+  var totalIntM=S.credits.reduce(function(s,c){return s+Math.round(c.total*(c.rate/100/12));},0);
+  var cnt=S.credits.length;
+  var cntLbl=cnt===1?'кредит':cnt<5?'кредита':'кредитов';
 
-  // Gradients per card index
-  var gradients=[
-    'linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)',
-    'linear-gradient(135deg,#1a0a28 0%,#2d0b55 50%,#4a0080 100%)',
-    'linear-gradient(135deg,#0d1f1a 0%,#0a3d2e 50%,#005f46 100%)',
-    'linear-gradient(135deg,#1f0a0a 0%,#3d0b0b 50%,#600000 100%)',
-    'linear-gradient(135deg,#1a1200 0%,#3d2e00 50%,#6b5000 100%)',
-  ];
-  var accentColors=['#4cc9f0','#c77dff','#00e5a0','#ff6b6b','#ffd166'];
-
-  var items=S.credits.map(function(c,idx){
-    var orig=c.orig||c.total,paid=orig-c.total,pp=Math.round(paid/orig*100);
-    var intM=Math.round(c.total*(c.rate/100/12));
-    var grad=gradients[idx%gradients.length];
-    var accent=accentColors[idx%accentColors.length];
-    var dots='●●●●&nbsp;&nbsp;●●●●&nbsp;&nbsp;●●●●';
-    return '<div class="bc-card" style="background:'+grad+';animation-delay:'+(idx*.08)+'s">'+
-      '<div class="bc-shine"></div>'+
-      // Top row
-      '<div class="bc-top">'+
-        '<div class="bc-bank">'+esc(c.bank||'Bank')+'</div>'+
-        '<div class="bc-rate-badge" style="color:'+accent+';border-color:'+accent+'">'+c.rate+'% /год</div>'+
-      '</div>'+
-      // Card number dots
-      '<div class="bc-dots">'+dots+'</div>'+
-      // Balance
-      '<div class="bc-bal-lbl">Остаток долга</div>'+
-      '<div class="bc-bal">'+fmt(c.total)+'</div>'+
-      // Progress bar
-      '<div class="bc-prog-wrap">'+
-        '<div class="bc-prog-track">'+
-          '<div class="bc-prog-fill" style="width:'+pp+'%;background:'+accent+'"></div>'+
-        '</div>'+
-        '<div class="bc-prog-meta">'+
-          '<span style="color:'+accent+'">'+pp+'% погашено</span>'+
-          '<span>из '+fmt(orig)+'</span>'+
-        '</div>'+
-      '</div>'+
-      // Bottom row
-      '<div class="bc-bottom">'+
-        '<div class="bc-stat"><div class="bc-sl">Платёж/мес</div><div class="bc-sv">'+(c.pay?fmt(c.pay):'—')+'</div></div>'+
-        '<div class="bc-stat"><div class="bc-sl">Проценты</div><div class="bc-sv">'+fmt(intM)+'</div></div>'+
-        '<div class="bc-chip">'+
-          '<div class="bc-chip-h"></div><div class="bc-chip-v"></div>'+
-        '</div>'+
-      '</div>'+
-      (c.due?'<div class="bc-due">📅 '+fD(c.due)+'</div>':'')+
-      '<div class="bc-acts">'+
-        '<button class="bc-pay" onclick="payCredit('+c.id+')">Внести платёж</button>'+
-        '<button class="bc-del" onclick="deleteCredit('+c.id+')">✕</button>'+
-      '</div>'+
-    '</div>';
-  }).join('');
-
-  // Summary strip
-  var summary='<div class="bc-summary">'+
-    '<div class="bc-sum-item"><div class="bc-sum-lbl">Всего долгов</div><div class="bc-sum-val">'+fmt(totalDebt)+'</div></div>'+
-    (totalPay?'<div class="bc-sum-div"></div><div class="bc-sum-item"><div class="bc-sum-lbl">Платежей/мес</div><div class="bc-sum-val" style="color:var(--c1)">'+fmt(totalPay)+'</div></div>':'')+
-    '<div class="bc-sum-div"></div><div class="bc-sum-item"><div class="bc-sum-lbl">Кредитов</div><div class="bc-sum-val">'+S.credits.length+'</div></div>'+
+  // Hero block (piggy style)
+  var hero='<div class="cr-hero">'+
+    '<div class="cr-hero-bg"></div>'+
+    '<div class="cr-hero-label">Общий долг</div>'+
+    '<div class="cr-hero-bal">'+fmt(totalDebt)+'</div>'+
+    '<div class="cr-hero-stats">'+
+      '<div class="cr-hs"><div class="cr-hs-val">'+(totalPay?fmt(totalPay):'—')+'</div><div class="cr-hs-lbl">Платёж / мес</div></div>'+
+      '<div class="cr-hs-div"></div>'+
+      '<div class="cr-hs"><div class="cr-hs-val">'+fmt(totalIntM)+'</div><div class="cr-hs-lbl">% в месяц</div></div>'+
+      '<div class="cr-hs-div"></div>'+
+      '<div class="cr-hs"><div class="cr-hs-val">'+totalPct+'%</div><div class="cr-hs-lbl">Погашено</div></div>'+
+    '</div>'+
   '</div>';
 
-  el.innerHTML=summary+items;
+  var ICONS={'ипотека':'🏠','авто':'🚗','автокредит':'🚗','машина':'🚗','карта':'💳','телефон':'📱','образование':'🎓','медицина':'🏥','бизнес':'💼','потреб':'💰'};
+  function creditIcon(name){
+    var low=(name||'').toLowerCase();
+    for(var k in ICONS){if(low.indexOf(k)>=0)return ICONS[k];}
+    return '💳';
+  }
+
+  var list='<div class="cr-list">'+S.credits.map(function(c,idx){
+    var orig=c.orig||c.total;
+    var paid=orig-c.total;
+    var pp=orig>0?Math.round(paid/orig*100):0;
+    var intM=c.rate?Math.round(c.total*(c.rate/100/12)):0;
+    var today=new Date();today.setHours(0,0,0,0);
+    var dueDate=c.due?new Date(c.due):null;
+    if(dueDate)dueDate.setHours(0,0,0,0);
+    var overdue=dueDate&&dueDate<today;
+    var dueToday=dueDate&&dueDate.getTime()===today.getTime();
+    var dueDiff=dueDate?Math.round((dueDate-today)/(1000*86400)):null;
+    var dueTxt='';var dueClass='cr-due-tag';
+    if(dueDate){
+      if(overdue){dueTxt='⚠️ Просрочен · '+fD(c.due);dueClass+=' overdue';}
+      else if(dueToday){dueTxt='📅 Платёж сегодня';dueClass+=' overdue';}
+      else{dueTxt='📅 Через '+dueDiff+' дн. · '+fD(c.due);}
+    }
+    var ico=creditIcon(c.name);
+    return '<div class="cr-item" id="cr-item-'+c.id+'" style="animation-delay:'+(idx*.06)+'s">'+
+      '<div class="cr-item-head" onclick="toggleCredit('+c.id+')">'+
+        '<div class="cr-ico-wrap">'+ico+'</div>'+
+        '<div class="cr-head-mid">'+
+          '<div class="cr-name">'+esc(c.name)+'</div>'+
+          '<div class="cr-chips">'+
+            (c.bank?'<span class="cr-chip cr-chip-bank">'+esc(c.bank)+'</span>':'')+
+            (c.rate?'<span class="cr-chip cr-chip-rate">'+c.rate+'% / год</span>':'')+
+            (overdue||dueToday?'<span class="cr-chip cr-chip-overdue">'+(dueToday?'Сегодня':'Просрочен')+'</span>':'')+
+          '</div>'+
+        '</div>'+
+        '<div class="cr-head-right">'+
+          '<div class="cr-debt-val">'+fmt(c.total)+'</div>'+
+          '<div class="cr-pct-lbl">'+pp+'% погашено</div>'+
+          '<span class="cr-chevron">▾</span>'+
+        '</div>'+
+      '</div>'+
+      '<div class="cr-bar-wrap">'+
+        '<div class="cr-bar-track"><div class="cr-bar-fill" style="width:'+pp+'%"></div></div>'+
+        '<div class="cr-bar-meta"><span>'+fmt(paid)+' погашено</span><span>из '+fmt(orig)+'</span></div>'+
+      '</div>'+
+      '<div class="cr-detail">'+
+        (dueTxt?'<div class="'+dueClass+'">'+dueTxt+'</div>':'')+
+        '<div class="cr-detail-grid">'+
+          '<div class="cr-dg-cell"><div class="cr-dg-lbl">Платёж / мес</div><div class="cr-dg-val">'+(c.pay?fmt(c.pay):'—')+'</div></div>'+
+          '<div class="cr-dg-cell"><div class="cr-dg-lbl">% / мес</div><div class="cr-dg-val">'+(intM?fmt(intM):'—')+'</div></div>'+
+          '<div class="cr-dg-cell"><div class="cr-dg-lbl">Остаток</div><div class="cr-dg-val">'+fmt(c.total)+'</div></div>'+
+          '<div class="cr-dg-cell"><div class="cr-dg-lbl">Изначально</div><div class="cr-dg-val">'+fmt(orig)+'</div></div>'+
+        '</div>'+
+        '<div class="cr-detail-acts">'+
+          '<button class="cr-btn-pay" onclick="payCredit('+c.id+')">💸 Внести платёж</button>'+
+          '<button class="cr-btn-del" onclick="deleteCredit('+c.id+')">Удалить</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('')+'</div>';
+
+  el.innerHTML=hero+list;
 }
 
 
@@ -3301,25 +3363,25 @@ function exportXLSX(){
   XLSX.utils.book_append_sheet(wb,wsSummary,'Сводка');
 
   // ── Sheet 2: Income ──
-  var incRows=[['Дата','Категория','Сумма (CA$)']];
+  var incRows=[['Дата','Категория','Сумма (CA$)','Заметка']];
   d.inc.sort(function(a,b){return new Date(a.date)-new Date(b.date);}).forEach(function(i){
-    incRows.push([i.date,i.cat,i.a]);
+    incRows.push([i.date,i.cat,i.a,i.note||'']);
   });
   incRows.push([]);
-  incRows.push(['ИТОГО','',d.totInc]);
+  incRows.push(['ИТОГО','',d.totInc,'']);
   var wsInc=XLSX.utils.aoa_to_sheet(incRows);
-  wsInc['!cols']=[{wch:14},{wch:18},{wch:16}];
+  wsInc['!cols']=[{wch:14},{wch:18},{wch:16},{wch:28}];
   XLSX.utils.book_append_sheet(wb,wsInc,'Доходы');
 
   // ── Sheet 3: Expenses ──
-  var expRows=[['Дата','Название','Категория','Сумма (CA$)']];
+  var expRows=[['Дата','Название','Категория','Сумма (CA$)','Заметка']];
   d.exp.sort(function(a,b){return new Date(a.date)-new Date(b.date);}).forEach(function(i){
-    expRows.push([i.date,i.name,i.cat,i.a]);
+    expRows.push([i.date,i.name,i.cat,i.a,i.note||'']);
   });
   expRows.push([]);
-  expRows.push(['ИТОГО','','',d.totExp]);
+  expRows.push(['ИТОГО','','',d.totExp,'']);
   var wsExp=XLSX.utils.aoa_to_sheet(expRows);
-  wsExp['!cols']=[{wch:14},{wch:22},{wch:16},{wch:16}];
+  wsExp['!cols']=[{wch:14},{wch:22},{wch:16},{wch:16},{wch:28}];
   XLSX.utils.book_append_sheet(wb,wsExp,'Расходы');
 
   // ── Sheet 4: By Category ──
