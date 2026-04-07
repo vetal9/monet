@@ -291,7 +291,7 @@ body{
 .tx-del{opacity:0;font-size:9.5px;padding:2px 8px;border-radius:8px;background:rgba(255,61,135,.1);border:1px solid rgba(255,61,135,.18);color:var(--c1);cursor:pointer;transition:all .12s}
 .tx:hover .tx-del{opacity:1}
 .tx-del:hover{background:rgba(255,61,135,.22)}
-.tx-note{font-size:10.5px;color:var(--ink3);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-style:italic;opacity:.8}
+.tx-note{font-size:12px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-style:italic;font-weight:600;background:linear-gradient(90deg,var(--c1),var(--c2),var(--m1),var(--v1),var(--c2),var(--c1));background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite}
 
 /* ── ADD FORM ── */
 .aform{
@@ -1759,6 +1759,7 @@ body{
         <div class="field"><label>Категория</label></div>
         <div class="chips" id="iChips"></div>
         <!-- Destination toggle -->
+        <div class="field"><label>Заметка (необязательно)</label><input type="text" id="iNote" placeholder="Например: премия, бонус, подработка..."></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
           <button id="destBalance" class="dest-btn dest-active" onclick="setDest('balance')">💳 В баланс</button>
           <button id="destPiggy" class="dest-btn" onclick="setDest('piggy')">💰 В копилку</button>
@@ -2144,7 +2145,7 @@ document.getElementById('greet-word').textContent=_h<12?'утром':_h<18?'дн
 
 // ── CATS ──
 var iCats=[{e:'💼',l:'Зарплата'},{e:'💻',l:'Фриланс'},{e:'📈',l:'Инвестиции'},{e:'🏠',l:'Аренда'},{e:'🎁',l:'Подарок'},{e:'✨',l:'Другое'}];
-var eCats=[{e:'🛒',l:'Продукты'},{e:'🚇',l:'Транспорт'},{e:'☕',l:'Кафе'},{e:'🏠',l:'ЖКХ'},{e:'👕',l:'Одежда'},{e:'💊',l:'Здоровье'},{e:'🎬',l:'Развлечения'},{e:'📱',l:'Подписки'},{e:'✨',l:'Другое'}];
+var eCats=[{e:'🛒',l:'Продукты'},{e:'🚇',l:'Транспорт'},{e:'☕',l:'Кафе'},{e:'🍽️',l:'Рестораны'},{e:'🏠',l:'ЖКХ'},{e:'👕',l:'Одежда'},{e:'👟',l:'Обувь'},{e:'💊',l:'Здоровье'},{e:'🏥',l:'Аптека'},{e:'🎬',l:'Кино'},{e:'🎮',l:'Игры'},{e:'📱',l:'Подписки'},{e:'✈️',l:'Путешествия'},{e:'🏨',l:'Отель'},{e:'⛽',l:'Бензин'},{e:'🚗',l:'Авто'},{e:'🐾',l:'Питомцы'},{e:'📚',l:'Книги'},{e:'🎓',l:'Образование'},{e:'💇',l:'Красота'},{e:'💪',l:'Спорт'},{e:'🛠️',l:'Ремонт'},{e:'🎁',l:'Подарки'},{e:'🧴',l:'Гигиена'},{e:'🏦',l:'Банк'},{e:'📦',l:'Доставка'},{e:'🌿',l:'Экология'},{e:'✨',l:'Другое'}];
 var selICat='Зарплата',selECat='Продукты';
 
 function buildChips(wid,cats,cur,cls,fn){
@@ -2402,20 +2403,23 @@ function setDest(t){
 function addI(){
   var a=parseFloat(document.getElementById('iA').value);
   var d=document.getElementById('iD').value||td();
+  var note=(document.getElementById('iNote').value||'').trim();
   if(!a||a<=0){pulse('iA');return;}
   if(_incDest==='piggy'){
     // В копилку — не трогаем баланс
     if(!S.piggy)S.piggy=[];
-    S.piggy.push({id:Date.now(),type:'in',a:a,date:d,note:selICat||'Доход'});
+    S.piggy.push({id:Date.now(),type:'in',a:a,date:d,note:note||selICat||'Доход'});
     sv();renderHome();renderPiggy();
     document.getElementById('iA').value='';
+    document.getElementById('iNote').value='';
     show('piggy');
   } else {
     // В баланс — обычный доход
-    S.income.unshift({id:Date.now(),name:selICat,a:a,cat:selICat,date:d});
+    S.income.unshift({id:Date.now(),name:selICat,a:a,cat:selICat,date:d,note:note});
     sv();renderHome();
     notifTx('income', selICat, a);
     document.getElementById('iA').value='';
+    document.getElementById('iNote').value='';
     show('home');
   }
 }
