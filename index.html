@@ -80,7 +80,7 @@ body::before{
 .sb-icons{display:flex;align-items:center;gap:4px;color:var(--ink2);font-size:11px}
 
 /* ── SCROLL ── */
-.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--nav) + var(--safe) + 24px)}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(80px + var(--safe) + 30px)}
 .scroll::-webkit-scrollbar{display:none}
 
 /* ── SCREENS ── */
@@ -91,87 +91,121 @@ body::before{
 /* ── GOLD DIVIDER ── */
 .gold-div{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 20px;opacity:.35}
 
-/* ── HERO ── */
+/* ══════════════════════════════
+   HOME — ПОЛНОСТЬЮ НОВЫЙ ДИЗАЙН
+   ══════════════════════════════ */
+
+/* ── HERO FULL-WIDTH BANNER ── */
 .hero{
-  margin:6px 16px 16px;
-  background:linear-gradient(145deg,#1C1608 0%,#251E0E 40%,#1A1508 100%);
-  border:1px solid var(--border2);
-  border-radius:28px;
-  padding:28px 24px 24px;
   position:relative;overflow:hidden;
+  margin:0 0 0 0;
+  padding:28px 24px 0;
   animation:fadeUp .35s ease both;
+  background:transparent;
 }
+/* золотое сияние сверху */
 .hero::before{
-  content:'';position:absolute;top:-60px;right:-60px;
-  width:200px;height:200px;border-radius:50%;
-  background:radial-gradient(circle,rgba(212,175,55,.15) 0%,transparent 70%);
-  pointer-events:none;
+  content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);
+  width:340px;height:340px;border-radius:50%;
+  background:radial-gradient(circle,rgba(212,175,55,.13) 0%,transparent 68%);
+  pointer-events:none;z-index:0;
 }
-.hero::after{
-  content:'';position:absolute;inset:0;border-radius:28px;
-  background:linear-gradient(135deg,rgba(212,175,55,.06) 0%,transparent 50%);
-  pointer-events:none;
-}
-.hero-eyebrow{
-  display:flex;align-items:center;gap:8px;margin-bottom:14px;
-  font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--ink3);
+.hero-inner{position:relative;z-index:1}
+
+/* дата + приветствие */
+.hero-greeting{
+  font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--ink3);margin-bottom:6px;display:flex;align-items:center;gap:8px;
 }
 .live-pip{width:5px;height:5px;border-radius:50%;background:var(--grn2);animation:goldPulse 2.2s infinite;flex-shrink:0}
+
+/* огромная сумма по центру */
+.hero-center{text-align:center;padding:10px 0 24px}
 .hero-amount{
   font-family:'Playfair Display',serif;
-  font-size:52px;font-weight:900;line-height:1;
-  letter-spacing:-2px;margin-bottom:6px;
+  font-size:62px;font-weight:900;line-height:1;letter-spacing:-3px;
+  display:block;margin-bottom:8px;
 }
 .hero-amount.pos{
-  background:linear-gradient(135deg,var(--gold2),var(--gold3));
+  background:linear-gradient(160deg,var(--gold3) 0%,var(--gold2) 40%,var(--acc2) 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
 .hero-amount.neg{color:var(--red2)}
-.hero-amount.zero{color:var(--ink2)}
-.hero-sub{font-size:13px;color:var(--ink3);font-weight:400;margin-bottom:24px;letter-spacing:.2px}
+.hero-amount.zero{color:var(--ink3)}
+.hero-sub{
+  font-size:12px;color:var(--ink3);font-weight:400;letter-spacing:.3px;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.hero-sub-dot{width:3px;height:3px;background:var(--gold);border-radius:50%;opacity:.5}
+
+/* горизонтальная линия-разделитель с орнаментом */
+.hero-ornament{
+  display:flex;align-items:center;gap:10px;
+  padding:0 0 20px;
+}
+.hero-orn-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.3))}
+.hero-orn-line.r{background:linear-gradient(270deg,transparent,rgba(212,175,55,.3))}
+.hero-orn-diamond{
+  width:7px;height:7px;background:var(--gold);
+  transform:rotate(45deg);opacity:.6;flex-shrink:0;
+}
+
+/* три стата под разделителем */
 .hero-stats{
   display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;
-  background:rgba(0,0,0,.25);border-radius:16px;
-  border:1px solid var(--border);padding:14px 0;
+  padding:0 4px 24px;
 }
-.hs{text-align:center;padding:0 10px}
-.hs-sep{background:var(--border);margin:4px 0}
-.hs-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px}
-.hs-val{font-size:15px;font-weight:700;font-family:'DM Mono',monospace}
+.hs{text-align:center;padding:0 8px}
+.hs-sep{background:rgba(212,175,55,.15);margin:4px 0}
+.hs-lbl{font-size:9px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--ink4);margin-bottom:7px}
+.hs-val{font-size:16px;font-weight:700;font-family:'DM Mono',monospace}
 .hs-val.g{color:var(--grn2)}
 .hs-val.r{color:var(--red2)}
 .hs-val.a{color:var(--gold2)}
 
-/* ── QUICK GRID ── */
-.q-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px;margin-bottom:16px;animation:fadeUp .35s .06s ease both}
-.q-card{
-  background:var(--bg3);border:1px solid var(--border);
-  border-radius:20px;padding:16px;cursor:pointer;
-  transition:transform .14s,background .14s,border-color .14s;
-  -webkit-tap-highlight-color:transparent;position:relative;overflow:hidden;
+/* нижний бордер-градиент после stats */
+.hero-bottom-fade{
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,175,55,.2),rgba(212,175,55,.4),rgba(212,175,55,.2),transparent);
+  margin:0 16px 20px;
 }
-.q-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,var(--gold),transparent);
-  opacity:.4;
+
+/* ── QUICK ROW (горизонтальная лента 4 пилюли) ── */
+.q-row{
+  display:flex;gap:9px;padding:0 16px;margin-bottom:18px;
+  animation:fadeUp .35s .06s ease both;
+  overflow-x:auto;scrollbar-width:none;
 }
-.q-card:active{transform:scale(.96);background:var(--bg4)}
-.q-ico{
-  width:38px;height:38px;border-radius:12px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:17px;margin-bottom:10px;
+.q-row::-webkit-scrollbar{display:none}
+.q-pill{
+  flex:1;min-width:0;
+  background:var(--bg3);
   border:1px solid var(--border);
+  border-radius:16px;padding:14px 12px 12px;
+  cursor:pointer;
+  transition:transform .13s,background .13s,border-color .13s;
+  -webkit-tap-highlight-color:transparent;
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
 }
-.q-lbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}
-.q-val{font-size:18px;font-weight:800;color:var(--ink)}
+.q-pill::after{
+  content:'';position:absolute;bottom:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  opacity:0;transition:opacity .2s;
+}
+.q-pill:hover::after{opacity:.5}
+.q-pill:active{transform:scale(.94);background:var(--bg4);border-color:var(--border2)}
+.q-pill-ico{font-size:22px;line-height:1}
+.q-pill-val{font-size:14px;font-weight:800;color:var(--ink);font-family:'DM Mono',monospace;line-height:1}
+.q-pill-lbl{font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink3)}
 
 /* ── SECTION HEADER ── */
-.sh{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 10px}
+.sh{display:flex;align-items:center;justify-content:space-between;padding:4px 20px 12px}
 .sh-title{
   font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
   color:var(--gold);display:flex;align-items:center;gap:8px;
 }
-.sh-title::before{content:'';width:16px;height:1px;background:var(--gold);opacity:.5}
+.sh-title::before{content:'';width:14px;height:1px;background:var(--gold);opacity:.5}
 .sh-link{font-size:12px;font-weight:600;color:var(--gold2);cursor:pointer;opacity:.8}
 
 /* ── CARD ── */
@@ -189,6 +223,27 @@ body::before{
 }
 .card-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .card-title::before{content:'';width:12px;height:1px;background:var(--gold);opacity:.6}
+
+/* ── HOME SUMMARY ROW (новая строка с суммами до графика) ── */
+.home-sum-row{
+  display:flex;gap:10px;padding:0 16px;margin-bottom:12px;
+  animation:fadeUp .3s .04s ease both;
+}
+.hsr-card{
+  flex:1;background:var(--bg3);border:1px solid var(--border);
+  border-radius:16px;padding:13px 14px;position:relative;overflow:hidden;
+}
+.hsr-card.inc-card{border-color:rgba(76,175,132,.2)}
+.hsr-card.exp-card{border-color:rgba(212,175,55,.18)}
+.hsr-card::before{
+  content:'';position:absolute;top:0;left:0;width:3px;bottom:0;border-radius:0 2px 2px 0;
+}
+.hsr-card.inc-card::before{background:var(--grn2)}
+.hsr-card.exp-card::before{background:var(--gold)}
+.hsr-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
+.hsr-val{font-size:18px;font-weight:700;font-family:'DM Mono',monospace}
+.hsr-val.g{color:var(--grn2)}
+.hsr-val.r{color:var(--red2)}
 
 /* ── RING ── */
 .ring-wrap{position:relative;width:84px;height:84px;flex-shrink:0}
@@ -345,54 +400,129 @@ body::before{
 .btn-red{background:rgba(192,68,58,.15);border:1.5px solid rgba(192,68,58,.3);color:var(--red2)}
 .btn-ghost{background:var(--bg4);border:1.5px solid var(--border);color:var(--ink2)}
 
-/* ── GOALS ── */
-.goal-card{
-  background:var(--bg3);border:1px solid var(--border);
-  border-radius:var(--r);padding:20px;margin:0 16px 12px;
-  animation:fadeUp .2s ease both;position:relative;overflow:hidden;
-}
-.goal-card::before{content:'';position:absolute;top:0;left:0;width:3px;bottom:0;background:linear-gradient(180deg,var(--gold),var(--acc));border-radius:0 2px 2px 0}
-.goal-top{display:flex;align-items:center;gap:12px;margin-bottom:16px}
-.goal-ico{width:48px;height:48px;border-radius:16px;flex-shrink:0;background:var(--bg4);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:22px}
-.goal-name{font-size:15px;font-weight:700;color:var(--ink);font-family:'Playfair Display',serif}
-.goal-dead{font-size:11px;color:var(--ink3);margin-top:3px}
-.goal-pct-badge{margin-left:auto;font-size:11px;font-weight:700;padding:5px 11px;border-radius:20px;flex-shrink:0;background:var(--gold-dim);color:var(--gold2);border:1px solid rgba(212,175,55,.2)}
-.goal-amts{display:flex;align-items:baseline;gap:6px;margin-bottom:12px}
-.goal-curr{font-size:26px;font-weight:700;color:var(--gold2);font-family:'DM Mono',monospace}
-.goal-target{font-size:13px;color:var(--ink3);font-weight:500}
-.goal-bar-bg{height:5px;background:rgba(212,175,55,.08);border-radius:5px;overflow:hidden;margin-bottom:6px}
-.goal-bar{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--acc),var(--gold2))}
-.goal-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);margin-bottom:14px}
-.goal-acts{display:flex;gap:8px}
-.goal-add-btn{flex:1;padding:11px;border-radius:12px;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;background:linear-gradient(135deg,var(--acc),var(--gold2));color:#0C0A06;transition:all .14s}
-.goal-add-btn:active{transform:scale(.97)}
-.goal-del-btn{padding:11px 16px;border-radius:12px;border:1.5px solid var(--border);background:none;color:var(--ink3);cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600}
-.goal-del-btn:hover{border-color:var(--red);color:var(--red)}
-
-/* ── CREDITS ── */
-.cr-hero{
-  margin:6px 16px 14px;
-  background:linear-gradient(145deg,#120F07 0%,#1E1810 40%,#140F07 100%);
-  border:1px solid var(--border2);
-  border-radius:28px;padding:26px 24px;
+/* ── GOALS — REDESIGNED ── */
+/* Summary banner */
+.goal-summary-banner{
+  margin:6px 16px 16px;
+  background:linear-gradient(145deg,#0D1A14 0%,#0F2018 40%,#0B1810 100%);
+  border:1px solid rgba(76,175,132,.22);
+  border-radius:24px;padding:22px 20px;
   position:relative;overflow:hidden;animation:fadeUp .3s ease both;
 }
-.cr-hero::before{content:'';position:absolute;inset:0;border-radius:28px;background:linear-gradient(135deg,rgba(212,175,55,.06),transparent 60%);pointer-events:none}
+.goal-summary-banner::before{content:'';position:absolute;inset:0;border-radius:24px;background:linear-gradient(135deg,rgba(76,175,132,.06),transparent 60%);pointer-events:none}
+.gsb-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.gsb-lbl{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(76,175,132,.5)}
+.gsb-total{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;letter-spacing:-1px;line-height:1;background:linear-gradient(135deg,var(--grn),var(--grn2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gsb-stats{display:flex;background:rgba(0,0,0,.25);border-radius:12px;padding:12px 0;border:1px solid rgba(76,175,132,.1)}
+.gsb-s{flex:1;text-align:center}
+.gsb-s-val{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px;font-family:'DM Mono',monospace}
+.gsb-s-lbl{font-size:9px;color:var(--ink4);text-transform:uppercase;letter-spacing:.8px}
+.gsb-div{width:1px;background:rgba(76,175,132,.12)}
+
+/* Filter tabs for goals */
+.goal-filter-tabs{display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto;scrollbar-width:none}
+.goal-filter-tabs::-webkit-scrollbar{display:none}
+.gf-tab{padding:7px 16px;font-size:11px;font-weight:700;border-radius:20px;border:1.5px solid var(--border);background:var(--bg3);color:var(--ink3);cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;transition:all .13s;-webkit-tap-highlight-color:transparent}
+.gf-tab.active{border-color:rgba(76,175,132,.4);background:rgba(76,175,132,.08);color:var(--grn2)}
+
+.goal-card{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--r);padding:0;margin:0 16px 12px;
+  animation:fadeUp .2s ease both;position:relative;overflow:hidden;
+  transition:border-color .15s;
+}
+.goal-card:hover{border-color:var(--border2)}
+.goal-card.done-card{border-color:rgba(76,175,132,.2)}
+.goal-card-inner{padding:18px}
+.goal-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.4),transparent)}
+.goal-card.done-card::before{background:linear-gradient(90deg,transparent,rgba(76,175,132,.5),transparent)}
+
+.goal-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
+.goal-ico{width:46px;height:46px;border-radius:15px;flex-shrink:0;background:var(--bg4);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:21px;transition:transform .2s}
+.goal-card:hover .goal-ico{transform:scale(1.05)}
+.goal-head{flex:1;min-width:0}
+.goal-name{font-size:15px;font-weight:700;color:var(--ink);font-family:'Playfair Display',serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.goal-dead{font-size:11px;color:var(--ink3);margin-top:3px;display:flex;align-items:center;gap:4px}
+.goal-dead-urgent{color:var(--red2);font-weight:600}
+.goal-pct-badge{flex-shrink:0;font-size:12px;font-weight:800;padding:5px 12px;border-radius:20px;background:var(--gold-dim);color:var(--gold2);border:1px solid rgba(212,175,55,.2)}
+.goal-pct-badge.done{background:rgba(76,175,132,.12);color:var(--grn2);border-color:rgba(76,175,132,.25)}
+.goal-pct-badge.urgent{background:rgba(192,68,58,.1);color:var(--red2);border-color:rgba(192,68,58,.2)}
+
+.goal-prog-section{margin-bottom:14px}
+.goal-amts-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px}
+.goal-curr{font-size:22px;font-weight:700;color:var(--gold2);font-family:'DM Mono',monospace}
+.goal-target{font-size:12px;color:var(--ink3);font-weight:500}
+.goal-bar-bg{height:6px;background:rgba(212,175,55,.07);border-radius:6px;overflow:hidden;margin-bottom:6px;position:relative}
+.goal-bar{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--acc),var(--gold2));transition:width .9s cubic-bezier(.4,0,.2,1);position:relative}
+.goal-bar::after{content:'';position:absolute;top:0;right:0;bottom:0;width:16px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15));border-radius:6px}
+.goal-bar.done-bar{background:linear-gradient(90deg,var(--grn),var(--grn2))}
+.goal-bar-bg.urgent-bar .goal-bar{background:linear-gradient(90deg,var(--red),var(--red2))}
+.goal-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--ink3)}
+.goal-meta-left{display:flex;align-items:center;gap:6px}
+.goal-days-left{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;background:rgba(212,175,55,.08);color:var(--gold)}
+.goal-days-left.urgent{background:rgba(192,68,58,.1);color:var(--red2)}
+
+/* Weekly target */
+.goal-weekly{
+  background:rgba(212,175,55,.05);border:1px solid rgba(212,175,55,.1);
+  border-radius:10px;padding:10px 12px;margin-bottom:12px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.goal-weekly-lbl{font-size:10px;color:var(--ink3);letter-spacing:.5px}
+.goal-weekly-val{font-size:12px;font-weight:700;color:var(--gold2);font-family:'DM Mono',monospace}
+
+.goal-acts{display:flex;gap:8px}
+.goal-add-btn{flex:1;padding:11px;border-radius:12px;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;background:linear-gradient(135deg,var(--acc),var(--gold2));color:#0C0A06;transition:all .14s;-webkit-tap-highlight-color:transparent}
+.goal-add-btn:active{transform:scale(.97)}
+.goal-del-btn{padding:11px 14px;border-radius:12px;border:1.5px solid var(--border);background:none;color:var(--ink3);cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;-webkit-tap-highlight-color:transparent;transition:all .13s}
+.goal-del-btn:active{border-color:var(--red);color:var(--red)}
+.goal-edit-btn{padding:11px 14px;border-radius:12px;border:1.5px solid rgba(212,175,55,.2);background:var(--gold-dim);color:var(--gold2);cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;-webkit-tap-highlight-color:transparent}
+
+/* Confetti badge */
+.goal-done-banner{text-align:center;padding:10px;font-size:13px;font-weight:700;color:var(--grn2);letter-spacing:.5px}
+
+/* ── CREDITS — REDESIGNED ── */
+.cr-hero{
+  margin:6px 16px 16px;
+  background:linear-gradient(145deg,#120F07 0%,#1E1810 40%,#140F07 100%);
+  border:1px solid var(--border2);
+  border-radius:24px;padding:22px 20px;
+  position:relative;overflow:hidden;animation:fadeUp .3s ease both;
+}
+.cr-hero::before{content:'';position:absolute;inset:0;border-radius:24px;background:linear-gradient(135deg,rgba(212,175,55,.06),transparent 60%);pointer-events:none}
 .cr-hero-lbl{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(212,175,55,.45);margin-bottom:10px}
-.cr-hero-bal{font-family:'Playfair Display',serif;font-size:40px;font-weight:900;letter-spacing:-1.5px;margin-bottom:20px;line-height:1;background:linear-gradient(135deg,var(--gold),var(--gold3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.cr-hero-stats{display:flex;background:rgba(0,0,0,.3);border-radius:14px;padding:14px 0;border:1px solid var(--border)}
+.cr-hero-bal{font-family:'Playfair Display',serif;font-size:38px;font-weight:900;letter-spacing:-1.5px;margin-bottom:6px;line-height:1;background:linear-gradient(135deg,var(--gold),var(--gold3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.cr-hero-sub{font-size:11px;color:rgba(212,175,55,.4);margin-bottom:16px}
+.cr-hero-stats{display:flex;background:rgba(0,0,0,.3);border-radius:14px;padding:12px 0;border:1px solid var(--border)}
 .cr-hs{flex:1;text-align:center}
 .cr-hs-val{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px;font-family:'DM Mono',monospace}
-.cr-hs-lbl{font-size:9px;color:var(--ink4);text-transform:uppercase;letter-spacing:1px}
+.cr-hs-lbl{font-size:9px;color:var(--ink4);text-transform:uppercase;letter-spacing:.8px}
 .cr-hs-div{width:1px;background:var(--border)}
+
+/* Payoff timeline mini-bar */
+.cr-payoff-row{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid rgba(212,175,55,.08)}
+.cr-payoff-lbl{font-size:9px;color:var(--ink4);text-transform:uppercase;letter-spacing:1px}
+.cr-payoff-val{font-size:12px;font-weight:700;color:var(--gold2);font-family:'DM Mono',monospace}
+.cr-total-prog{margin-top:8px;height:3px;background:rgba(212,175,55,.08);border-radius:3px;overflow:hidden}
+.cr-total-prog-fill{height:100%;background:linear-gradient(90deg,var(--acc),var(--gold2));border-radius:3px;transition:width .9s ease}
+
+/* Sort tabs */
+.cr-sort-row{display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto;scrollbar-width:none}
+.cr-sort-row::-webkit-scrollbar{display:none}
+.cr-sort-btn{padding:7px 14px;font-size:10px;font-weight:700;border-radius:16px;border:1.5px solid var(--border);background:var(--bg3);color:var(--ink3);cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;transition:all .13s;-webkit-tap-highlight-color:transparent;letter-spacing:.3px}
+.cr-sort-btn.active{border-color:rgba(212,175,55,.35);background:var(--gold-dim);color:var(--gold2)}
 
 .cr-item{
   background:var(--bg3);border:1px solid var(--border);
   border-radius:var(--r);overflow:hidden;margin:0 16px 10px;
-  transition:border-color .14s;animation:fadeUp .2s ease both;
+  transition:border-color .14s,transform .14s;animation:fadeUp .2s ease both;
 }
+.cr-item:active{transform:scale(.995)}
 .cr-item:hover{border-color:var(--border2)}
-.cr-head{display:flex;align-items:center;gap:12px;padding:16px;cursor:pointer}
+.cr-item.overdue-item-border{border-color:rgba(192,68,58,.3)}
+.cr-item.paid-off{border-color:rgba(76,175,132,.2)}
+
+.cr-head{display:flex;align-items:center;gap:12px;padding:16px;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .cr-head-ico{width:44px;height:44px;border-radius:14px;flex-shrink:0;background:var(--gold-dim);border:1px solid rgba(212,175,55,.2);display:flex;align-items:center;justify-content:center;font-size:19px}
 .cr-head-mid{flex:1;min-width:0}
 .cr-hname{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -400,24 +530,46 @@ body::before{
 .cr-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;background:var(--bg4);color:var(--ink3);letter-spacing:.3px}
 .cr-tag.rate{background:var(--gold-dim);color:var(--gold2)}
 .cr-tag.overdue{background:rgba(192,68,58,.1);color:var(--red2)}
+.cr-tag.ok{background:rgba(76,175,132,.1);color:var(--grn2)}
 .cr-head-right{text-align:right;flex-shrink:0}
 .cr-debt-val{font-size:16px;font-weight:700;color:var(--gold2);font-family:'DM Mono',monospace}
 .cr-pct-lbl{font-size:10px;color:var(--ink3);margin-top:2px}
 .cr-chevron{font-size:10px;color:var(--ink3);display:block;margin-top:4px;transition:transform .2s}
 .cr-item.open .cr-chevron{transform:rotate(180deg)}
+
 .cr-progress{padding:0 16px 14px}
-.cr-prog-track{height:4px;background:rgba(212,175,55,.06);border-radius:4px;overflow:hidden;margin-bottom:6px}
-.cr-prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--acc),var(--gold2),var(--gold3));background-size:200%;animation:goldShimmer 3s linear infinite;transition:width .9s ease}
+.cr-prog-track{height:5px;background:rgba(212,175,55,.06);border-radius:5px;overflow:hidden;margin-bottom:6px;position:relative}
+.cr-prog-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--acc),var(--gold2),var(--gold3));background-size:200%;animation:goldShimmer 3s linear infinite;transition:width .9s ease}
 .cr-prog-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--ink3)}
-.cr-detail{display:none;border-top:1px solid var(--border);padding:16px}
+
+.cr-detail{display:none;border-top:1px solid var(--border);padding:16px;animation:fadeIn .15s ease}
 .cr-item.open .cr-detail{display:block}
 .cr-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
-.cr-cell{background:var(--gold-dim);border:1px solid rgba(212,175,55,.12);border-radius:12px;padding:12px}
+.cr-cell{background:var(--gold-dim);border:1px solid rgba(212,175,55,.1);border-radius:12px;padding:12px;transition:border-color .13s}
+.cr-cell:hover{border-color:rgba(212,175,55,.22)}
 .cr-cell-lbl{font-size:9px;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
 .cr-cell-val{font-size:15px;font-weight:700;color:var(--ink);font-family:'DM Mono',monospace}
+.cr-cell-val.warn{color:var(--red2)}
+
+/* Payoff forecast */
+.cr-forecast{background:rgba(0,0,0,.2);border:1px solid rgba(212,175,55,.08);border-radius:12px;padding:12px 14px;margin-bottom:12px}
+.cr-forecast-title{font-size:9px;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:8px}
+.cr-forecast-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(212,175,55,.05)}
+.cr-forecast-row:last-child{border-bottom:none}
+.cr-forecast-lbl{font-size:11px;color:var(--ink3)}
+.cr-forecast-val{font-size:11px;font-weight:700;color:var(--ink);font-family:'DM Mono',monospace}
+
+/* Next payment due chip */
+.cr-due-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.cr-due-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;border:1px solid rgba(212,175,55,.18);background:var(--gold-dim);color:var(--gold2)}
+.cr-due-chip.overdue{background:rgba(192,68,58,.1);border-color:rgba(192,68,58,.25);color:var(--red2)}
+.cr-due-chip.soon{background:rgba(212,175,55,.12);border-color:rgba(212,175,55,.3);color:var(--gold3)}
+
 .cr-detail-acts{display:flex;gap:8px}
-.cr-pay-btn{flex:1;padding:12px;border-radius:12px;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px;font-weight:800;background:linear-gradient(135deg,var(--acc),var(--gold2));color:#0C0A06;transition:all .14s}
-.cr-del-btn{padding:12px 16px;border-radius:12px;border:1.5px solid var(--border);background:none;color:var(--ink3);cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600}
+.cr-pay-btn{flex:1;padding:12px;border-radius:12px;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px;font-weight:800;background:linear-gradient(135deg,var(--acc),var(--gold2));color:#0C0A06;transition:all .14s;-webkit-tap-highlight-color:transparent}
+.cr-pay-btn:active{transform:scale(.97)}
+.cr-edit-btn{padding:12px 14px;border-radius:12px;border:1.5px solid rgba(212,175,55,.2);background:var(--gold-dim);color:var(--gold2);cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;-webkit-tap-highlight-color:transparent}
+.cr-del-btn{padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:none;color:var(--ink3);cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;-webkit-tap-highlight-color:transparent}
 
 /* ── RECURRING ── */
 .rp-item{
@@ -537,7 +689,14 @@ body::before{
 .tgl-knob{position:absolute;top:2px;left:2px;width:19px;height:19px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.4);transition:transform .2s}
 .tgl.on .tgl-knob{transform:translateX(19px)}
 
-/* ── EXPORT ── */
+/* ── EMOJI PICKER ── */
+.goal-emoji-opt{
+  width:40px;height:40px;border-radius:12px;border:1.5px solid var(--border);
+  background:var(--bg4);display:flex;align-items:center;justify-content:center;
+  font-size:20px;cursor:pointer;transition:all .12s;-webkit-tap-highlight-color:transparent;
+}
+.goal-emoji-opt.selected{border-color:rgba(76,175,132,.4);background:rgba(76,175,132,.1)}
+.goal-emoji-opt:active{transform:scale(.9)}
 .export-card{
   background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);
   padding:20px;margin:16px 16px 0;
@@ -560,59 +719,60 @@ body::before{
 .db-stat-val{font-size:22px;font-weight:800;color:var(--gold2);margin-bottom:3px;font-family:'Playfair Display',serif}
 .db-stat-lbl{font-size:9px;color:var(--ink3);text-transform:uppercase;letter-spacing:1px}
 
-/* ── BOTTOM NAV ── */
+/* ── BOTTOM NAV — FLOATING PILL ── */
 .bnav{
-  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
-  width:100%;max-width:430px;
-  height:calc(var(--nav) + var(--safe));
-  background:rgba(12,10,6,.95);backdrop-filter:blur(30px);
-  border-top:1px solid var(--border2);
-  display:flex;align-items:flex-start;padding:0 6px;
+  position:fixed;bottom:calc(var(--safe) + 14px);left:50%;transform:translateX(-50%);
+  width:calc(100% - 32px);max-width:390px;
+  height:64px;
+  background:rgba(20,16,8,.92);backdrop-filter:blur(30px);
+  border:1px solid rgba(212,175,55,.22);
+  border-radius:32px;
+  display:flex;align-items:center;padding:0 8px;
   z-index:200;
-}
-.bnav::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(212,175,55,.35),transparent);
+  box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 0 1px rgba(212,175,55,.08) inset,0 1px 0 rgba(212,175,55,.18) inset;
 }
 .ntab{
-  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
-  padding-top:10px;gap:5px;cursor:pointer;border:none;background:transparent;
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;cursor:pointer;border:none;background:transparent;
   color:var(--ink3);font-family:'Outfit',sans-serif;
-  font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;
-  transition:color .15s;border-radius:16px;
+  font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;
+  transition:color .18s;border-radius:22px;height:52px;
   -webkit-tap-highlight-color:transparent;
 }
-.ntab:active{background:rgba(212,175,55,.04)}
+.ntab:active{background:rgba(212,175,55,.06)}
 .ntab.active{color:var(--gold2)}
 .ntab-ico{
-  width:36px;height:28px;border-radius:10px;
+  width:32px;height:22px;border-radius:10px;
   display:flex;align-items:center;justify-content:center;
-  font-size:18px;transition:background .15s;position:relative;
+  font-size:17px;transition:all .18s;position:relative;
 }
-.ntab.active .ntab-ico{background:rgba(212,175,55,.1)}
+.ntab.active .ntab-ico{
+  background:rgba(212,175,55,.12);
+}
+/* активная точка под иконкой */
 .ntab.active .ntab-ico::after{
-  content:'';position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);
+  content:'';position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);
   width:0;height:2px;border-radius:1px;
   background:linear-gradient(90deg,var(--acc),var(--gold2));
   animation:navInd .25s ease forwards;
 }
+
+/* центральная кнопка ADD — особая */
 .ntab-add{
-  flex:0 0 64px;display:flex;flex-direction:column;align-items:center;
-  padding-top:4px;gap:4px;cursor:pointer;border:none;background:transparent;
-  font-family:'Outfit',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);
-  -webkit-tap-highlight-color:transparent;transition:color .15s;
+  flex:0 0 52px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;border:none;background:transparent;
+  -webkit-tap-highlight-color:transparent;transition:transform .12s;
+  margin:0 4px;
 }
-.ntab-add.active{color:var(--gold2)}
+.ntab-add:active{transform:scale(.9)}
 .add-circle{
-  width:50px;height:50px;border-radius:50%;margin-top:-10px;
-  background:linear-gradient(135deg,#9B6E2A,#E8C547,#9B6E2A);
+  width:48px;height:48px;border-radius:50%;
+  background:linear-gradient(145deg,#9B6E2A 0%,#E8C547 50%,#9B6E2A 100%);
   background-size:200%;animation:goldShimmer 3s linear infinite;
   display:flex;align-items:center;justify-content:center;
-  font-size:24px;font-weight:300;color:#0C0A06;
-  box-shadow:0 0 0 6px rgba(212,175,55,.12),0 6px 24px rgba(212,175,55,.35);
-  transition:transform .12s;
+  font-size:22px;color:#0C0A06;font-weight:300;
+  box-shadow:0 0 0 4px rgba(212,175,55,.15),0 4px 18px rgba(212,175,55,.4);
 }
-.ntab-add:active .add-circle{transform:scale(.91)}
 
 /* ── MORE PANEL ── */
 .more-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:500;display:none;animation:fadeIn .2s ease}
@@ -762,50 +922,62 @@ body::before{
     <!-- HOME -->
     <div id="sc-home" class="screen active">
 
-      <!-- HERO -->
+      <!-- HERO — новый дизайн без рамки-карточки -->
       <div class="hero">
-        <div class="hero-eyebrow"><span class="live-pip"></span>Текущий баланс</div>
-        <div class="hero-amount zero mono" id="hbal">0 CA$</div>
-        <div class="hero-sub" id="hsub">Добавьте первую операцию</div>
-        <div class="hero-stats">
-          <div class="hs">
-            <div class="hs-lbl">Доходы</div>
-            <div class="hs-val g" id="hInc">0</div>
+        <div class="hero-inner">
+          <div class="hero-greeting"><span class="live-pip"></span>Текущий баланс</div>
+          <div class="hero-center">
+            <span class="hero-amount zero" id="hbal">0 CA$</span>
+            <div class="hero-sub">
+              <span id="hsub">Добавьте первую операцию</span>
+            </div>
           </div>
-          <div class="hs-sep"></div>
-          <div class="hs">
-            <div class="hs-lbl">Расходы</div>
-            <div class="hs-val r" id="hExp">0</div>
+          <div class="hero-ornament">
+            <div class="hero-orn-line"></div>
+            <div class="hero-orn-diamond"></div>
+            <div class="hero-orn-line r"></div>
           </div>
-          <div class="hs-sep"></div>
-          <div class="hs">
-            <div class="hs-lbl">Копилка</div>
-            <div class="hs-val a" id="hPig">0</div>
+          <div class="hero-stats">
+            <div class="hs">
+              <div class="hs-lbl">Доходы</div>
+              <div class="hs-val g" id="hInc">0</div>
+            </div>
+            <div class="hs-sep"></div>
+            <div class="hs">
+              <div class="hs-lbl">Расходы</div>
+              <div class="hs-val r" id="hExp">0</div>
+            </div>
+            <div class="hs-sep"></div>
+            <div class="hs">
+              <div class="hs-lbl">Копилка</div>
+              <div class="hs-val a" id="hPig">0</div>
+            </div>
           </div>
         </div>
       </div>
+      <div class="hero-bottom-fade"></div>
 
-      <!-- QUICK GRID -->
-      <div class="q-grid">
-        <div class="q-card" onclick="show('budget')">
-          <div class="q-ico" style="background:rgba(212,175,55,.08)">📊</div>
-          <div class="q-lbl">Бюджет</div>
-          <div class="q-val" id="qBudget">—</div>
+      <!-- QUICK PILL ROW (4 пилюли в ряд) -->
+      <div class="q-row">
+        <div class="q-pill" onclick="show('budget')">
+          <div class="q-pill-ico">📊</div>
+          <div class="q-pill-val" id="qBudget">—</div>
+          <div class="q-pill-lbl">Бюджет</div>
         </div>
-        <div class="q-card" onclick="show('credits')">
-          <div class="q-ico" style="background:rgba(192,68,58,.1)">💳</div>
-          <div class="q-lbl">Долг</div>
-          <div class="q-val" id="qDebt">0</div>
+        <div class="q-pill" onclick="show('credits')">
+          <div class="q-pill-ico">💳</div>
+          <div class="q-pill-val" id="qDebt">0</div>
+          <div class="q-pill-lbl">Долг</div>
         </div>
-        <div class="q-card" onclick="show('recurring')">
-          <div class="q-ico" style="background:rgba(212,175,55,.08)">📅</div>
-          <div class="q-lbl">Платежей</div>
-          <div class="q-val" id="qRec">0</div>
+        <div class="q-pill" onclick="show('recurring')">
+          <div class="q-pill-ico">📅</div>
+          <div class="q-pill-val" id="qRec">0</div>
+          <div class="q-pill-lbl">Платежей</div>
         </div>
-        <div class="q-card" onclick="show('goals')">
-          <div class="q-ico" style="background:rgba(76,175,132,.1)">🎯</div>
-          <div class="q-lbl">Целей</div>
-          <div class="q-val" id="qGoals">0</div>
+        <div class="q-pill" onclick="show('goals')">
+          <div class="q-pill-ico">🎯</div>
+          <div class="q-pill-val" id="qGoals">0</div>
+          <div class="q-pill-lbl">Целей</div>
         </div>
       </div>
 
@@ -991,8 +1163,8 @@ body::before{
       <div class="add-sect">
         <div class="spacer"></div>
         <div class="form-card">
-          <div class="form-gold-line"></div>
-          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--gold2);margin-bottom:18px">Новая цель</div>
+          <div class="form-gold-line" style="background:linear-gradient(90deg,transparent,var(--grn2),transparent)"></div>
+          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--grn2);margin-bottom:18px">✦ Новая цель</div>
           <div class="g2">
             <div class="fgroup"><label class="flabel">Название</label><input id="gN" class="finput" placeholder="Отпуск…"></div>
             <div class="fgroup"><label class="flabel">Цель (CA$)</label><input type="number" id="gT" class="finput" placeholder="0"></div>
@@ -1003,19 +1175,53 @@ body::before{
           </div>
           <div class="fgroup">
             <label class="flabel">Иконка</label>
-            <select id="gE" class="finput">
-              <option value="🎯">🎯</option><option value="🏠">🏠</option><option value="🚗">🚗</option>
-              <option value="✈️">✈️</option><option value="💻">💻</option><option value="📚">📚</option>
-              <option value="💍">💍</option><option value="🎓">🎓</option><option value="🏋️">🏋️</option>
-              <option value="🎮">🎮</option><option value="🌊">🌊</option><option value="👶">👶</option>
-            </select>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px" id="goalEmojiPicker">
+              <span class="goal-emoji-opt selected" data-e="🎯" onclick="pickGoalEmoji(this)">🎯</span>
+              <span class="goal-emoji-opt" data-e="🏠" onclick="pickGoalEmoji(this)">🏠</span>
+              <span class="goal-emoji-opt" data-e="🚗" onclick="pickGoalEmoji(this)">🚗</span>
+              <span class="goal-emoji-opt" data-e="✈️" onclick="pickGoalEmoji(this)">✈️</span>
+              <span class="goal-emoji-opt" data-e="💻" onclick="pickGoalEmoji(this)">💻</span>
+              <span class="goal-emoji-opt" data-e="📚" onclick="pickGoalEmoji(this)">📚</span>
+              <span class="goal-emoji-opt" data-e="💍" onclick="pickGoalEmoji(this)">💍</span>
+              <span class="goal-emoji-opt" data-e="🎓" onclick="pickGoalEmoji(this)">🎓</span>
+              <span class="goal-emoji-opt" data-e="🏋️" onclick="pickGoalEmoji(this)">🏋️</span>
+              <span class="goal-emoji-opt" data-e="🎮" onclick="pickGoalEmoji(this)">🎮</span>
+              <span class="goal-emoji-opt" data-e="🌊" onclick="pickGoalEmoji(this)">🌊</span>
+              <span class="goal-emoji-opt" data-e="👶" onclick="pickGoalEmoji(this)">👶</span>
+              <span class="goal-emoji-opt" data-e="💰" onclick="pickGoalEmoji(this)">💰</span>
+              <span class="goal-emoji-opt" data-e="🏖️" onclick="pickGoalEmoji(this)">🏖️</span>
+            </div>
+            <input type="hidden" id="gE" value="🎯">
           </div>
-          <button class="btn-prim btn-gold" onclick="addGoal()">✦ Создать цель</button>
+          <button class="btn-prim btn-grn" onclick="addGoal()">✦ Создать цель</button>
         </div>
       </div>
-      <div class="sh">
-        <div class="sh-title">Мои цели</div>
-        <span style="font-size:12px;color:var(--ink3)" id="goalCnt"></span>
+      <!-- Summary -->
+      <div class="goal-summary-banner" id="goalSummaryBanner" style="display:none">
+        <div class="gsb-top">
+          <div>
+            <div class="gsb-lbl">Накоплено всего</div>
+            <div class="gsb-total" id="goalTotalSaved">0 CA$</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:9px;color:var(--ink4);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Прогресс</div>
+            <div style="font-size:22px;font-weight:800;color:var(--grn2);font-family:'DM Mono',monospace" id="goalOverallPct">0%</div>
+          </div>
+        </div>
+        <div class="gsb-stats">
+          <div class="gsb-s"><div class="gsb-s-val" id="goalCntActive">0</div><div class="gsb-s-lbl">Активных</div></div>
+          <div class="gsb-div"></div>
+          <div class="gsb-s"><div class="gsb-s-val" id="goalCntDone">0</div><div class="gsb-s-lbl">Достигнуто</div></div>
+          <div class="gsb-div"></div>
+          <div class="gsb-s"><div class="gsb-s-val" id="goalTotalTarget">0</div><div class="gsb-s-lbl">Общая цель</div></div>
+        </div>
+      </div>
+      <!-- Filter -->
+      <div class="goal-filter-tabs" id="goalFilterTabs">
+        <button class="gf-tab active" onclick="setGoalFilter('all',this)">Все</button>
+        <button class="gf-tab" onclick="setGoalFilter('active',this)">Активные</button>
+        <button class="gf-tab" onclick="setGoalFilter('done',this)">Достигнуты</button>
+        <button class="gf-tab" onclick="setGoalFilter('urgent',this)">Скоро дедлайн</button>
       </div>
       <div id="goalsList"></div>
       <div class="gap"></div>
@@ -1027,7 +1233,7 @@ body::before{
       <div class="add-sect">
         <div class="form-card">
           <div class="form-gold-line"></div>
-          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--gold2);margin-bottom:18px">Новый кредит</div>
+          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--gold2);margin-bottom:18px">💳 Новый кредит</div>
           <div class="g2">
             <div class="fgroup"><label class="flabel">Название</label><input id="cN" class="finput" placeholder="Ипотека…"></div>
             <div class="fgroup"><label class="flabel">Банк</label><input id="cBk" class="finput" placeholder="TD…"></div>
@@ -1042,6 +1248,13 @@ body::before{
           </div>
           <button class="btn-prim btn-acc" onclick="addCredit()">💳 Добавить</button>
         </div>
+      </div>
+      <!-- Sort row -->
+      <div class="cr-sort-row">
+        <button class="cr-sort-btn active" onclick="setCrSort('debt',this)">По сумме ↓</button>
+        <button class="cr-sort-btn" onclick="setCrSort('rate',this)">По ставке ↓</button>
+        <button class="cr-sort-btn" onclick="setCrSort('due',this)">По дате</button>
+        <button class="cr-sort-btn" onclick="setCrSort('pct',this)">По прогрессу</button>
       </div>
       <div id="creditList"></div>
       <div class="gap"></div>
@@ -1213,7 +1426,7 @@ body::before{
   </div>
 </div>
 
-<!-- BOTTOM NAV -->
+<!-- BOTTOM NAV — FLOATING PILL -->
 <nav class="bnav">
   <button class="ntab active" id="tab-home" onclick="show('home')">
     <div class="ntab-ico">🏠</div><span>Главная</span>
@@ -1221,8 +1434,8 @@ body::before{
   <button class="ntab" id="tab-txs" onclick="show('txs')">
     <div class="ntab-ico">📋</div><span>Операции</span>
   </button>
-  <button class="ntab-add" id="tab-add" onclick="show('add')">
-    <div class="add-circle">＋</div><span>Добавить</span>
+  <button class="ntab-add" id="tab-add" onclick="show('add')" title="Добавить">
+    <div class="add-circle">＋</div>
   </button>
   <button class="ntab" id="tab-piggy" onclick="show('piggy')">
     <div class="ntab-ico">🪙</div><span>Копилка</span>
@@ -1384,7 +1597,7 @@ function renderHome(){
   document.getElementById('monthLbl').textContent=n.toLocaleDateString('ru-RU',{month:'long',year:'numeric'});
 
   var hb=document.getElementById('hbal');
-  if(hb){hb.textContent=fmt(bal);hb.className='hero-amount mono '+(bal>0?'pos':bal<0?'neg':'zero');}
+  if(hb){hb.textContent=fmt(bal);hb.className='hero-amount '+(bal>0?'pos':bal<0?'neg':'zero');}
   document.getElementById('hsub').textContent=bal>0?'Заработано '+fmt(tInc)+' всего':bal<0?'Перерасход на '+fmt(Math.abs(bal)):'Добавьте первую операцию';
   document.getElementById('hInc').textContent=fmtK(mInc);
   document.getElementById('hExp').textContent=fmtK(mExp);
@@ -1527,9 +1740,23 @@ function delI(id){S.income=S.income.filter(function(i){return i.id!==id;});sv();
 function delE(id){S.expense=S.expense.filter(function(i){return i.id!==id;});sv();renderHome();if(cur==='txs')renderTxs();}
 
 // ── GOALS ──
+var _goalFilter='all';
+var _selGoalEmoji='🎯';
+function pickGoalEmoji(el){
+  _selGoalEmoji=el.dataset.e;
+  document.querySelectorAll('.goal-emoji-opt').forEach(function(e){e.classList.remove('selected');});
+  el.classList.add('selected');
+  document.getElementById('gE').value=_selGoalEmoji;
+}
+function setGoalFilter(f,el){
+  _goalFilter=f;
+  document.querySelectorAll('.gf-tab').forEach(function(b){b.classList.remove('active');});
+  if(el)el.classList.add('active');
+  renderGoals();
+}
 function addGoal(){
   var n=document.getElementById('gN').value.trim();var t=parseFloat(document.getElementById('gT').value);
-  var c=parseFloat(document.getElementById('gC').value)||0;var e=document.getElementById('gE').value;var dl=document.getElementById('gDL').value;
+  var c=parseFloat(document.getElementById('gC').value)||0;var e=document.getElementById('gE').value||_selGoalEmoji;var dl=document.getElementById('gDL').value;
   if(!n||!t||t<=0){pulse('gT');return;}
   S.goals.push({id:Date.now(),name:n,target:t,current:c,emoji:e,deadline:dl});
   sv();renderGoals();
@@ -1549,17 +1776,79 @@ function depositGoal(id){
 }
 function deleteGoal(id){openConfirm('Удалить цель?','',function(){S.goals=S.goals.filter(function(g){return g.id!==id;});sv();renderGoals();},'Удалить',null,null);}
 function renderGoals(){
-  document.getElementById('goalCnt').textContent=S.goals.length?'· '+S.goals.length:'';
+  // Summary
+  var banner=document.getElementById('goalSummaryBanner');
+  var totalSaved=S.goals.reduce(function(s,g){return s+g.current;},0);
+  var totalTarget=S.goals.reduce(function(s,g){return s+g.target;},0);
+  var done=S.goals.filter(function(g){return g.current>=g.target;});
+  var active=S.goals.filter(function(g){return g.current<g.target;});
+  if(banner){
+    banner.style.display=S.goals.length?'':'none';
+    var pct=totalTarget>0?Math.round(totalSaved/totalTarget*100):0;
+    var el1=document.getElementById('goalTotalSaved');if(el1)el1.textContent=fmt(totalSaved);
+    var el2=document.getElementById('goalOverallPct');if(el2)el2.textContent=pct+'%';
+    var el3=document.getElementById('goalCntActive');if(el3)el3.textContent=active.length;
+    var el4=document.getElementById('goalCntDone');if(el4)el4.textContent=done.length;
+    var el5=document.getElementById('goalTotalTarget');if(el5)el5.textContent=fmtK(totalTarget)+' CA$';
+  }
   var el=document.getElementById('goalsList');
-  if(!S.goals.length){el.innerHTML='<div class="empty"><div class="empty-ico">🎯</div><div class="empty-title">Нет целей</div><div class="empty-sub">Создайте первую цель</div></div>';return;}
-  el.innerHTML=S.goals.map(function(g,idx){
+  var today=new Date();today.setHours(0,0,0,0);
+  var filtered=S.goals.filter(function(g){
+    var isDone=g.current>=g.target;
+    if(_goalFilter==='active')return !isDone;
+    if(_goalFilter==='done')return isDone;
+    if(_goalFilter==='urgent'){
+      if(isDone)return false;
+      if(!g.deadline)return false;
+      var dl=new Date(g.deadline);dl.setHours(0,0,0,0);
+      var diff=Math.round((dl-today)/(1000*86400));
+      return diff<=30&&diff>=0;
+    }
+    return true;
+  });
+  if(!filtered.length){
+    el.innerHTML='<div class="empty"><div class="empty-ico">🎯</div><div class="empty-title">'+(_goalFilter==='all'?'Нет целей':'Нет целей в этой категории')+'</div><div class="empty-sub">'+(_goalFilter==='all'?'Создайте первую цель':'Попробуйте другой фильтр')+'</div></div>';
+    return;
+  }
+  el.innerHTML=filtered.map(function(g,idx){
     var p=Math.min(100,Math.round(g.current/g.target*100));var done=p>=100;
-    return '<div class="goal-card" style="animation-delay:'+(idx*.05)+'s">'+
-      '<div class="goal-top"><div class="goal-ico">'+g.emoji+'</div><div><div class="goal-name">'+esc(g.name)+'</div><div class="goal-dead">'+(g.deadline?'до '+fD(g.deadline):'без срока')+'</div></div><div class="goal-pct-badge">'+p+'%</div></div>'+
-      '<div class="goal-amts"><div class="goal-curr">'+fmt(g.current)+'</div><div class="goal-target">/ '+fmt(g.target)+'</div></div>'+
-      '<div class="goal-bar-bg"><div class="goal-bar" style="width:'+p+'%"></div></div>'+
-      '<div class="goal-meta"><span>'+(done?'🎉 Достигнута!':'осталось '+fmt(g.target-g.current))+'</span><span>'+p+'%</span></div>'+
-      '<div class="goal-acts">'+(done?'':'<button class="goal-add-btn" onclick="depositGoal('+g.id+')">+ Пополнить</button>')+'<button class="goal-del-btn" onclick="deleteGoal('+g.id+')">Удалить</button></div>'+
+    var daysLeft=null;var urgentDays=false;
+    if(g.deadline&&!done){
+      var dl=new Date(g.deadline);dl.setHours(0,0,0,0);
+      daysLeft=Math.round((dl-today)/(1000*86400));
+      urgentDays=daysLeft<=14&&daysLeft>=0;
+    }
+    // Weekly target calc
+    var weeklyNeed='';
+    if(!done&&g.deadline&&daysLeft!==null&&daysLeft>0){
+      var weeks=Math.max(1,Math.ceil(daysLeft/7));
+      var need=(g.target-g.current)/weeks;
+      weeklyNeed=fmt(need)+' / нед.';
+    }
+    var pctBadgeClass=done?'done':urgentDays?'urgent':'';
+    var isUrgentBar=urgentDays&&!done;
+    return '<div class="goal-card'+(done?' done-card':'')+(urgentDays?' urgent-card':'')+'" style="animation-delay:'+(idx*.05)+'s">'+
+      '<div class="goal-card-inner">'+
+      '<div class="goal-top">'+
+        '<div class="goal-ico">'+g.emoji+'</div>'+
+        '<div class="goal-head">'+
+          '<div class="goal-name">'+esc(g.name)+'</div>'+
+          '<div class="goal-dead">'+(g.deadline?'📅 до '+fD(g.deadline)+(daysLeft!==null?'&nbsp;<span class="goal-days-left'+(urgentDays?' urgent':'')+'">'+
+            (daysLeft<0?'Просрочен':daysLeft===0?'Сегодня!':daysLeft+' дн.')+'</span>':''):'без срока')+'</div>'+
+        '</div>'+
+        '<div class="goal-pct-badge '+pctBadgeClass+'">'+p+'%</div>'+
+      '</div>'+
+      '<div class="goal-prog-section">'+
+        '<div class="goal-amts-row"><div class="goal-curr">'+fmt(g.current)+'</div><div class="goal-target">из '+fmt(g.target)+'</div></div>'+
+        '<div class="goal-bar-bg'+(isUrgentBar?' urgent-bar':'')+'"><div class="goal-bar'+(done?' done-bar':'')+(isUrgentBar?' urgent-bar-fill':'')+'" style="width:'+p+'%"></div></div>'+
+        '<div class="goal-meta"><span class="goal-meta-left">'+(done?'🎉 Достигнута!':'осталось '+fmt(g.target-g.current))+'</span><span>'+p+'%</span></div>'+
+      '</div>'+
+      (weeklyNeed?'<div class="goal-weekly"><span class="goal-weekly-lbl">📈 Нужно в неделю</span><span class="goal-weekly-val">'+weeklyNeed+'</span></div>':'')+
+      '<div class="goal-acts">'+
+        (done?'<div class="goal-done-banner">🏆 Цель достигнута! Отличная работа!</div>':'<button class="goal-add-btn" onclick="depositGoal('+g.id+')">+ Пополнить</button>')+
+        '<button class="goal-del-btn" onclick="deleteGoal('+g.id+')">✕</button>'+
+      '</div>'+
+      '</div>'+
     '</div>';
   }).join('');
 }
@@ -1578,6 +1867,13 @@ function fireConfetti(){
 }
 
 // ── CREDITS ──
+var _crSort='debt';
+function setCrSort(s,el){
+  _crSort=s;
+  document.querySelectorAll('.cr-sort-btn').forEach(function(b){b.classList.remove('active');});
+  if(el)el.classList.add('active');
+  renderCredits();
+}
 function addCredit(){
   var n=document.getElementById('cN').value.trim();var bk=document.getElementById('cBk').value.trim();
   var t=parseFloat(document.getElementById('cT').value);var r=parseFloat(document.getElementById('cR').value)||0;
@@ -1608,18 +1904,101 @@ function renderCredits(){
   var pct=orig>0?Math.round((orig-debt)/orig*100):0;
   var ICONS={ипотека:'🏠',авто:'🚗',карта:'💳',телефон:'📱',образование:'🎓',потреб:'💰'};
   function ico(n){var l=(n||'').toLowerCase();for(var k in ICONS)if(l.indexOf(k)>=0)return ICONS[k];return '💳';}
-  el.innerHTML='<div class="cr-hero"><div class="cr-hero-lbl">Общий долг</div><div class="cr-hero-bal">'+fmt(debt)+'</div><div class="cr-hero-stats"><div class="cr-hs"><div class="cr-hs-val">'+(pay?fmt(pay):'—')+'</div><div class="cr-hs-lbl">Платёж/мес</div></div><div class="cr-hs-div"></div><div class="cr-hs"><div class="cr-hs-val">'+fmt(intM)+'</div><div class="cr-hs-lbl">% в мес</div></div><div class="cr-hs-div"></div><div class="cr-hs"><div class="cr-hs-val">'+pct+'%</div><div class="cr-hs-lbl">Погашено</div></div></div></div>'+
-  (S.credits.length?S.credits.map(function(c,idx){
+
+  // Sort credits
+  var sorted=[].concat(S.credits);
+  if(_crSort==='debt')sorted.sort(function(a,b){return b.total-a.total;});
+  else if(_crSort==='rate')sorted.sort(function(a,b){return b.rate-a.rate;});
+  else if(_crSort==='due')sorted.sort(function(a,b){return (a.due||'9999')>(b.due||'9999')?1:-1;});
+  else if(_crSort==='pct'){sorted.sort(function(a,b){var pa=(a.orig||a.total)>0?((a.orig||a.total)-a.total)/(a.orig||a.total):0;var pb=(b.orig||b.total)>0?((b.orig||b.total)-b.total)/(b.orig||b.total):0;return pb-pa;});}
+
+  var today=new Date();today.setHours(0,0,0,0);
+
+  // Forecast months to payoff (simplified)
+  function monthsToPayoff(c){
+    if(!c.pay||c.pay<=0)return null;
+    var intPerMonth=c.rate/100/12;if(intPerMonth===0)return Math.ceil(c.total/c.pay);
+    if(c.pay<=c.total*intPerMonth)return null;
+    return Math.ceil(-Math.log(1-(c.total*intPerMonth/c.pay))/Math.log(1+intPerMonth));
+  }
+
+  var heroHTML='<div class="cr-hero">'+
+    '<div class="cr-hero-lbl">Общий долг</div>'+
+    '<div class="cr-hero-bal">'+fmt(debt)+'</div>'+
+    '<div class="cr-hero-sub">'+S.credits.length+' кредит'+(S.credits.length===1?'':'ов'+(S.credits.length>=2&&S.credits.length<=4?'а':''))+' · '+pct+'% погашено</div>'+
+    '<div class="cr-hero-stats">'+
+      '<div class="cr-hs"><div class="cr-hs-val">'+(pay?fmt(pay):'—')+'</div><div class="cr-hs-lbl">Платёж/мес</div></div>'+
+      '<div class="cr-hs-div"></div>'+
+      '<div class="cr-hs"><div class="cr-hs-val">'+fmt(intM)+'</div><div class="cr-hs-lbl">% в мес</div></div>'+
+      '<div class="cr-hs-div"></div>'+
+      '<div class="cr-hs"><div class="cr-hs-val">'+pct+'%</div><div class="cr-hs-lbl">Погашено</div></div>'+
+    '</div>'+
+    '<div class="cr-total-prog"><div class="cr-total-prog-fill" style="width:'+pct+'%"></div></div>'+
+    '<div class="cr-payoff-row">'+
+      '<span class="cr-payoff-lbl">Уплачено процентов/мес</span>'+
+      '<span class="cr-payoff-val">'+fmt(intM)+'</span>'+
+    '</div>'+
+  '</div>';
+
+  var itemsHTML=sorted.length?sorted.map(function(c,idx){
     var o=c.orig||c.total;var paid=o-c.total;var pp=o>0?Math.round(paid/o*100):0;
-    var today=new Date();today.setHours(0,0,0,0);
     var due=c.due?new Date(c.due):null;if(due)due.setHours(0,0,0,0);
     var overdue=due&&due<today;
-    return '<div class="cr-item" id="cr-'+c.id+'" style="animation-delay:'+(idx*.05)+'s">'+
-      '<div class="cr-head" onclick="toggleCredit('+c.id+')"><div class="cr-head-ico">'+ico(c.name)+'</div><div class="cr-head-mid"><div class="cr-hname">'+esc(c.name)+'</div><div class="cr-htags">'+(c.bank?'<span class="cr-tag">'+esc(c.bank)+'</span>':'')+(c.rate?'<span class="cr-tag rate">'+c.rate+'%</span>':'')+(overdue?'<span class="cr-tag overdue">Просрочен</span>':'')+'</div></div><div class="cr-head-right"><div class="cr-debt-val">'+fmt(c.total)+'</div><div class="cr-pct-lbl">'+pp+'% погашено</div><span class="cr-chevron">▾</span></div></div>'+
-      '<div class="cr-progress"><div class="cr-prog-track"><div class="cr-prog-fill" style="width:'+pp+'%"></div></div><div class="cr-prog-meta"><span>'+fmt(paid)+' погашено</span><span>из '+fmt(o)+'</span></div></div>'+
-      '<div class="cr-detail"><div class="cr-detail-grid"><div class="cr-cell"><div class="cr-cell-lbl">Платёж/мес</div><div class="cr-cell-val">'+(c.pay?fmt(c.pay):'—')+'</div></div><div class="cr-cell"><div class="cr-cell-lbl">% в мес</div><div class="cr-cell-val">'+(c.rate?fmt(Math.round(c.total*(c.rate/100/12))):'—')+'</div></div><div class="cr-cell"><div class="cr-cell-lbl">Остаток</div><div class="cr-cell-val">'+fmt(c.total)+'</div></div><div class="cr-cell"><div class="cr-cell-lbl">Изначально</div><div class="cr-cell-val">'+fmt(o)+'</div></div></div><div class="cr-detail-acts"><button class="cr-pay-btn" onclick="payCredit('+c.id+')">💸 Внести платёж</button><button class="cr-del-btn" onclick="deleteCredit('+c.id+')">Удалить</button></div></div>'+
+    var daysUntilDue=due?Math.round((due-today)/(1000*86400)):null;
+    var soonDue=daysUntilDue!==null&&daysUntilDue<=7&&daysUntilDue>=0;
+    var months=monthsToPayoff(c);
+    var intPerMonth=c.total>0&&c.rate>0?Math.round(c.total*(c.rate/100/12)):0;
+    var dueChip='';
+    if(c.due){
+      var chipClass=overdue?'overdue':soonDue?'soon':'';
+      var chipTxt=overdue?'⚠️ Просрочен '+Math.abs(daysUntilDue)+' дн.':daysUntilDue===0?'⏰ Сегодня!':soonDue?'⏳ Через '+daysUntilDue+' дн.':'📅 '+fD(c.due);
+      dueChip='<div class="cr-due-chip '+chipClass+'">'+chipTxt+'</div>';
+    }
+    return '<div class="cr-item'+(overdue?' overdue-item-border':'')+(c.total<=0?' paid-off':'')+'" id="cr-'+c.id+'" style="animation-delay:'+(idx*.05)+'s">'+
+      '<div class="cr-head" onclick="toggleCredit('+c.id+')">'+
+        '<div class="cr-head-ico">'+ico(c.name)+'</div>'+
+        '<div class="cr-head-mid">'+
+          '<div class="cr-hname">'+esc(c.name)+'</div>'+
+          '<div class="cr-htags">'+
+            (c.bank?'<span class="cr-tag">'+esc(c.bank)+'</span>':'')+
+            (c.rate?'<span class="cr-tag rate">'+c.rate+'%</span>':'')+
+            (overdue?'<span class="cr-tag overdue">Просрочен</span>':'')+
+            (c.total<=0?'<span class="cr-tag ok">✓ Погашен</span>':'')+
+          '</div>'+
+        '</div>'+
+        '<div class="cr-head-right">'+
+          '<div class="cr-debt-val">'+fmt(c.total)+'</div>'+
+          '<div class="cr-pct-lbl">'+pp+'% погашено</div>'+
+          '<span class="cr-chevron">▾</span>'+
+        '</div>'+
+      '</div>'+
+      '<div class="cr-progress">'+
+        '<div class="cr-prog-track"><div class="cr-prog-fill" style="width:'+pp+'%"></div></div>'+
+        '<div class="cr-prog-meta"><span>'+fmt(paid)+' погашено</span><span>из '+fmt(o)+'</span></div>'+
+      '</div>'+
+      '<div class="cr-detail">'+
+        (dueChip?'<div class="cr-due-row">'+dueChip+'</div>':'')+
+        '<div class="cr-detail-grid">'+
+          '<div class="cr-cell"><div class="cr-cell-lbl">Платёж/мес</div><div class="cr-cell-val">'+(c.pay?fmt(c.pay):'—')+'</div></div>'+
+          '<div class="cr-cell"><div class="cr-cell-lbl">% в мес</div><div class="cr-cell-val'+(intPerMonth>0?' warn':'')+'">'+fmt(intPerMonth)+'</div></div>'+
+          '<div class="cr-cell"><div class="cr-cell-lbl">Остаток</div><div class="cr-cell-val">'+fmt(c.total)+'</div></div>'+
+          '<div class="cr-cell"><div class="cr-cell-lbl">Изначально</div><div class="cr-cell-val">'+fmt(o)+'</div></div>'+
+        '</div>'+
+        '<div class="cr-forecast">'+
+          '<div class="cr-forecast-title">📊 Прогноз погашения</div>'+
+          '<div class="cr-forecast-row"><span class="cr-forecast-lbl">Месяцев до погашения</span><span class="cr-forecast-val">'+(months?months+' мес.':'н/д')+'</span></div>'+
+          '<div class="cr-forecast-row"><span class="cr-forecast-lbl">Переплата процентов</span><span class="cr-forecast-val">'+(months&&intPerMonth?fmt(months*intPerMonth):'н/д')+'</span></div>'+
+          '<div class="cr-forecast-row"><span class="cr-forecast-lbl">Дата погашения</span><span class="cr-forecast-val">'+(months?new Date(new Date().setMonth(new Date().getMonth()+months)).toLocaleDateString('ru-RU',{month:'short',year:'numeric'}):'н/д')+'</span></div>'+
+        '</div>'+
+        '<div class="cr-detail-acts">'+
+          '<button class="cr-pay-btn" onclick="payCredit('+c.id+')">💸 Внести платёж</button>'+
+          '<button class="cr-del-btn" onclick="deleteCredit('+c.id+')">✕</button>'+
+        '</div>'+
+      '</div>'+
     '</div>';
-  }).join(''):'<div class="empty"><div class="empty-ico">💳</div><div class="empty-title">Нет кредитов</div></div>');
+  }).join(''):'<div class="empty"><div class="empty-ico">💳</div><div class="empty-title">Нет кредитов</div><div class="empty-sub">Добавьте первый кредит выше</div></div>';
+
+  el.innerHTML=heroHTML+itemsHTML;
 }
 
 // ── RECURRING ──
