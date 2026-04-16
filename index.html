@@ -91,113 +91,185 @@ body::before{
 /* ── GOLD DIVIDER ── */
 .gold-div{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 20px;opacity:.35}
 
-/* ══════════════════════════════
-   HOME — ПОЛНОСТЬЮ НОВЫЙ ДИЗАЙН
-   ══════════════════════════════ */
+/* ══════════════════════════════════════
+   HOME — НОВЫЙ ДИЗАЙН (ПОЛНАЯ ЗАМЕНА)
+   ══════════════════════════════════════ */
 
-/* ── HERO FULL-WIDTH BANNER ── */
-.hero{
-  position:relative;overflow:hidden;
-  margin:0 0 0 0;
-  padding:28px 24px 0;
-  animation:fadeUp .35s ease both;
-  background:transparent;
+/* ── HEADER TOP BAR ── */
+.home-topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 20px 4px;
+  animation:fadeIn .3s ease both;
 }
-/* золотое сияние сверху */
-.hero::before{
-  content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);
-  width:340px;height:340px;border-radius:50%;
-  background:radial-gradient(circle,rgba(212,175,55,.13) 0%,transparent 68%);
-  pointer-events:none;z-index:0;
+.home-brand{
+  font-family:'Playfair Display',serif;
+  font-size:20px;font-weight:700;
+  letter-spacing:-.5px;color:var(--ink);
 }
-.hero-inner{position:relative;z-index:1}
-
-/* дата + приветствие */
-.hero-greeting{
-  font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;
-  color:var(--ink3);margin-bottom:6px;display:flex;align-items:center;gap:8px;
+.home-brand span{color:var(--gold2)}
+.home-date-badge{
+  font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  color:var(--ink3);background:var(--bg3);border:1px solid var(--border);
+  border-radius:20px;padding:5px 12px;
+  display:flex;align-items:center;gap:5px;
 }
 .live-pip{width:5px;height:5px;border-radius:50%;background:var(--grn2);animation:goldPulse 2.2s infinite;flex-shrink:0}
 
-/* огромная сумма по центру */
-.hero-center{text-align:center;padding:10px 0 24px}
-.hero-amount{
-  font-family:'Playfair Display',serif;
-  font-size:62px;font-weight:900;line-height:1;letter-spacing:-3px;
-  display:block;margin-bottom:8px;
+/* ── BALANCE CARD (новая горизонтальная карточка) ── */
+.bal-card{
+  margin:10px 16px 14px;
+  border-radius:28px;
+  background:linear-gradient(135deg,#1A1508 0%,#241C0D 50%,#181207 100%);
+  border:1px solid rgba(212,175,55,.28);
+  position:relative;overflow:hidden;
+  padding:22px 22px 20px;
+  animation:fadeUp .3s ease both;
 }
-.hero-amount.pos{
-  background:linear-gradient(160deg,var(--gold3) 0%,var(--gold2) 40%,var(--acc2) 100%);
+.bal-card::before{
+  content:'';position:absolute;
+  top:-60px;right:-40px;width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(212,175,55,.10) 0%,transparent 70%);
+  pointer-events:none;
+}
+.bal-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,175,55,.4),transparent);
+}
+.bal-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px}
+.bal-card-label{
+  font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;
+  color:rgba(212,175,55,.5);margin-bottom:8px;
+}
+.bal-card-amount{
+  font-family:'Playfair Display',serif;
+  font-size:44px;font-weight:900;line-height:1;letter-spacing:-2px;
+}
+.bal-card-amount.pos{
+  background:linear-gradient(135deg,#FFF0A0,var(--gold2) 50%,var(--acc2));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
-.hero-amount.neg{color:var(--red2)}
-.hero-amount.zero{color:var(--ink3)}
-.hero-sub{
-  font-size:12px;color:var(--ink3);font-weight:400;letter-spacing:.3px;
-  display:inline-flex;align-items:center;gap:6px;
+.bal-card-amount.neg{color:var(--red2);-webkit-text-fill-color:var(--red2)}
+.bal-card-amount.zero{color:var(--ink3);-webkit-text-fill-color:var(--ink3)}
+.bal-card-sub{
+  font-size:11px;color:rgba(212,175,55,.45);margin-top:5px;font-weight:500;
 }
-.hero-sub-dot{width:3px;height:3px;background:var(--gold);border-radius:50%;opacity:.5}
+.bal-card-badge{
+  background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.18);
+  border-radius:14px;padding:8px 12px;text-align:right;flex-shrink:0;margin-left:12px;
+}
+.bal-card-badge-lbl{font-size:9px;color:var(--ink4);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;font-weight:700}
+.bal-card-badge-val{font-size:13px;font-weight:800;font-family:'DM Mono',monospace;color:var(--gold2)}
 
-/* горизонтальная линия-разделитель с орнаментом */
-.hero-ornament{
-  display:flex;align-items:center;gap:10px;
-  padding:0 0 20px;
+.bal-card-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
 }
-.hero-orn-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.3))}
-.hero-orn-line.r{background:linear-gradient(270deg,transparent,rgba(212,175,55,.3))}
-.hero-orn-diamond{
-  width:7px;height:7px;background:var(--gold);
-  transform:rotate(45deg);opacity:.6;flex-shrink:0;
-}
-
-/* три стата под разделителем */
-.hero-stats{
-  display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;
-  padding:0 4px 24px;
-}
-.hs{text-align:center;padding:0 8px}
-.hs-sep{background:rgba(212,175,55,.15);margin:4px 0}
-.hs-lbl{font-size:9px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--ink4);margin-bottom:7px}
-.hs-val{font-size:16px;font-weight:700;font-family:'DM Mono',monospace}
-.hs-val.g{color:var(--grn2)}
-.hs-val.r{color:var(--red2)}
-.hs-val.a{color:var(--gold2)}
-
-/* нижний бордер-градиент после stats */
-.hero-bottom-fade{
-  height:1px;
-  background:linear-gradient(90deg,transparent,rgba(212,175,55,.2),rgba(212,175,55,.4),rgba(212,175,55,.2),transparent);
-  margin:0 16px 20px;
-}
-
-/* ── QUICK ROW (горизонтальная лента 4 пилюли) ── */
-.q-row{
-  display:flex;gap:9px;padding:0 16px;margin-bottom:18px;
-  animation:fadeUp .35s .06s ease both;
-  overflow-x:auto;scrollbar-width:none;
-}
-.q-row::-webkit-scrollbar{display:none}
-.q-pill{
-  flex:1;min-width:0;
-  background:var(--bg3);
-  border:1px solid var(--border);
-  border-radius:16px;padding:14px 12px 12px;
-  cursor:pointer;
-  transition:transform .13s,background .13s,border-color .13s;
-  -webkit-tap-highlight-color:transparent;
+.bal-stat{
+  background:rgba(0,0,0,.25);border-radius:16px;padding:12px 14px;
+  border:1px solid rgba(255,255,255,.04);
   position:relative;overflow:hidden;
+}
+.bal-stat::before{
+  content:'';position:absolute;top:0;left:0;width:3px;bottom:0;border-radius:0 2px 2px 0;
+}
+.bal-stat.inc-s::before{background:var(--grn2);opacity:.7}
+.bal-stat.exp-s::before{background:var(--gold);opacity:.7}
+.bal-stat-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--ink4);margin-bottom:6px}
+.bal-stat-val{font-size:17px;font-weight:800;font-family:'DM Mono',monospace}
+.bal-stat-val.g{color:var(--grn2)}
+.bal-stat-val.r{color:var(--gold2)}
+.bal-stat-trend{font-size:10px;color:var(--ink4);margin-top:3px}
+
+/* ── QUICK ACTIONS ROW ── */
+.qa-row{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+  padding:0 16px;margin-bottom:18px;
+  animation:fadeUp .3s .05s ease both;
+}
+.qa-btn{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:18px;padding:14px 8px 12px;
   display:flex;flex-direction:column;align-items:center;gap:6px;
+  cursor:pointer;transition:all .13s;-webkit-tap-highlight-color:transparent;
+  position:relative;overflow:hidden;
 }
-.q-pill::after{
-  content:'';position:absolute;bottom:0;left:10%;right:10%;height:1px;
-  background:linear-gradient(90deg,transparent,var(--gold),transparent);
-  opacity:0;transition:opacity .2s;
+.qa-btn:active{transform:scale(.93);border-color:var(--border2);background:var(--bg4)}
+.qa-btn-ring{
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:17px;
+  background:var(--bg4);border:1px solid var(--border2);
+  position:relative;
 }
-.q-pill:hover::after{opacity:.5}
-.q-pill:active{transform:scale(.94);background:var(--bg4);border-color:var(--border2)}
-.q-pill-ico{font-size:22px;line-height:1}
-.q-pill-val{font-size:14px;font-weight:800;color:var(--ink);font-family:'DM Mono',monospace;line-height:1}
-.q-pill-lbl{font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink3)}
+.qa-btn.budget-qa .qa-btn-ring{background:rgba(212,175,55,.07);border-color:rgba(212,175,55,.2)}
+.qa-btn.debt-qa .qa-btn-ring{background:rgba(192,68,58,.07);border-color:rgba(192,68,58,.15)}
+.qa-btn.rec-qa .qa-btn-ring{background:rgba(76,175,132,.07);border-color:rgba(76,175,132,.15)}
+.qa-btn.goals-qa .qa-btn-ring{background:rgba(110,115,205,.1);border-color:rgba(110,115,205,.2)}
+.qa-val{font-size:13px;font-weight:800;color:var(--ink);font-family:'DM Mono',monospace;line-height:1}
+.qa-lbl{font-size:8px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--ink3)}
+
+/* ── SECTION HEADER ── */
+.sh{display:flex;align-items:center;justify-content:space-between;padding:4px 20px 12px}
+.sh-title{
+  font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--gold);display:flex;align-items:center;gap:8px;
+}
+.sh-title::before{content:'';width:14px;height:1px;background:var(--gold);opacity:.5}
+.sh-link{font-size:12px;font-weight:600;color:var(--gold2);cursor:pointer;opacity:.8}
+
+/* ── CARD ── */
+.card{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--r);padding:18px;
+  margin:0 16px 12px;
+  animation:fadeUp .3s ease both;
+  position:relative;overflow:hidden;
+}
+.card-shine{
+  position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+  background:conic-gradient(from 180deg at 50% 50%,transparent 0deg,rgba(212,175,55,.03) 60deg,transparent 120deg);
+  pointer-events:none;
+}
+.card-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card-title::before{content:'';width:12px;height:1px;background:var(--gold);opacity:.6}
+
+/* Aliases for backward compat */
+.hero{display:none} /* скрываем старый hero */
+.hero-bottom-fade{display:none}
+.hero-amount{display:none}
+.hero-greeting{display:none}
+.hero-center{display:none}
+.hero-ornament{display:none}
+.hero-stats{display:none}
+.hs{display:none}
+.hs-sep{display:none}
+.live-pip-old{display:none}
+
+/* ── HOME SUMMARY ROW (новая строка с суммами до графика) ── */
+.home-sum-row{
+  display:flex;gap:10px;padding:0 16px;margin-bottom:12px;
+  animation:fadeUp .3s .04s ease both;
+}
+.hsr-card{
+  flex:1;background:var(--bg3);border:1px solid var(--border);
+  border-radius:16px;padding:13px 14px;position:relative;overflow:hidden;
+}
+.hsr-card.inc-card{border-color:rgba(76,175,132,.2)}
+.hsr-card.exp-card{border-color:rgba(212,175,55,.18)}
+.hsr-card::before{
+  content:'';position:absolute;top:0;left:0;width:3px;bottom:0;border-radius:0 2px 2px 0;
+}
+.hsr-card.inc-card::before{background:var(--grn2)}
+.hsr-card.exp-card::before{background:var(--gold)}
+.hsr-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
+.hsr-val{font-size:18px;font-weight:700;font-family:'DM Mono',monospace}
+.hsr-val.g{color:var(--grn2)}
+.hsr-val.r{color:var(--red2)}
+
+/* ── Q-PILL aliases kept for JS ── */
+.q-row{display:none}
+.q-pill{display:none}
+.q-pill-ico{display:none}
+.q-pill-val{display:none}
+.q-pill-lbl{display:none}
 
 /* ── SECTION HEADER ── */
 .sh{display:flex;align-items:center;justify-content:space-between;padding:4px 20px 12px}
@@ -922,62 +994,63 @@ body::before{
     <!-- HOME -->
     <div id="sc-home" class="screen active">
 
-      <!-- HERO — новый дизайн без рамки-карточки -->
-      <div class="hero">
-        <div class="hero-inner">
-          <div class="hero-greeting"><span class="live-pip"></span>Текущий баланс</div>
-          <div class="hero-center">
-            <span class="hero-amount zero" id="hbal">0 CA$</span>
-            <div class="hero-sub">
-              <span id="hsub">Добавьте первую операцию</span>
-            </div>
+      <!-- TOP BAR -->
+      <div class="home-topbar">
+        <div class="home-brand">Мон<span>е</span>т</div>
+        <div class="home-date-badge">
+          <span class="live-pip"></span>
+          <span id="homeDateLbl">сегодня</span>
+        </div>
+      </div>
+
+      <!-- BALANCE CARD (новый дизайн) -->
+      <div class="bal-card">
+        <div class="bal-card-top">
+          <div>
+            <div class="bal-card-label">Общий баланс</div>
+            <div class="bal-card-amount zero" id="hbal">0 CA$</div>
+            <div class="bal-card-sub" id="hsub">Добавьте первую операцию</div>
           </div>
-          <div class="hero-ornament">
-            <div class="hero-orn-line"></div>
-            <div class="hero-orn-diamond"></div>
-            <div class="hero-orn-line r"></div>
+          <div class="bal-card-badge">
+            <div class="bal-card-badge-lbl">Копилка</div>
+            <div class="bal-card-badge-val" id="hPig">0</div>
           </div>
-          <div class="hero-stats">
-            <div class="hs">
-              <div class="hs-lbl">Доходы</div>
-              <div class="hs-val g" id="hInc">0</div>
-            </div>
-            <div class="hs-sep"></div>
-            <div class="hs">
-              <div class="hs-lbl">Расходы</div>
-              <div class="hs-val r" id="hExp">0</div>
-            </div>
-            <div class="hs-sep"></div>
-            <div class="hs">
-              <div class="hs-lbl">Копилка</div>
-              <div class="hs-val a" id="hPig">0</div>
-            </div>
+        </div>
+        <div class="bal-card-row">
+          <div class="bal-stat inc-s">
+            <div class="bal-stat-lbl">↑ Доходы</div>
+            <div class="bal-stat-val g" id="hInc">0</div>
+            <div class="bal-stat-trend" id="hIncTrend">за этот месяц</div>
+          </div>
+          <div class="bal-stat exp-s">
+            <div class="bal-stat-lbl">↓ Расходы</div>
+            <div class="bal-stat-val r" id="hExp">0</div>
+            <div class="bal-stat-trend" id="hExpTrend">за этот месяц</div>
           </div>
         </div>
       </div>
-      <div class="hero-bottom-fade"></div>
 
-      <!-- QUICK PILL ROW (4 пилюли в ряд) -->
-      <div class="q-row">
-        <div class="q-pill" onclick="show('budget')">
-          <div class="q-pill-ico">📊</div>
-          <div class="q-pill-val" id="qBudget">—</div>
-          <div class="q-pill-lbl">Бюджет</div>
+      <!-- QUICK ACTIONS (новый дизайн, 4 кнопки) -->
+      <div class="qa-row">
+        <div class="qa-btn budget-qa" onclick="show('budget')">
+          <div class="qa-btn-ring">📊</div>
+          <div class="qa-val" id="qBudget">—</div>
+          <div class="qa-lbl">Бюджет</div>
         </div>
-        <div class="q-pill" onclick="show('credits')">
-          <div class="q-pill-ico">💳</div>
-          <div class="q-pill-val" id="qDebt">0</div>
-          <div class="q-pill-lbl">Долг</div>
+        <div class="qa-btn debt-qa" onclick="show('credits')">
+          <div class="qa-btn-ring">💳</div>
+          <div class="qa-val" id="qDebt">0</div>
+          <div class="qa-lbl">Долг</div>
         </div>
-        <div class="q-pill" onclick="show('recurring')">
-          <div class="q-pill-ico">📅</div>
-          <div class="q-pill-val" id="qRec">0</div>
-          <div class="q-pill-lbl">Платежей</div>
+        <div class="qa-btn rec-qa" onclick="show('recurring')">
+          <div class="qa-btn-ring">📅</div>
+          <div class="qa-val" id="qRec">0</div>
+          <div class="qa-lbl">Платежи</div>
         </div>
-        <div class="q-pill" onclick="show('goals')">
-          <div class="q-pill-ico">🎯</div>
-          <div class="q-pill-val" id="qGoals">0</div>
-          <div class="q-pill-lbl">Целей</div>
+        <div class="qa-btn goals-qa" onclick="show('goals')">
+          <div class="qa-btn-ring">🎯</div>
+          <div class="qa-val" id="qGoals">0</div>
+          <div class="qa-lbl">Цели</div>
         </div>
       </div>
 
@@ -1596,8 +1669,12 @@ function renderHome(){
   var bal=tInc-tExp;
   document.getElementById('monthLbl').textContent=n.toLocaleDateString('ru-RU',{month:'long',year:'numeric'});
 
+  // date badge
+  var dl=document.getElementById('homeDateLbl');
+  if(dl)dl.textContent=n.toLocaleDateString('ru-RU',{day:'numeric',month:'short'});
+
   var hb=document.getElementById('hbal');
-  if(hb){hb.textContent=fmt(bal);hb.className='hero-amount '+(bal>0?'pos':bal<0?'neg':'zero');}
+  if(hb){hb.textContent=fmt(bal);hb.className='bal-card-amount '+(bal>0?'pos':bal<0?'neg':'zero');}
   document.getElementById('hsub').textContent=bal>0?'Заработано '+fmt(tInc)+' всего':bal<0?'Перерасход на '+fmt(Math.abs(bal)):'Добавьте первую операцию';
   document.getElementById('hInc').textContent=fmtK(mInc);
   document.getElementById('hExp').textContent=fmtK(mExp);
@@ -1609,7 +1686,7 @@ function renderHome(){
   var bEl=document.getElementById('qBudget');
   if(bEl){bEl.textContent=budgets.length?budgetPct+'%':'—';bEl.style.color=budgetPct>80?'var(--red2)':budgetPct>50?'var(--gold2)':'var(--grn2)';}
   var debt=S.credits.reduce(function(s,c){return s+c.total;},0);
-  document.getElementById('qDebt').textContent=debt>0?fmtK(debt)+'CA$':'0';
+  document.getElementById('qDebt').textContent=debt>0?fmtK(debt)+'$':'0';
   document.getElementById('qRec').textContent=S.recurring.length;
   document.getElementById('qGoals').textContent=S.goals.length;
 
