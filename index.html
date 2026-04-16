@@ -553,37 +553,101 @@ body::before{
 /* Confetti badge */
 .goal-done-banner{text-align:center;padding:10px;font-size:13px;font-weight:700;color:var(--grn2);letter-spacing:.5px}
 
-/* ── CREDITS — REDESIGNED ── */
+/* ══════════════════════════════════
+   CREDITS — NEW PREMIUM TOP DESIGN
+   ══════════════════════════════════ */
+
+/* ── BIG HERO BANNER ── */
 .cr-hero{
-  margin:6px 16px 16px;
-  background:linear-gradient(145deg,#120F07 0%,#1E1810 40%,#140F07 100%);
-  border:1px solid var(--border2);
-  border-radius:24px;padding:22px 20px;
+  margin:6px 16px 0;
+  background:linear-gradient(150deg,#0E0B04 0%,#1C1508 35%,#251C0C 65%,#141008 100%);
+  border:1px solid rgba(212,175,55,.32);
+  border-radius:28px;
   position:relative;overflow:hidden;animation:fadeUp .3s ease both;
 }
-.cr-hero::before{content:'';position:absolute;inset:0;border-radius:24px;background:linear-gradient(135deg,rgba(212,175,55,.06),transparent 60%);pointer-events:none}
-.cr-hero-lbl{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(212,175,55,.45);margin-bottom:10px}
-.cr-hero-bal{font-family:'Playfair Display',serif;font-size:38px;font-weight:900;letter-spacing:-1.5px;margin-bottom:6px;line-height:1;background:linear-gradient(135deg,var(--gold),var(--gold3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.cr-hero-sub{font-size:11px;color:rgba(212,175,55,.4);margin-bottom:16px}
-.cr-hero-stats{display:flex;background:rgba(0,0,0,.3);border-radius:14px;padding:12px 0;border:1px solid var(--border)}
-.cr-hs{flex:1;text-align:center}
-.cr-hs-val{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px;font-family:'DM Mono',monospace}
-.cr-hs-lbl{font-size:9px;color:var(--ink4);text-transform:uppercase;letter-spacing:.8px}
-.cr-hs-div{width:1px;background:var(--border)}
+.cr-hero::before{
+  content:'';position:absolute;top:-80px;right:-60px;width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(212,175,55,.12) 0%,transparent 65%);pointer-events:none;
+}
+.cr-hero::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,175,55,.45),transparent);
+}
 
-/* Payoff timeline mini-bar */
-.cr-payoff-row{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid rgba(212,175,55,.08)}
-.cr-payoff-lbl{font-size:9px;color:var(--ink4);text-transform:uppercase;letter-spacing:1px}
-.cr-payoff-val{font-size:12px;font-weight:700;color:var(--gold2);font-family:'DM Mono',monospace}
-.cr-total-prog{margin-top:8px;height:3px;background:rgba(212,175,55,.08);border-radius:3px;overflow:hidden}
-.cr-total-prog-fill{height:100%;background:linear-gradient(90deg,var(--acc),var(--gold2));border-radius:3px;transition:width .9s ease}
+/* Hero top area — main debt */
+.cr-hero-top{padding:22px 22px 18px;border-bottom:1px solid rgba(212,175,55,.08)}
+.cr-hero-eyebrow{
+  display:flex;align-items:center;gap:8px;
+  font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;
+  color:rgba(212,175,55,.5);margin-bottom:10px;
+}
+.cr-hero-eyebrow-line{flex:1;height:1px;background:rgba(212,175,55,.15)}
+.cr-hero-main{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.cr-hero-left{}
+.cr-hero-bal{
+  font-family:'Playfair Display',serif;
+  font-size:50px;font-weight:900;letter-spacing:-2px;line-height:1;
+  background:linear-gradient(135deg,#FFF0A0,var(--gold2) 45%,var(--acc2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.cr-hero-bal-sub{font-size:11px;color:rgba(212,175,55,.4);margin-top:6px;font-weight:500}
+.cr-hero-ring-wrap{flex-shrink:0;position:relative;width:76px;height:76px}
+.cr-hero-ring-wrap svg{transform:rotate(-90deg)}
+.cr-ring-bg{fill:none;stroke:rgba(212,175,55,.08);stroke-width:7}
+.cr-ring-fill{fill:none;stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset .9s cubic-bezier(.4,0,.2,1)}
+.cr-ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.cr-ring-pct{font-size:16px;font-weight:800;font-family:'DM Mono',monospace;color:var(--gold2);line-height:1}
+.cr-ring-tiny{font-size:8px;color:var(--ink4);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
 
-/* Sort tabs */
+/* Big 4-cell stat grid */
+.cr-hero-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:1px;background:rgba(212,175,55,.07);
+  border-bottom:1px solid rgba(212,175,55,.07);
+}
+.cr-hg-cell{
+  padding:14px 16px;background:rgba(0,0,0,.15);
+  position:relative;
+}
+.cr-hg-cell:nth-child(1){border-radius:0}
+.cr-hg-ico{font-size:15px;margin-bottom:6px;display:block}
+.cr-hg-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--ink4);margin-bottom:4px}
+.cr-hg-val{font-size:17px;font-weight:800;font-family:'DM Mono',monospace;color:var(--ink)}
+.cr-hg-val.warn{color:var(--red2)}
+.cr-hg-val.ok{color:var(--grn2)}
+.cr-hg-val.gold{color:var(--gold2)}
+.cr-hg-sub{font-size:10px;color:var(--ink4);margin-top:2px}
+
+/* Total progress bar with label */
+.cr-prog-section{padding:14px 18px 16px}
+.cr-prog-label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.cr-prog-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink3)}
+.cr-prog-value{font-size:11px;font-weight:700;color:var(--gold2);font-family:'DM Mono',monospace}
+.cr-total-prog{height:5px;background:rgba(212,175,55,.08);border-radius:5px;overflow:hidden}
+.cr-total-prog-fill{height:100%;background:linear-gradient(90deg,var(--acc),var(--gold2),var(--gold3));background-size:200%;animation:goldShimmer 4s linear infinite;border-radius:5px;transition:width .9s ease}
+.cr-prog-sub{display:flex;justify-content:space-between;margin-top:6px}
+.cr-prog-sub-lbl{font-size:10px;color:var(--ink4)}
+
+/* Insight strip — best strategy */
+.cr-insight{
+  margin:10px 16px 14px;
+  background:rgba(212,175,55,.05);border:1px solid rgba(212,175,55,.14);
+  border-radius:16px;padding:12px 15px;
+  display:flex;align-items:center;gap:10px;
+  animation:fadeUp .3s .05s ease both;
+}
+.cr-insight-ico{font-size:20px;flex-shrink:0}
+.cr-insight-text{flex:1}
+.cr-insight-title{font-size:11px;font-weight:800;color:var(--gold2);margin-bottom:2px}
+.cr-insight-body{font-size:10px;color:var(--ink3);line-height:1.4}
+
+/* Sort row */
 .cr-sort-row{display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto;scrollbar-width:none}
 .cr-sort-row::-webkit-scrollbar{display:none}
 .cr-sort-btn{padding:7px 14px;font-size:10px;font-weight:700;border-radius:16px;border:1.5px solid var(--border);background:var(--bg3);color:var(--ink3);cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;transition:all .13s;-webkit-tap-highlight-color:transparent;letter-spacing:.3px}
 .cr-sort-btn.active{border-color:rgba(212,175,55,.35);background:var(--gold-dim);color:var(--gold2)}
 
+/* Credit item card */
 .cr-item{
   background:var(--bg3);border:1px solid var(--border);
   border-radius:var(--r);overflow:hidden;margin:0 16px 10px;
@@ -594,8 +658,14 @@ body::before{
 .cr-item.overdue-item-border{border-color:rgba(192,68,58,.3)}
 .cr-item.paid-off{border-color:rgba(76,175,132,.2)}
 
+/* Card head */
 .cr-head{display:flex;align-items:center;gap:12px;padding:16px;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.cr-head-ico{width:44px;height:44px;border-radius:14px;flex-shrink:0;background:var(--gold-dim);border:1px solid rgba(212,175,55,.2);display:flex;align-items:center;justify-content:center;font-size:19px}
+.cr-head-ico{
+  width:48px;height:48px;border-radius:15px;flex-shrink:0;
+  background:var(--gold-dim);border:1px solid rgba(212,175,55,.2);
+  display:flex;align-items:center;justify-content:center;font-size:21px;
+  position:relative;
+}
 .cr-head-mid{flex:1;min-width:0}
 .cr-hname{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cr-htags{display:flex;gap:5px;flex-wrap:wrap}
@@ -604,44 +674,61 @@ body::before{
 .cr-tag.overdue{background:rgba(192,68,58,.1);color:var(--red2)}
 .cr-tag.ok{background:rgba(76,175,132,.1);color:var(--grn2)}
 .cr-head-right{text-align:right;flex-shrink:0}
-.cr-debt-val{font-size:16px;font-weight:700;color:var(--gold2);font-family:'DM Mono',monospace}
+.cr-debt-val{font-size:17px;font-weight:800;color:var(--gold2);font-family:'DM Mono',monospace}
 .cr-pct-lbl{font-size:10px;color:var(--ink3);margin-top:2px}
 .cr-chevron{font-size:10px;color:var(--ink3);display:block;margin-top:4px;transition:transform .2s}
 .cr-item.open .cr-chevron{transform:rotate(180deg)}
 
+/* Progress bar */
 .cr-progress{padding:0 16px 14px}
 .cr-prog-track{height:5px;background:rgba(212,175,55,.06);border-radius:5px;overflow:hidden;margin-bottom:6px;position:relative}
 .cr-prog-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--acc),var(--gold2),var(--gold3));background-size:200%;animation:goldShimmer 3s linear infinite;transition:width .9s ease}
 .cr-prog-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--ink3)}
 
-.cr-detail{display:none;border-top:1px solid var(--border);padding:16px;animation:fadeIn .15s ease}
+/* Detail section */
+.cr-detail{display:none;border-top:1px solid var(--border);animation:fadeIn .15s ease}
 .cr-item.open .cr-detail{display:block}
-.cr-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+
+/* Detail info grid — 4 cells */
+.cr-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px 16px 4px}
 .cr-cell{background:var(--gold-dim);border:1px solid rgba(212,175,55,.1);border-radius:12px;padding:12px;transition:border-color .13s}
 .cr-cell:hover{border-color:rgba(212,175,55,.22)}
 .cr-cell-lbl{font-size:9px;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
 .cr-cell-val{font-size:15px;font-weight:700;color:var(--ink);font-family:'DM Mono',monospace}
 .cr-cell-val.warn{color:var(--red2)}
 
+/* Extended info strip */
+.cr-ext-strip{
+  display:flex;background:rgba(0,0,0,.2);margin:0 16px 12px;
+  border-radius:12px;padding:11px 0;border:1px solid var(--border);
+}
+.cr-ext-s{flex:1;text-align:center;padding:0 6px}
+.cr-ext-val{font-size:12px;font-weight:700;color:var(--ink);font-family:'DM Mono',monospace;margin-bottom:2px}
+.cr-ext-lbl{font-size:8px;color:var(--ink4);text-transform:uppercase;letter-spacing:.8px}
+.cr-ext-div{width:1px;background:var(--border);flex-shrink:0}
+
 /* Payoff forecast */
-.cr-forecast{background:rgba(0,0,0,.2);border:1px solid rgba(212,175,55,.08);border-radius:12px;padding:12px 14px;margin-bottom:12px}
-.cr-forecast-title{font-size:9px;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:8px}
-.cr-forecast-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(212,175,55,.05)}
+.cr-forecast{background:rgba(0,0,0,.2);border:1px solid rgba(212,175,55,.08);border-radius:12px;padding:12px 14px;margin:0 16px 12px}
+.cr-forecast-title{font-size:9px;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.cr-forecast-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(212,175,55,.05)}
 .cr-forecast-row:last-child{border-bottom:none}
 .cr-forecast-lbl{font-size:11px;color:var(--ink3)}
 .cr-forecast-val{font-size:11px;font-weight:700;color:var(--ink);font-family:'DM Mono',monospace}
 
 /* Next payment due chip */
-.cr-due-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.cr-due-row{display:flex;align-items:center;gap:8px;padding:0 16px 10px}
 .cr-due-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;border:1px solid rgba(212,175,55,.18);background:var(--gold-dim);color:var(--gold2)}
 .cr-due-chip.overdue{background:rgba(192,68,58,.1);border-color:rgba(192,68,58,.25);color:var(--red2)}
 .cr-due-chip.soon{background:rgba(212,175,55,.12);border-color:rgba(212,175,55,.3);color:var(--gold3)}
 
-.cr-detail-acts{display:flex;gap:8px}
+/* Action buttons */
+.cr-detail-acts{display:flex;gap:8px;padding:0 16px 16px}
 .cr-pay-btn{flex:1;padding:12px;border-radius:12px;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px;font-weight:800;background:linear-gradient(135deg,var(--acc),var(--gold2));color:#0C0A06;transition:all .14s;-webkit-tap-highlight-color:transparent}
 .cr-pay-btn:active{transform:scale(.97)}
 .cr-edit-btn{padding:12px 14px;border-radius:12px;border:1.5px solid rgba(212,175,55,.2);background:var(--gold-dim);color:var(--gold2);cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;-webkit-tap-highlight-color:transparent}
 .cr-del-btn{padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:none;color:var(--ink3);cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;-webkit-tap-highlight-color:transparent}
+
+/* ── RECURRING ──
 
 /* ── RECURRING ── */
 .rp-item{
@@ -1978,8 +2065,9 @@ function renderCredits(){
   var pay=S.credits.reduce(function(s,c){return s+(c.pay||0);},0);
   var intM=S.credits.reduce(function(s,c){return s+Math.round(c.total*(c.rate/100/12));},0);
   var orig=S.credits.reduce(function(s,c){return s+(c.orig||c.total);},0);
-  var pct=orig>0?Math.round((orig-debt)/orig*100):0;
-  var ICONS={ипотека:'🏠',авто:'🚗',карта:'💳',телефон:'📱',образование:'🎓',потреб:'💰'};
+  var paidTotal=orig-debt;
+  var pct=orig>0?Math.round(paidTotal/orig*100):0;
+  var ICONS={ипотека:'🏠',авто:'🚗',карта:'💳',телефон:'📱',образование:'🎓',потреб:'💰',авт:'🚗'};
   function ico(n){var l=(n||'').toLowerCase();for(var k in ICONS)if(l.indexOf(k)>=0)return ICONS[k];return '💳';}
 
   // Sort credits
@@ -1991,7 +2079,6 @@ function renderCredits(){
 
   var today=new Date();today.setHours(0,0,0,0);
 
-  // Forecast months to payoff (simplified)
   function monthsToPayoff(c){
     if(!c.pay||c.pay<=0)return null;
     var intPerMonth=c.rate/100/12;if(intPerMonth===0)return Math.ceil(c.total/c.pay);
@@ -1999,21 +2086,67 @@ function renderCredits(){
     return Math.ceil(-Math.log(1-(c.total*intPerMonth/c.pay))/Math.log(1+intPerMonth));
   }
 
+  // ── Total months to close all credits ──
+  var allMonths=S.credits.map(monthsToPayoff).filter(function(m){return m!==null;});
+  var maxMonths=allMonths.length?Math.max.apply(null,allMonths):null;
+  var payoffDate=maxMonths?new Date(new Date().setMonth(new Date().getMonth()+maxMonths)).toLocaleDateString('ru-RU',{month:'long',year:'numeric'}):null;
+
+  // ── Insight: avalanche vs snowball ──
+  var highestRate=S.credits.reduce(function(a,c){return(!a||c.rate>a.rate)?c:a;},null);
+  var smallestDebt=S.credits.reduce(function(a,c){return c.total>0&&(!a||c.total<a.total)?c:a;},null);
+  var insightHTML='';
+  if(S.credits.length>=2&&highestRate&&highestRate.total>0){
+    insightHTML='<div class="cr-insight">'+
+      '<div class="cr-insight-ico">💡</div>'+
+      '<div class="cr-insight-text">'+
+        '<div class="cr-insight-title">Метод «Лавина»: быстрее</div>'+
+        '<div class="cr-insight-body">Направьте доп. деньги на «'+esc(highestRate.name)+'» ('+highestRate.rate+'% годовых) — это максимально снизит переплату</div>'+
+      '</div>'+
+    '</div>';
+  }
+
+  // ── SVG ring ──
+  var circ=188;var offset=circ-(circ*pct/100);
+  var ringColor=pct>=80?'url(#crRingGrad2)':'url(#crRingGrad)';
+  var ringHTML='<svg width="76" height="76" viewBox="0 0 76 76">'+
+    '<defs>'+
+      '<linearGradient id="crRingGrad" x1="0%" y1="0%" x2="100%" y2="0%">'+
+        '<stop offset="0%" stop-color="#C9943E"/><stop offset="100%" stop-color="#E8C547"/>'+
+      '</linearGradient>'+
+      '<linearGradient id="crRingGrad2" x1="0%" y1="0%" x2="100%" y2="0%">'+
+        '<stop offset="0%" stop-color="#4CAF84"/><stop offset="100%" stop-color="#6ECDA0"/>'+
+      '</linearGradient>'+
+    '</defs>'+
+    '<circle class="cr-ring-bg" cx="38" cy="38" r="30" stroke-dasharray="188"/>'+
+    '<circle class="cr-ring-fill" cx="38" cy="38" r="30" stroke="'+ringColor+'" stroke-dasharray="188" stroke-dashoffset="'+offset+'"/>'+
+  '</svg>'+
+  '<div class="cr-ring-center"><div class="cr-ring-pct">'+pct+'%</div><div class="cr-ring-tiny">готово</div></div>';
+
+  // ── Hero HTML ──
   var heroHTML='<div class="cr-hero">'+
-    '<div class="cr-hero-lbl">Общий долг</div>'+
-    '<div class="cr-hero-bal">'+fmt(debt)+'</div>'+
-    '<div class="cr-hero-sub">'+S.credits.length+' кредит'+(S.credits.length===1?'':'ов'+(S.credits.length>=2&&S.credits.length<=4?'а':''))+' · '+pct+'% погашено</div>'+
-    '<div class="cr-hero-stats">'+
-      '<div class="cr-hs"><div class="cr-hs-val">'+(pay?fmt(pay):'—')+'</div><div class="cr-hs-lbl">Платёж/мес</div></div>'+
-      '<div class="cr-hs-div"></div>'+
-      '<div class="cr-hs"><div class="cr-hs-val">'+fmt(intM)+'</div><div class="cr-hs-lbl">% в мес</div></div>'+
-      '<div class="cr-hs-div"></div>'+
-      '<div class="cr-hs"><div class="cr-hs-val">'+pct+'%</div><div class="cr-hs-lbl">Погашено</div></div>'+
+    '<div class="cr-hero-top">'+
+      '<div class="cr-hero-eyebrow">💳 Долговой дашборд<div class="cr-hero-eyebrow-line"></div></div>'+
+      '<div class="cr-hero-main">'+
+        '<div class="cr-hero-left">'+
+          '<div class="cr-hero-bal">'+fmt(debt)+'</div>'+
+          '<div class="cr-hero-bal-sub">'+S.credits.length+' '+(S.credits.length===1?'кредит':S.credits.length<=4?'кредита':'кредитов')+' · погашено '+fmt(paidTotal)+'</div>'+
+        '</div>'+
+        '<div class="cr-hero-ring-wrap">'+ringHTML+'</div>'+
+      '</div>'+
     '</div>'+
-    '<div class="cr-total-prog"><div class="cr-total-prog-fill" style="width:'+pct+'%"></div></div>'+
-    '<div class="cr-payoff-row">'+
-      '<span class="cr-payoff-lbl">Уплачено процентов/мес</span>'+
-      '<span class="cr-payoff-val">'+fmt(intM)+'</span>'+
+    '<div class="cr-hero-grid">'+
+      '<div class="cr-hg-cell"><span class="cr-hg-ico">📅</span><div class="cr-hg-lbl">Платёж / мес</div><div class="cr-hg-val gold">'+(pay?fmt(pay):'—')+'</div><div class="cr-hg-sub">обязательный</div></div>'+
+      '<div class="cr-hg-cell"><span class="cr-hg-ico">🔥</span><div class="cr-hg-lbl">Проценты / мес</div><div class="cr-hg-val warn">'+fmt(intM)+'</div><div class="cr-hg-sub">«сгорает» ежемесячно</div></div>'+
+      '<div class="cr-hg-cell"><span class="cr-hg-ico">📊</span><div class="cr-hg-lbl">Уплачено всего</div><div class="cr-hg-val ok">'+fmt(paidTotal)+'</div><div class="cr-hg-sub">'+pct+'% от исходного</div></div>'+
+      '<div class="cr-hg-cell"><span class="cr-hg-ico">🎯</span><div class="cr-hg-lbl">Дата закрытия</div><div class="cr-hg-val">'+(payoffDate||'—')+'</div><div class="cr-hg-sub">'+(maxMonths?maxMonths+' мес.':'нет данных')+'</div></div>'+
+    '</div>'+
+    '<div class="cr-prog-section">'+
+      '<div class="cr-prog-label-row">'+
+        '<span class="cr-prog-label">Общий прогресс погашения</span>'+
+        '<span class="cr-prog-value">'+fmt(paidTotal)+' из '+fmt(orig)+'</span>'+
+      '</div>'+
+      '<div class="cr-total-prog"><div class="cr-total-prog-fill" style="width:'+pct+'%"></div></div>'+
+      '<div class="cr-prog-sub"><span class="cr-prog-sub-lbl">0</span><span class="cr-prog-sub-lbl">'+pct+'% выплачено</span><span class="cr-prog-sub-lbl">'+fmt(orig)+'</span></div>'+
     '</div>'+
   '</div>';
 
@@ -2025,11 +2158,14 @@ function renderCredits(){
     var soonDue=daysUntilDue!==null&&daysUntilDue<=7&&daysUntilDue>=0;
     var months=monthsToPayoff(c);
     var intPerMonth=c.total>0&&c.rate>0?Math.round(c.total*(c.rate/100/12)):0;
+    var annualInterest=c.total>0&&c.rate>0?Math.round(c.total*c.rate/100):0;
+    var totalOverpay=months&&intPerMonth?months*intPerMonth:0;
+    var payoffD=months?new Date(new Date().setMonth(new Date().getMonth()+months)).toLocaleDateString('ru-RU',{month:'short',year:'numeric'}):null;
     var dueChip='';
     if(c.due){
       var chipClass=overdue?'overdue':soonDue?'soon':'';
       var chipTxt=overdue?'⚠️ Просрочен '+Math.abs(daysUntilDue)+' дн.':daysUntilDue===0?'⏰ Сегодня!':soonDue?'⏳ Через '+daysUntilDue+' дн.':'📅 '+fD(c.due);
-      dueChip='<div class="cr-due-chip '+chipClass+'">'+chipTxt+'</div>';
+      dueChip='<div class="cr-due-row"><div class="cr-due-chip '+chipClass+'">'+chipTxt+'</div></div>';
     }
     return '<div class="cr-item'+(overdue?' overdue-item-border':'')+(c.total<=0?' paid-off':'')+'" id="cr-'+c.id+'" style="animation-delay:'+(idx*.05)+'s">'+
       '<div class="cr-head" onclick="toggleCredit('+c.id+')">'+
@@ -2054,18 +2190,27 @@ function renderCredits(){
         '<div class="cr-prog-meta"><span>'+fmt(paid)+' погашено</span><span>из '+fmt(o)+'</span></div>'+
       '</div>'+
       '<div class="cr-detail">'+
-        (dueChip?'<div class="cr-due-row">'+dueChip+'</div>':'')+
+        dueChip+
         '<div class="cr-detail-grid">'+
           '<div class="cr-cell"><div class="cr-cell-lbl">Платёж/мес</div><div class="cr-cell-val">'+(c.pay?fmt(c.pay):'—')+'</div></div>'+
-          '<div class="cr-cell"><div class="cr-cell-lbl">% в мес</div><div class="cr-cell-val'+(intPerMonth>0?' warn':'')+'">'+fmt(intPerMonth)+'</div></div>'+
-          '<div class="cr-cell"><div class="cr-cell-lbl">Остаток</div><div class="cr-cell-val">'+fmt(c.total)+'</div></div>'+
+          '<div class="cr-cell"><div class="cr-cell-lbl">% в месяц</div><div class="cr-cell-val'+(intPerMonth>0?' warn':'')+'">'+fmt(intPerMonth)+'</div></div>'+
+          '<div class="cr-cell"><div class="cr-cell-lbl">Остаток долга</div><div class="cr-cell-val">'+fmt(c.total)+'</div></div>'+
           '<div class="cr-cell"><div class="cr-cell-lbl">Изначально</div><div class="cr-cell-val">'+fmt(o)+'</div></div>'+
+        '</div>'+
+        '<div class="cr-ext-strip">'+
+          '<div class="cr-ext-s"><div class="cr-ext-val">'+fmt(annualInterest)+'</div><div class="cr-ext-lbl">% в год</div></div>'+
+          '<div class="cr-ext-div"></div>'+
+          '<div class="cr-ext-s"><div class="cr-ext-val">'+(totalOverpay?fmt(totalOverpay):'—')+'</div><div class="cr-ext-lbl">Переплата</div></div>'+
+          '<div class="cr-ext-div"></div>'+
+          '<div class="cr-ext-s"><div class="cr-ext-val">'+(payoffD||'—')+'</div><div class="cr-ext-lbl">Закроется</div></div>'+
         '</div>'+
         '<div class="cr-forecast">'+
           '<div class="cr-forecast-title">📊 Прогноз погашения</div>'+
-          '<div class="cr-forecast-row"><span class="cr-forecast-lbl">Месяцев до погашения</span><span class="cr-forecast-val">'+(months?months+' мес.':'н/д')+'</span></div>'+
-          '<div class="cr-forecast-row"><span class="cr-forecast-lbl">Переплата процентов</span><span class="cr-forecast-val">'+(months&&intPerMonth?fmt(months*intPerMonth):'н/д')+'</span></div>'+
-          '<div class="cr-forecast-row"><span class="cr-forecast-lbl">Дата погашения</span><span class="cr-forecast-val">'+(months?new Date(new Date().setMonth(new Date().getMonth()+months)).toLocaleDateString('ru-RU',{month:'short',year:'numeric'}):'н/д')+'</span></div>'+
+          '<div class="cr-forecast-row"><span class="cr-forecast-lbl">Месяцев до закрытия</span><span class="cr-forecast-val">'+(months?months+' мес.':'н/д')+'</span></div>'+
+          '<div class="cr-forecast-row"><span class="cr-forecast-lbl">Сумма переплаты %</span><span class="cr-forecast-val">'+(totalOverpay?fmt(totalOverpay):'н/д')+'</span></div>'+
+          '<div class="cr-forecast-row"><span class="cr-forecast-lbl">Дата погашения</span><span class="cr-forecast-val">'+(payoffD||'н/д')+'</span></div>'+
+          '<div class="cr-forecast-row"><span class="cr-forecast-lbl">Эффективная ставка</span><span class="cr-forecast-val">'+(c.rate?c.rate+'% год.':'н/д')+'</span></div>'+
+          '<div class="cr-forecast-row"><span class="cr-forecast-lbl">% от долга / мес</span><span class="cr-forecast-val">'+(c.rate?(c.rate/12).toFixed(2)+'%':'н/д')+'</span></div>'+
         '</div>'+
         '<div class="cr-detail-acts">'+
           '<button class="cr-pay-btn" onclick="payCredit('+c.id+')">💸 Внести платёж</button>'+
@@ -2075,7 +2220,7 @@ function renderCredits(){
     '</div>';
   }).join(''):'<div class="empty"><div class="empty-ico">💳</div><div class="empty-title">Нет кредитов</div><div class="empty-sub">Добавьте первый кредит выше</div></div>';
 
-  el.innerHTML=heroHTML+itemsHTML;
+  el.innerHTML=heroHTML+insightHTML+itemsHTML;
 }
 
 // ── RECURRING ──
