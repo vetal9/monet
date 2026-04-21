@@ -2463,15 +2463,31 @@ function copySQL(){
 }
 async function pullDB(){
   if(!DB.connected||!DB.url||!DB.key)return;
-  try{var res=await fetch(DB.url+'/rest/v1/monet_data?id=eq.main&select=data,updated_at',{headers:{'apikey':DB.key,'Authorization':'Bearer '+DB.key}});
-  if(!res.ok)return;var rows=await res.json();if(!rows||!rows.length){forcePush();return;}
-  var remote=JSON.parse(rows[0].data);
-  function mergeArr(l,r){l=l||[];r=r||[];return l.length>=r.length?l:r;}
-  function mergeObj(l,r){l=l||{};r=r||{};return Object.assign({},r,l);}
-  S={income:mergeArr(S.income,remote.income),expense:mergeArr(S.expense,remote.expense),goals:mergeArr(S.goals,remote.goals),credits:mergeArr(S.credits,remote.credits),recurring:mergeArr(S.recurring,remote.recurring),piggy:mergeArr(S.piggy,remote.piggy),budgets:mergeObj(S.budgets,remote.budgets),_ts:Math.max(S._ts||0,remote._ts||0)};
-  try{localStorage.setItem('monet8',JSON.stringify(S));}catch(e){}
-  if((S._ts||0)>=(remote._ts||0))forcePush();
-  renderHome();
+  try{
+    var res=await fetch(DB.url+'/rest/v1/monet_data?id=eq.main&select=data,updated_at',{headers:{'apikey':DB.key,'Authorization':'Bearer '+DB.key}});
+    if(!res.ok)return;
+    var rows=await res.json();
+    // Если в базе нет записи и локально есть данные — пушим. Если локально тоже пусто — не трогаем.
+    if(!rows||!rows.length){
+      var hasLocal=(S.income&&S.income.length)||(S.expense&&S.expense.length)||(S.goals&&S.goals.length);
+      if(hasLocal)forcePush();
+      return;
+    }
+    var remote=JSON.parse(rows[0].data);
+    var localTs=S._ts||0;
+    var remoteTs=remote._ts||0;
+    // Побеждает тот у кого новее timestamp
+    if(remoteTs>localTs){
+      // Удалённые данные новее — берём их
+      S=remote;
+      if(!S.recurring)S.recurring=[];if(!S.budgets)S.budgets={};if(!S.piggy)S.piggy=[];
+      try{localStorage.setItem('monet8',JSON.stringify(S));}catch(e){}
+      renderHome();
+    } else if(localTs>remoteTs){
+      // Локальные данные новее — пушим на сервер
+      forcePush();
+    }
+    // Если timestamp одинаковый — ничего не делаем, данные синхронизированы
   }catch(e){}
 }
 function clearAllConfirm(){openConfirm('Удалить все данные?','Действие нельзя отменить.',function(){S={income:[],expense:[],goals:[],credits:[],recurring:[],budgets:{},piggy:[]};try{localStorage.setItem('monet8',JSON.stringify(S));}catch(e){}renderHome();renderSettings();},'Удалить всё',null,null);}
