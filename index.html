@@ -1632,7 +1632,13 @@ body::before{
 // ── STATE ──
 var S={income:[],expense:[],goals:[],credits:[],recurring:[],budgets:{},piggy:[]};
 try{var _d=localStorage.getItem('monet8');if(_d)S=Object.assign(S,JSON.parse(_d));}catch(e){}
-if(!S.budgets)S.budgets={};if(!S.piggy)S.piggy=[];if(!S.recurring)S.recurring=[];
+if(!Array.isArray(S.income))S.income=[];
+if(!Array.isArray(S.expense))S.expense=[];
+if(!Array.isArray(S.goals))S.goals=[];
+if(!Array.isArray(S.credits))S.credits=[];
+if(!Array.isArray(S.recurring))S.recurring=[];
+if(!Array.isArray(S.piggy))S.piggy=[];
+if(!S.budgets||typeof S.budgets!=='object'||Array.isArray(S.budgets))S.budgets={};
 
 var sv=function(){
   S._ts=Date.now();
