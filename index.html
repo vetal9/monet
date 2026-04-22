@@ -1639,12 +1639,7 @@ var sv=function(){
   try{localStorage.setItem('monet8',JSON.stringify(S));}catch(e){}
   if(DB.connected&&DB.url&&DB.key){
     clearTimeout(sv._t);
-    sv._t=setTimeout(function(){
-      fetch(DB.url+'/rest/v1/monet_data',{method:'POST',
-        headers:{'Content-Type':'application/json','apikey':DB.key,'Authorization':'Bearer '+DB.key,'Prefer':'resolution=merge-duplicates,return=minimal'},
-        body:JSON.stringify({id:'main',data:JSON.stringify(S),updated_at:new Date().toISOString()})
-      }).catch(function(){});
-    },1200);
+    sv._t=setTimeout(function(){forcePush().catch(function(){});},1200);
   }
 };
 
@@ -2428,68 +2423,120 @@ function updateDBUI(){
   if(disc)disc.style.display=DB.connected?'block':'none';
   if(sub)sub.textContent=DB.connected?'Подключено ✓':'Нажмите для настройки';
 }
+
+// ── HTTP helper ──
+function dbFetch(path,opts){
+  return fetch(DB.url+'/rest/v1/'+path,Object.assign({headers:{'apikey':DB.key,'Authorization':'Bearer '+DB.key,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates,return=minimal'}},opts));
+}
+
 async function connectDB(){
   var url=document.getElementById('dbUrl').value.trim();var key=document.getElementById('dbKey').value.trim();
   if(!url||!key){setDbMsg('Заполните поля',false);return;}
   setDbMsg('Проверяем…',true);
-  try{var res=await fetch(url+'/rest/v1/monet_data?select=id&limit=1',{headers:{'apikey':key,'Authorization':'Bearer '+key}});
-  if(!res.ok&&res.status!==200&&res.status!==406){setDbMsg('Ошибка '+res.status,false);return;}
-  DB={url:url,key:key,connected:true};saveDBCfg();setDbMsg('✓ Подключено!',true);updateDBUI();}
-  catch(e){setDbMsg('Ошибка: '+e.message,false);}
+  try{
+    var res=await fetch(url+'/rest/v1/monet_transactions?select=id&limit=1',{headers:{'apikey':key,'Authorization':'Bearer '+key}});
+    if(!res.ok&&res.status!==406){setDbMsg('Ошибка '+res.status,false);return;}
+    DB={url:url,key:key,connected:true};saveDBCfg();setDbMsg('✓ Подключено!',true);updateDBUI();
+  }catch(e){setDbMsg('Ошибка: '+e.message,false);}
 }
 function disconnectDB(){DB={url:'',key:'',connected:false};saveDBCfg();updateDBUI();document.getElementById('dbUrl').value='';document.getElementById('dbKey').value='';setDbMsg('Отключено',true);}
+
+// ── PUSH: сохраняем каждый массив в свою таблицу ──
 async function forcePush(){
   if(!DB.connected){setSyncMsg('Не подключено',false);return;}
   setSyncMsg('Загружаем…',true);
-  try{var res=await fetch(DB.url+'/rest/v1/monet_data',{method:'POST',headers:{'Content-Type':'application/json','apikey':DB.key,'Authorization':'Bearer '+DB.key,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({id:'main',data:JSON.stringify(S),updated_at:new Date().toISOString()})});
-  if(res.ok||res.status===201||res.status===204){setSyncMsg('✓ Загружено · '+new Date().toLocaleTimeString('ru'),true);}else{setSyncMsg('Ошибка '+res.status,false);}
+  try{
+    var now=new Date().toISOString();
+    var ops=[
+      // Транзакции: доходы и расходы
+      dbFetch('monet_transactions',{method:'POST',body:JSON.stringify(
+        [].concat(
+          S.income.map(function(i){return{id:String(i.id),type:'income',name:i.name,amount:i.a,cat:i.cat||'',note:i.note||'',date:i.date||now.split('T')[0],updated_at:now};}),
+          S.expense.map(function(i){return{id:String(i.id),type:'expense',name:i.name,amount:i.a,cat:i.cat||'',note:i.note||'',date:i.date||now.split('T')[0],updated_at:now};})
+        )
+      )}),
+      // Цели
+      dbFetch('monet_goals',{method:'POST',body:JSON.stringify(
+        S.goals.map(function(g){return{id:String(g.id),name:g.name,target:g.target,current:g.current||0,emoji:g.emoji||'🎯',deadline:g.deadline||null,updated_at:now};})
+      )}),
+      // Кредиты
+      dbFetch('monet_credits',{method:'POST',body:JSON.stringify(
+        S.credits.map(function(c){return{id:String(c.id),name:c.name,bank:c.bank||'',total:c.total,orig:c.orig||c.total,rate:c.rate||0,pay:c.pay||0,due:c.due||null,updated_at:now};})
+      )}),
+      // Копилки
+      dbFetch('monet_piggy',{method:'POST',body:JSON.stringify(
+        S.piggy.map(function(p){return{id:String(p.id),type:p.type||'in',amount:p.a,note:p.note||'',date:p.date||now.split('T')[0],updated_at:now};})
+      )}),
+      // Повторяющиеся платежи
+      dbFetch('monet_recurring',{method:'POST',body:JSON.stringify(
+        S.recurring.map(function(r){return{id:String(r.id),name:r.name,amount:r.a,cat:r.cat||'',period:r.period||'monthly',updated_at:now};})
+      )}),
+      // Бюджеты
+      dbFetch('monet_budgets',{method:'POST',body:JSON.stringify(
+        Object.entries(S.budgets||{}).map(function(kv){return{cat:kv[0],limit_amount:kv[1],updated_at:now};})
+      )})
+    ];
+    await Promise.all(ops);
+    setSyncMsg('✓ Загружено · '+new Date().toLocaleTimeString('ru'),true);
   }catch(e){setSyncMsg('Ошибка: '+e.message,false);}
 }
+
+// ── PULL: читаем все таблицы ──
 async function forcePull(){
   if(!DB.connected){setSyncMsg('Не подключено',false);return;}
   setSyncMsg('Скачиваем…',true);
-  try{var res=await fetch(DB.url+'/rest/v1/monet_data?id=eq.main&select=data',{headers:{'apikey':DB.key,'Authorization':'Bearer '+DB.key}});
-  if(!res.ok){setSyncMsg('Ошибка '+res.status,false);return;}
-  var rows=await res.json();if(!rows||!rows.length){setSyncMsg('Нет данных',false);return;}
-  S=JSON.parse(rows[0].data);if(!S.recurring)S.recurring=[];if(!S.budgets)S.budgets={};if(!S.piggy)S.piggy=[];
-  try{localStorage.setItem('monet8',JSON.stringify(S));}catch(e){}
-  setSyncMsg('✓ Получено · '+new Date().toLocaleTimeString('ru'),true);
-  renderHome();if(cur==='txs')renderTxs();if(cur==='goals')renderGoals();if(cur==='credits')renderCredits();if(cur==='recurring')renderRecurring();if(cur==='budget')renderBudget();if(cur==='piggy')renderPiggy();
+  try{
+    var results=await Promise.all([
+      dbFetch('monet_transactions?select=*&order=date.desc',{method:'GET'}).then(function(r){return r.json();}),
+      dbFetch('monet_goals?select=*',{method:'GET'}).then(function(r){return r.json();}),
+      dbFetch('monet_credits?select=*',{method:'GET'}).then(function(r){return r.json();}),
+      dbFetch('monet_piggy?select=*&order=date.desc',{method:'GET'}).then(function(r){return r.json();}),
+      dbFetch('monet_recurring?select=*',{method:'GET'}).then(function(r){return r.json();}),
+      dbFetch('monet_budgets?select=*',{method:'GET'}).then(function(r){return r.json();})
+    ]);
+    var txs=results[0]||[];
+    var goals=results[1]||[];
+    var credits=results[2]||[];
+    var piggy=results[3]||[];
+    var recurring=results[4]||[];
+    var budgets=results[5]||[];
+
+    S.income=txs.filter(function(t){return t.type==='income';}).map(function(t){return{id:Number(t.id),name:t.name,a:t.amount,cat:t.cat,note:t.note,date:t.date};});
+    S.expense=txs.filter(function(t){return t.type==='expense';}).map(function(t){return{id:Number(t.id),name:t.name,a:t.amount,cat:t.cat,note:t.note,date:t.date};});
+    S.goals=goals.map(function(g){return{id:Number(g.id),name:g.name,target:g.target,current:g.current,emoji:g.emoji,deadline:g.deadline};});
+    S.credits=credits.map(function(c){return{id:Number(c.id),name:c.name,bank:c.bank,total:c.total,orig:c.orig,rate:c.rate,pay:c.pay,due:c.due};});
+    S.piggy=piggy.map(function(p){return{id:Number(p.id),type:p.type,a:p.amount,note:p.note,date:p.date};});
+    S.recurring=recurring.map(function(r){return{id:Number(r.id),name:r.name,a:r.amount,cat:r.cat,period:r.period};});
+    S.budgets={};budgets.forEach(function(b){S.budgets[b.cat]=b.limit_amount;});
+    S._ts=Date.now();
+
+    try{localStorage.setItem('monet8',JSON.stringify(S));}catch(e){}
+    setSyncMsg('✓ Получено · '+new Date().toLocaleTimeString('ru'),true);
+    renderHome();
+    if(cur==='txs')renderTxs();if(cur==='goals')renderGoals();if(cur==='credits')renderCredits();
+    if(cur==='recurring')renderRecurring();if(cur==='budget')renderBudget();if(cur==='piggy')renderPiggy();
   }catch(e){setSyncMsg('Ошибка: '+e.message,false);}
 }
-function copySQL(){
-  var sql="CREATE TABLE IF NOT EXISTS monet_data (\n  id TEXT PRIMARY KEY,\n  data TEXT NOT NULL,\n  updated_at TIMESTAMPTZ DEFAULT NOW()\n);\nALTER TABLE monet_data ENABLE ROW LEVEL SECURITY;\nCREATE POLICY \"allow_all\" ON monet_data FOR ALL USING (true) WITH CHECK (true);";
-  navigator.clipboard.writeText(sql).then(function(){alert('SQL скопирован!');}).catch(function(){alert('Скопируйте вручную:\n'+sql);});
-}
+
+// ── Фоновая синхронизация (только pull) ──
 async function pullDB(){
   if(!DB.connected||!DB.url||!DB.key)return;
-  try{
-    var res=await fetch(DB.url+'/rest/v1/monet_data?id=eq.main&select=data,updated_at',{headers:{'apikey':DB.key,'Authorization':'Bearer '+DB.key}});
-    if(!res.ok)return;
-    var rows=await res.json();
-    // Если в базе нет записи и локально есть данные — пушим. Если локально тоже пусто — не трогаем.
-    if(!rows||!rows.length){
-      var hasLocal=(S.income&&S.income.length)||(S.expense&&S.expense.length)||(S.goals&&S.goals.length);
-      if(hasLocal)forcePush();
-      return;
-    }
-    var remote=JSON.parse(rows[0].data);
-    var localTs=S._ts||0;
-    var remoteTs=remote._ts||0;
-    // Побеждает тот у кого новее timestamp
-    if(remoteTs>localTs){
-      // Удалённые данные новее — берём их
-      S=remote;
-      if(!S.recurring)S.recurring=[];if(!S.budgets)S.budgets={};if(!S.piggy)S.piggy=[];
-      try{localStorage.setItem('monet8',JSON.stringify(S));}catch(e){}
-      renderHome();
-    } else if(localTs>remoteTs){
-      // Локальные данные новее — пушим на сервер
-      forcePush();
-    }
-    // Если timestamp одинаковый — ничего не делаем, данные синхронизированы
-  }catch(e){}
+  try{await forcePull();}catch(e){}
 }
+
+function copySQL(){
+  var sql=
+"-- Запустите этот SQL в Supabase SQL Editor\n\n"+
+"CREATE TABLE IF NOT EXISTS monet_transactions (\n  id TEXT PRIMARY KEY,\n  type TEXT NOT NULL,\n  name TEXT,\n  amount NUMERIC NOT NULL,\n  cat TEXT,\n  note TEXT,\n  date DATE,\n  updated_at TIMESTAMPTZ DEFAULT NOW()\n);\n\n"+
+"CREATE TABLE IF NOT EXISTS monet_goals (\n  id TEXT PRIMARY KEY,\n  name TEXT,\n  target NUMERIC,\n  current NUMERIC DEFAULT 0,\n  emoji TEXT,\n  deadline DATE,\n  updated_at TIMESTAMPTZ DEFAULT NOW()\n);\n\n"+
+"CREATE TABLE IF NOT EXISTS monet_credits (\n  id TEXT PRIMARY KEY,\n  name TEXT,\n  bank TEXT,\n  total NUMERIC,\n  orig NUMERIC,\n  rate NUMERIC DEFAULT 0,\n  pay NUMERIC DEFAULT 0,\n  due DATE,\n  updated_at TIMESTAMPTZ DEFAULT NOW()\n);\n\n"+
+"CREATE TABLE IF NOT EXISTS monet_piggy (\n  id TEXT PRIMARY KEY,\n  type TEXT,\n  amount NUMERIC,\n  note TEXT,\n  date DATE,\n  updated_at TIMESTAMPTZ DEFAULT NOW()\n);\n\n"+
+"CREATE TABLE IF NOT EXISTS monet_recurring (\n  id TEXT PRIMARY KEY,\n  name TEXT,\n  amount NUMERIC,\n  cat TEXT,\n  period TEXT,\n  updated_at TIMESTAMPTZ DEFAULT NOW()\n);\n\n"+
+"CREATE TABLE IF NOT EXISTS monet_budgets (\n  cat TEXT PRIMARY KEY,\n  limit_amount NUMERIC,\n  updated_at TIMESTAMPTZ DEFAULT NOW()\n);\n\n"+
+"DO $$ DECLARE t TEXT; BEGIN\n  FOREACH t IN ARRAY ARRAY['monet_transactions','monet_goals','monet_credits','monet_piggy','monet_recurring','monet_budgets'] LOOP\n    EXECUTE 'ALTER TABLE '||t||' ENABLE ROW LEVEL SECURITY';\n    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename=t AND policyname='allow_all') THEN\n      EXECUTE 'CREATE POLICY allow_all ON '||t||' FOR ALL USING (true) WITH CHECK (true)';\n    END IF;\n  END LOOP;\nEND $$;";
+  navigator.clipboard.writeText(sql).then(function(){alert('SQL скопирован! Вставьте в Supabase SQL Editor и выполните.');}).catch(function(){alert('Скопируйте вручную:\n'+sql);});
+}
+
 function clearAllConfirm(){openConfirm('Удалить все данные?','Действие нельзя отменить.',function(){S={income:[],expense:[],goals:[],credits:[],recurring:[],budgets:{},piggy:[]};try{localStorage.setItem('monet8',JSON.stringify(S));}catch(e){}renderHome();renderSettings();},'Удалить всё',null,null);}
 setInterval(function(){if(DB.connected&&document.visibilityState!=='hidden')pullDB();},30000);
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'&&DB.connected)pullDB();});
