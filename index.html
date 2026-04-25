@@ -771,36 +771,68 @@ body::before{
 
 /* ── PIGGY ── */
 .pig-hero{
-  margin:6px 16px 16px;
-  background:linear-gradient(145deg,#130F05 0%,#201800 40%,#1A1405 100%);
-  border:1px solid rgba(212,175,55,.25);
-  border-radius:28px;padding:30px 24px 24px;text-align:center;
+  margin:6px 16px 0;
+  background:linear-gradient(150deg,#0E0B04 0%,#1C1407 35%,#241B0A 65%,#131007 100%);
+  border:1px solid rgba(212,175,55,.3);
+  border-radius:28px;
   animation:fadeUp .3s ease both;position:relative;overflow:hidden;
 }
-.pig-hero::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.1) 0%,transparent 65%);pointer-events:none}
-.pig-coin{font-size:56px;display:block;margin-bottom:12px;animation:coinBounce 4s ease-in-out infinite;cursor:pointer;user-select:none}
+.pig-hero::before{content:'';position:absolute;top:-60px;right:-40px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.12) 0%,transparent 65%);pointer-events:none}
+.pig-hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.4),transparent)}
+
+.pig-hero-top{padding:24px 22px 20px;display:flex;align-items:center;gap:18px}
+.pig-coin-wrap{position:relative;flex-shrink:0}
+.pig-coin{font-size:52px;display:block;animation:coinBounce 4s ease-in-out infinite;cursor:pointer;user-select:none;line-height:1}
 .pig-coin:active{animation:none;transform:scale(.88)}
-.pig-lbl{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(212,175,55,.45);margin-bottom:12px}
-.pig-bal{font-family:'Playfair Display',serif;font-size:46px;font-weight:900;letter-spacing:-1.5px;line-height:1;margin-bottom:22px;background:linear-gradient(135deg,var(--gold),var(--gold3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.pig-stats{display:flex;background:rgba(0,0,0,.3);border-radius:14px;padding:14px 0;border:1px solid rgba(212,175,55,.15)}
+.pig-hero-info{flex:1;min-width:0}
+.pig-lbl{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(212,175,55,.45);margin-bottom:6px}
+.pig-bal{font-family:'Playfair Display',serif;font-size:38px;font-weight:900;letter-spacing:-1.5px;line-height:1;background:linear-gradient(135deg,#FFF0A0,var(--gold2) 50%,var(--acc2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.pig-bal-sub{font-size:11px;color:rgba(212,175,55,.4);margin-top:5px;font-weight:500}
+
+/* Goal progress section inside hero */
+.pig-goal-section{padding:0 22px 20px}
+.pig-goal-label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.pig-goal-name{font-size:11px;font-weight:700;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.pig-goal-pct{font-size:13px;font-weight:800;color:var(--gold2);font-family:'DM Mono',monospace}
+.pig-goal-bar-bg{height:8px;background:rgba(212,175,55,.08);border-radius:8px;overflow:hidden;position:relative;margin-bottom:8px}
+.pig-goal-bar{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--acc),var(--gold2),var(--gold3));background-size:200%;animation:goldShimmer 3s linear infinite;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.pig-goal-bar.done{background:linear-gradient(90deg,var(--grn),var(--grn2))}
+.pig-goal-amounts{display:flex;justify-content:space-between;font-size:10px;color:var(--ink3)}
+.pig-goal-edit{font-size:10px;color:var(--gold);cursor:pointer;text-decoration:underline;font-weight:600}
+
+/* No goal state */
+.pig-no-goal{padding:0 22px 18px;display:flex;align-items:center;gap:10px}
+.pig-set-goal-btn{flex:1;padding:11px 14px;border-radius:14px;border:1.5px dashed rgba(212,175,55,.3);background:rgba(212,175,55,.04);color:var(--gold);font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .14s;text-align:center;-webkit-tap-highlight-color:transparent}
+.pig-set-goal-btn:active{background:rgba(212,175,55,.08)}
+
+/* Stats row */
+.pig-stats{display:flex;background:rgba(0,0,0,.3);border-radius:0 0 24px 24px;padding:14px 0;border-top:1px solid rgba(212,175,55,.08)}
 .pig-stat{flex:1;text-align:center}
 .pig-stat-val{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;font-family:'DM Mono',monospace}
 .pig-stat-lbl{font-size:9px;color:var(--ink4);text-transform:uppercase;letter-spacing:1px}
-.pig-stat-div{width:1px;background:rgba(212,175,55,.15)}
+.pig-stat-div{width:1px;background:rgba(212,175,55,.12)}
 
-.pig-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px;margin-bottom:14px}
+/* Action buttons — new horizontal pill style */
+.pig-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px;margin-bottom:2px}
 .pig-act-btn{
-  border:none;border-radius:20px;padding:18px 12px;cursor:pointer;
-  font-family:'Outfit',sans-serif;font-size:13px;font-weight:800;
-  display:flex;flex-direction:column;align-items:center;gap:8px;
+  border:none;border-radius:18px;padding:16px 12px;cursor:pointer;
+  font-family:'Outfit',sans-serif;font-size:14px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;gap:10px;
   transition:all .15s;-webkit-tap-highlight-color:transparent;
+  letter-spacing:.2px;
 }
 .pig-act-btn:active{transform:scale(.96)}
-.pig-act-in{background:rgba(76,175,132,.1);border:1.5px solid rgba(76,175,132,.2);color:var(--grn2)}
-.pig-act-out{background:rgba(212,175,55,.08);border:1.5px solid rgba(212,175,55,.2);color:var(--gold2)}
-.pig-act-ico{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900}
-.pig-act-in .pig-act-ico{background:rgba(76,175,132,.15)}
-.pig-act-out .pig-act-ico{background:rgba(212,175,55,.1)}
+.pig-act-in{
+  background:linear-gradient(135deg,#1E6644,#2D9E68);
+  color:#fff;
+  box-shadow:0 4px 16px rgba(76,175,132,.3);
+}
+.pig-act-out{
+  background:linear-gradient(135deg,var(--acc),var(--gold2));
+  color:#0C0A06;
+  box-shadow:0 4px 16px rgba(212,175,55,.25);
+}
+.pig-act-ico{font-size:18px;line-height:1}
 
 .pig-panel{
   background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);
@@ -811,6 +843,14 @@ body::before{
 .pig-panel-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 .pig-panel-title{font-size:14px;font-weight:800;color:var(--gold2)}
 .pig-panel-close{font-size:12px;color:var(--ink3);cursor:pointer;padding:5px 10px;border-radius:8px;background:var(--bg4);border:1px solid var(--border);font-family:'Outfit',sans-serif}
+
+/* Goal setup panel */
+.pig-goal-panel{
+  background:var(--bg3);border:1px solid rgba(212,175,55,.2);border-radius:var(--r);
+  padding:20px;margin:0 16px 14px;display:none;animation:pop .2s ease both;
+  position:relative;overflow:hidden;
+}
+.pig-goal-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold2),transparent)}
 
 .pig-tx{
   display:flex;align-items:center;gap:12px;
@@ -1270,10 +1310,44 @@ body::before{
     <!-- PIGGY -->
     <div id="sc-piggy" class="screen">
       <div class="spacer"></div>
+
+      <!-- HERO CARD -->
       <div class="pig-hero">
-        <span class="pig-coin" id="pigCoin">🪙</span>
-        <div class="pig-lbl">Копилка</div>
-        <div class="pig-bal" id="pigBal">0 CA$</div>
+        <div class="pig-hero-top">
+          <div class="pig-coin-wrap">
+            <span class="pig-coin" id="pigCoin">🪙</span>
+          </div>
+          <div class="pig-hero-info">
+            <div class="pig-lbl">Копилка</div>
+            <div class="pig-bal" id="pigBal">0 CA$</div>
+            <div class="pig-bal-sub" id="pigBalSub">Начните копить</div>
+          </div>
+        </div>
+
+        <!-- GOAL PROGRESS (показывается если есть цель) -->
+        <div class="pig-goal-section" id="pigGoalSection" style="display:none">
+          <div class="pig-goal-label-row">
+            <div class="pig-goal-name">🎯 <span id="pigGoalNameLbl">Цель</span></div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="pig-goal-pct" id="pigGoalPct">0%</div>
+              <span class="pig-goal-edit" onclick="openPigGoalPanel()">изменить</span>
+            </div>
+          </div>
+          <div class="pig-goal-bar-bg">
+            <div class="pig-goal-bar" id="pigGoalBar" style="width:0%"></div>
+          </div>
+          <div class="pig-goal-amounts">
+            <span id="pigGoalCurr">0 CA$</span>
+            <span id="pigGoalTarget">из 0 CA$</span>
+          </div>
+        </div>
+
+        <!-- NO GOAL (показывается если нет цели) -->
+        <div class="pig-no-goal" id="pigNoGoal">
+          <button class="pig-set-goal-btn" onclick="openPigGoalPanel()">＋ Установить цель накопления</button>
+        </div>
+
+        <!-- STATS -->
         <div class="pig-stats">
           <div class="pig-stat">
             <div class="pig-stat-val" id="pigTotIn">0</div>
@@ -1292,22 +1366,44 @@ body::before{
         </div>
       </div>
 
+      <!-- ACTION BUTTONS -->
       <div class="pig-actions">
         <button class="pig-act-btn pig-act-in" onclick="openPigPanel('in')">
-          <div class="pig-act-ico">↑</div>Положить
+          <span class="pig-act-ico">↑</span> Положить
         </button>
         <button class="pig-act-btn pig-act-out" onclick="openPigPanel('out')">
-          <div class="pig-act-ico">↓</div>Взять
+          <span class="pig-act-ico">↓</span> Взять
         </button>
       </div>
 
+      <!-- DEPOSIT/WITHDRAW PANEL -->
       <div class="pig-panel" id="pigPanel">
         <div class="pig-panel-hd">
           <span class="pig-panel-title" id="pigPanelTitle">Пополнение</span>
           <button class="pig-panel-close" onclick="closePigPanel()">✕</button>
         </div>
         <input type="number" id="pigInput" class="finput large" placeholder="0" style="margin-bottom:14px">
-        <button class="btn-prim btn-gold" id="pigConfirmBtn" onclick="confirmPig()">Подтвердить</button>
+        <button class="btn-prim btn-grn" id="pigConfirmBtn" onclick="confirmPig()">Подтвердить</button>
+      </div>
+
+      <!-- GOAL SETUP PANEL -->
+      <div class="pig-goal-panel" id="pigGoalPanel">
+        <div class="pig-panel-hd">
+          <span class="pig-panel-title">🎯 Цель накопления</span>
+          <button class="pig-panel-close" onclick="closePigGoalPanel()">✕</button>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Название цели</label>
+          <input type="text" id="pigGoalName" class="finput" placeholder="На машину, отпуск…">
+        </div>
+        <div class="fgroup" style="margin-bottom:14px">
+          <label class="flabel">Сумма цели (CA$)</label>
+          <input type="number" id="pigGoalAmt" class="finput large" placeholder="0">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button class="btn-prim btn-gold" onclick="savePigGoal()">Сохранить</button>
+          <button class="btn-prim btn-red" onclick="deletePigGoal()" style="border-radius:50px;padding:16px;font-size:13px">Удалить цель</button>
+        </div>
       </div>
 
       <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 20px 10px">
@@ -1639,6 +1735,7 @@ if(!Array.isArray(S.credits))S.credits=[];
 if(!Array.isArray(S.recurring))S.recurring=[];
 if(!Array.isArray(S.piggy))S.piggy=[];
 if(!S.budgets||typeof S.budgets!=='object'||Array.isArray(S.budgets))S.budgets={};
+if(S.piggyGoal===undefined)S.piggyGoal=null;
 
 var sv=function(){
   S._ts=Date.now();
@@ -2299,6 +2396,7 @@ var _pigMode=null;
 function openPigPanel(mode){
   _pigMode=mode;
   var p=document.getElementById('pigPanel');p.style.display='block';
+  closePigGoalPanel();
   var t=document.getElementById('pigPanelTitle');var btn=document.getElementById('pigConfirmBtn');
   if(mode==='in'){t.textContent='↑ Пополнение копилки';btn.className='btn-prim btn-grn';btn.textContent='+ Положить';}
   else{t.textContent='↓ Снятие из копилки';btn.className='btn-prim btn-gold';btn.textContent='− Взять';}
@@ -2312,7 +2410,31 @@ function confirmPig(){
   if(_pigMode==='in'){S.piggy.push({id:Date.now(),type:'in',a:a,date:td(),note:'Пополнение'});}
   else{var bal=pigBal();if(a>bal){openModal('Недостаточно','В копилке: '+fmt(bal),function(){});return;}S.piggy.push({id:Date.now(),type:'out',a:a,date:td(),note:'Снятие'});}
   sv();renderPiggy();renderHome();closePigPanel();
+  // confetti if goal reached
+  if(S.piggyGoal&&S.piggyGoal.amount>0){var nb=pigBal();if(nb>=S.piggyGoal.amount&&_pigMode==='in')fireConfetti();}
 }
+
+// Goal panel
+function openPigGoalPanel(){
+  closePigPanel();
+  var p=document.getElementById('pigGoalPanel');p.style.display='block';
+  var g=S.piggyGoal||{};
+  document.getElementById('pigGoalName').value=g.name||'';
+  document.getElementById('pigGoalAmt').value=g.amount||'';
+  setTimeout(function(){document.getElementById('pigGoalName').focus();},100);
+}
+function closePigGoalPanel(){var p=document.getElementById('pigGoalPanel');if(p)p.style.display='none';}
+function savePigGoal(){
+  var name=document.getElementById('pigGoalName').value.trim();
+  var amount=parseFloat(document.getElementById('pigGoalAmt').value);
+  if(!name||!amount||amount<=0){pulse('pigGoalAmt');return;}
+  S.piggyGoal={name:name,amount:amount};
+  sv();renderPiggy();closePigGoalPanel();
+}
+function deletePigGoal(){
+  S.piggyGoal=null;sv();renderPiggy();closePigGoalPanel();
+}
+
 function clearPiggy(){openConfirm('Очистить копилку?','История будет удалена.',function(){S.piggy=[];sv();renderPiggy();},'Очистить',null,null);}
 function deletePiggyTx(id){id=Number(id);openConfirm('Удалить запись?','',function(){S.piggy=S.piggy.filter(function(t){return Number(t.id)!==id;});sv();renderPiggy();},'Удалить',null,null);}
 function renderPiggy(){
@@ -2324,6 +2446,36 @@ function renderPiggy(){
   var pi=document.getElementById('pigTotIn');if(pi)pi.textContent=fmt(totIn);
   var po=document.getElementById('pigTotOut');if(po)po.textContent=fmt(totOut);
   var pc=document.getElementById('pigCnt');if(pc)pc.textContent=S.piggy.length;
+
+  // Sub label
+  var sub=document.getElementById('pigBalSub');
+  if(sub){
+    if(S.piggyGoal&&S.piggyGoal.amount>0){
+      var left=Math.max(0,S.piggyGoal.amount-bal);
+      sub.textContent=left>0?'Осталось '+fmt(left):'🎉 Цель достигнута!';
+    } else {
+      sub.textContent=bal>0?'Накоплено':'Начните копить';
+    }
+  }
+
+  // Goal progress
+  var gs=document.getElementById('pigGoalSection');
+  var ng=document.getElementById('pigNoGoal');
+  if(S.piggyGoal&&S.piggyGoal.amount>0){
+    if(gs)gs.style.display='';
+    if(ng)ng.style.display='none';
+    var pct=Math.min(100,Math.round(bal/S.piggyGoal.amount*100));
+    var nl=document.getElementById('pigGoalNameLbl');if(nl)nl.textContent=S.piggyGoal.name;
+    var gp=document.getElementById('pigGoalPct');if(gp)gp.textContent=pct+'%';
+    var gb=document.getElementById('pigGoalBar');
+    if(gb){gb.style.width=pct+'%';gb.className='pig-goal-bar'+(pct>=100?' done':'');}
+    var gc=document.getElementById('pigGoalCurr');if(gc)gc.textContent=fmt(bal);
+    var gt=document.getElementById('pigGoalTarget');if(gt)gt.textContent='из '+fmt(S.piggyGoal.amount);
+  } else {
+    if(gs)gs.style.display='none';
+    if(ng)ng.style.display='';
+  }
+
   var hist=document.getElementById('pigHist');if(!hist)return;
   if(!S.piggy.length){hist.innerHTML='<div style="padding:36px;text-align:center;color:var(--ink3);font-size:13px">🪙 История пуста</div>';return;}
   hist.innerHTML=[].concat(S.piggy).reverse().map(function(t,idx){
@@ -2465,6 +2617,7 @@ async function forcePull(){
   if(!Array.isArray(parsed.recurring))parsed.recurring=[];
   if(!Array.isArray(parsed.piggy))parsed.piggy=[];
   if(!parsed.budgets||typeof parsed.budgets!=='object'||Array.isArray(parsed.budgets))parsed.budgets={};
+  if(parsed.piggyGoal===undefined)parsed.piggyGoal=null;
   S=parsed;
   try{localStorage.setItem('monet8',JSON.stringify(S));}catch(e){}
   setSyncMsg('✓ Получено · '+new Date().toLocaleTimeString('ru'),true);
