@@ -909,15 +909,17 @@ body::before{
 /* ── MORE PANEL ── */
 .more-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:500;display:none;animation:fadeIn .2s ease}
 .more-panel{
-  position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(110%);
+  position:fixed;bottom:0;left:0;right:0;margin:0 auto;
+  transform:translateY(110%);
   width:100%;max-width:430px;
   background:var(--bg2);border-radius:26px 26px 0 0;
   border:1px solid var(--border2);border-bottom:none;
   padding:14px 16px calc(var(--safe) + 22px);
   z-index:501;transition:transform .3s cubic-bezier(.32,0,.15,1);
+  box-sizing:border-box;
 }
 .more-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.4}
-.more-panel.open{transform:translateX(-50%) translateY(0)}
+.more-panel.open{transform:translateY(0)}
 .more-handle{width:36px;height:4px;border-radius:2px;background:var(--border2);margin:0 auto 18px}
 .more-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
 .more-item{
@@ -936,15 +938,22 @@ body::before{
 /* ── MODAL ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(10px);z-index:600;display:none;animation:fadeIn .2s ease}
 .modal-box{
-  position:fixed;left:50%;top:50%;
-  transform:translate(-50%,-50%);
-  width:calc(100% - 32px);max-width:340px;
+  position:fixed;
+  left:0;right:0;bottom:0;
+  margin:0 auto;
+  width:100%;max-width:430px;
   background:var(--bg2);border:1px solid var(--border2);
-  border-radius:26px;padding:24px 22px 22px;
-  z-index:700;display:none;animation:pop .22s ease both;
-  position:fixed;overflow:hidden;
+  border-radius:26px 26px 0 0;
+  padding:20px 22px calc(var(--safe) + 24px);
+  z-index:700;display:none;
+  animation:slideUp2 .25s cubic-bezier(.32,0,.15,1) both;
+  overflow:hidden;
+  box-sizing:border-box;
 }
-.modal-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+@keyframes slideUp2{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-box::before{content:'';display:block;width:36px;height:4px;border-radius:2px;background:var(--border2);margin:0 auto 18px}
+.modal-box::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
 .modal-title{font-size:15px;font-weight:800;color:var(--gold2);margin-bottom:4px;font-family:'Playfair Display',serif}
 .modal-sub{font-size:12px;color:var(--ink3);margin-bottom:16px;line-height:1.5}
 .modal-input-wrap{background:var(--bg4);border:1.5px solid var(--border2);border-radius:14px;overflow:hidden;margin-bottom:14px}
@@ -1001,7 +1010,183 @@ body::before{
 .empty-title{font-size:14px;font-weight:700;color:var(--ink2)}
 .empty-sub{font-size:12px;color:var(--ink3)}
 
-/* ── MISC ── */
+/* ══════════════════════════════════
+   NEW HOME — FINTECH REDESIGN
+   ══════════════════════════════════ */
+
+/* ── HEADER ── */
+.nh-header{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  padding:12px 20px 6px;
+  animation:fadeIn .35s ease both;
+}
+.nh-greeting{
+  font-size:11px;font-weight:600;color:var(--ink3);
+  letter-spacing:.3px;margin-bottom:3px;
+}
+.nh-brand{
+  font-family:'Playfair Display',serif;
+  font-size:26px;font-weight:900;letter-spacing:-1px;
+  color:var(--ink);line-height:1;
+}
+.nh-brand span{
+  background:linear-gradient(135deg,var(--acc),var(--gold2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.nh-date-pill{
+  display:flex;align-items:center;gap:5px;
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:20px;padding:6px 12px;margin-top:4px;
+  font-size:11px;font-weight:600;color:var(--ink3);
+}
+
+/* ── HERO BALANCE ── */
+.nh-hero{
+  margin:8px 16px 0;
+  border-radius:28px;
+  background:linear-gradient(145deg,#190D16 0%,#221219 45%,#160B14 100%);
+  border:1px solid rgba(224,82,138,.28);
+  padding:22px 22px 0;
+  position:relative;overflow:hidden;
+  animation:fadeUp .35s .05s ease both;
+}
+.nh-hero-glow{
+  position:absolute;top:-80px;right:-60px;
+  width:280px;height:280px;border-radius:50%;
+  background:radial-gradient(circle,rgba(224,82,138,.13) 0%,transparent 65%);
+  pointer-events:none;
+}
+.nh-hero::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(224,82,138,.5),transparent);
+}
+.nh-hero-top{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:8px;
+}
+.nh-hero-lbl{
+  font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;
+  color:rgba(224,82,138,.5);
+}
+.nh-hero-month{
+  font-size:10px;font-weight:600;color:var(--ink4);
+  background:rgba(224,82,138,.08);border:1px solid rgba(224,82,138,.14);
+  border-radius:8px;padding:3px 8px;
+}
+.nh-hero-amount{
+  font-family:'Playfair Display',serif;
+  font-size:48px;font-weight:900;line-height:1;letter-spacing:-2px;
+  background:linear-gradient(135deg,#FFB3D4,var(--gold2) 50%,var(--acc2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:6px;
+}
+.nh-hero-amount.neg{
+  background:none;-webkit-text-fill-color:var(--red2);color:var(--red2);
+}
+.nh-hero-amount.zero{
+  background:none;-webkit-text-fill-color:var(--ink3);color:var(--ink3);
+}
+.nh-hero-sub{
+  font-size:11px;color:rgba(224,82,138,.45);font-weight:500;margin-bottom:18px;
+}
+
+/* Stats strip inside hero */
+.nh-stats-row{
+  display:flex;align-items:stretch;
+  background:rgba(0,0,0,.3);
+  border-radius:18px 18px 0 0;
+  margin:0 -22px;
+  border-top:1px solid rgba(224,82,138,.1);
+}
+.nh-stat{
+  flex:1;display:flex;align-items:center;gap:8px;
+  padding:14px 14px;cursor:default;
+}
+.nh-stat-pig{cursor:pointer;transition:background .13s}
+.nh-stat-pig:active{background:rgba(224,82,138,.06)}
+.nh-stat-icon{
+  font-size:14px;width:28px;height:28px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.nh-stat-inc .nh-stat-icon{background:rgba(76,175,132,.12);color:var(--grn2)}
+.nh-stat-exp .nh-stat-icon{background:rgba(224,82,138,.1);color:var(--gold2)}
+.nh-stat-pig .nh-stat-icon{background:rgba(212,175,55,.1)}
+.nh-stat-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink4);margin-bottom:2px}
+.nh-stat-val{font-size:14px;font-weight:800;font-family:'DM Mono',monospace;color:var(--ink)}
+.nh-stat-inc .nh-stat-val{color:var(--grn2)}
+.nh-stat-exp .nh-stat-val{color:var(--gold2)}
+.nh-stat-divider{width:1px;background:rgba(224,82,138,.1);margin:10px 0;flex-shrink:0}
+
+/* ── CHART ROW ── */
+.nh-chart-row{
+  display:flex;gap:10px;padding:12px 16px 0;
+  animation:fadeUp .35s .09s ease both;
+}
+
+/* Donut card */
+.nh-donut-card{
+  width:110px;flex-shrink:0;
+  background:var(--bg3);border:1px solid var(--border);border-radius:20px;
+  padding:14px 10px 12px;display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.nh-donut-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink4);text-align:center;margin-bottom:4px}
+.nh-donut-wrap{position:relative;width:90px;height:90px;flex-shrink:0}
+.nh-donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.nh-donut-pct{font-size:18px;font-weight:800;font-family:'DM Mono',monospace;color:var(--gold2);line-height:1}
+.nh-donut-tiny{font-size:8px;color:var(--ink4);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
+
+/* Bars card */
+.nh-bars-card{
+  flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:20px;
+  padding:14px 14px 10px;display:flex;flex-direction:column;
+}
+.nh-bars-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink4);margin-bottom:8px}
+.nh-bars-inner{display:flex;align-items:flex-end;gap:5px;height:56px;flex:1}
+.nh-bars-labels{display:flex;gap:5px;margin-top:5px}
+
+/* ── QUICK ACTIONS ── */
+.nh-qa{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+  padding:12px 16px 0;
+  animation:fadeUp .35s .12s ease both;
+}
+.nh-qa-item{
+  background:var(--bg3);border:1px solid var(--border);border-radius:18px;
+  padding:13px 6px 11px;display:flex;flex-direction:column;align-items:center;gap:5px;
+  cursor:pointer;transition:all .13s;-webkit-tap-highlight-color:transparent;
+  position:relative;overflow:hidden;
+}
+.nh-qa-item:active{transform:scale(.93);border-color:var(--border2);background:var(--bg4)}
+.nh-qa-ico{
+  width:36px;height:36px;border-radius:12px;border:1px solid transparent;
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+.nh-qa-val{font-size:13px;font-weight:800;color:var(--ink);font-family:'DM Mono',monospace;line-height:1}
+.nh-qa-lbl{font-size:8px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--ink3)}
+
+/* ── SECTIONS ── */
+.nh-section{padding:14px 16px 0;animation:fadeUp .35s .15s ease both}
+.nh-section-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.nh-section-title{
+  font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  color:var(--gold);display:flex;align-items:center;gap:8px;
+}
+.nh-section-title::before{content:'';width:12px;height:2px;background:linear-gradient(90deg,var(--acc),var(--gold2));border-radius:2px}
+.nh-section-link{font-size:11px;font-weight:600;color:var(--gold2);cursor:pointer;opacity:.75;transition:opacity .13s}
+.nh-section-link:active{opacity:1}
+
+/* Cats card */
+.nh-cats-card{
+  background:var(--bg3);border:1px solid var(--border);border-radius:18px;
+  overflow:hidden;padding:4px 0;
+}
+
+/* Recent card */
+.nh-recent-card{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:18px;overflow:hidden;
+}
+
 .gap{height:16px}
 .spacer{height:18px}
 .confetti-p{position:fixed;pointer-events:none;z-index:9999;width:8px;height:8px;border-radius:2px;animation:confettiFall var(--dur) ease-in forwards}
@@ -1014,7 +1199,23 @@ body::before{
   transition:all .13s;-webkit-tap-highlight-color:transparent;
 }
 .tx-cv-btn:active{transform:scale(.94);background:rgba(224,82,138,.2)}
-#cvBox{z-index:800}
+
+/* Conversion modal — bottom sheet */
+#cvBox{
+  position:fixed;
+  left:0;right:0;bottom:0;
+  margin:0 auto;
+  width:100%;max-width:430px;
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:26px 26px 0 0;
+  padding:6px 22px calc(var(--safe) + 24px);
+  z-index:800;display:none;
+  animation:slideUp .25s cubic-bezier(.32,0,.15,1) both;
+  overflow-y:auto;max-height:92vh;
+  box-sizing:border-box;
+}
+#cvBox::before{content:'';display:block;width:36px;height:4px;border-radius:2px;background:var(--border2);margin:0 auto 14px}
+#cvBox::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
@@ -1064,75 +1265,67 @@ body::before{
     <!-- HOME -->
     <div id="sc-home" class="screen active">
 
-      <!-- TOP BAR -->
-      <div class="home-topbar">
-        <div class="home-brand">Мон<span>е</span>т</div>
-        <div class="home-date-badge">
-          <span class="live-pip"></span>
-          <span id="homeDateLbl">сегодня</span>
+      <!-- ══ NEW HOME HEADER ══ -->
+      <div class="nh-header">
+        <div class="nh-header-left">
+          <div class="nh-greeting" id="nhGreeting">Добрый день 👋</div>
+          <div class="nh-brand">Мон<span>е</span>т</div>
         </div>
-      </div>
-
-      <!-- BALANCE CARD (новый дизайн) -->
-      <div class="bal-card">
-        <div class="bal-card-top">
-          <div>
-            <div class="bal-card-label">Общий баланс</div>
-            <div class="bal-card-amount zero" id="hbal">0 CA$</div>
-            <div class="bal-card-sub" id="hsub">Добавьте первую операцию</div>
-          </div>
-          <div class="bal-card-badge">
-            <div class="bal-card-badge-lbl">Копилка</div>
-            <div class="bal-card-badge-val" id="hPig">0</div>
-          </div>
-        </div>
-        <div class="bal-card-row">
-          <div class="bal-stat inc-s">
-            <div class="bal-stat-lbl">↑ Доходы</div>
-            <div class="bal-stat-val g" id="hInc">0</div>
-            <div class="bal-stat-trend" id="hIncTrend">за этот месяц</div>
-          </div>
-          <div class="bal-stat exp-s">
-            <div class="bal-stat-lbl">↓ Расходы</div>
-            <div class="bal-stat-val r" id="hExp">0</div>
-            <div class="bal-stat-trend" id="hExpTrend">за этот месяц</div>
+        <div class="nh-header-right">
+          <div class="nh-date-pill">
+            <span class="live-pip"></span>
+            <span id="homeDateLbl">сегодня</span>
           </div>
         </div>
       </div>
 
-      <!-- QUICK ACTIONS (новый дизайн, 4 кнопки) -->
-      <div class="qa-row">
-        <div class="qa-btn budget-qa" onclick="show('budget')">
-          <div class="qa-btn-ring">📊</div>
-          <div class="qa-val" id="qBudget">—</div>
-          <div class="qa-lbl">Бюджет</div>
+      <!-- ══ HERO BALANCE ══ -->
+      <div class="nh-hero">
+        <div class="nh-hero-glow"></div>
+        <div class="nh-hero-top">
+          <div class="nh-hero-lbl">Общий баланс</div>
+          <div class="nh-hero-month" id="monthLbl">этот месяц</div>
         </div>
-        <div class="qa-btn debt-qa" onclick="show('credits')">
-          <div class="qa-btn-ring">💳</div>
-          <div class="qa-val" id="qDebt">0</div>
-          <div class="qa-lbl">Долг</div>
-        </div>
-        <div class="qa-btn rec-qa" onclick="show('recurring')">
-          <div class="qa-btn-ring">📅</div>
-          <div class="qa-val" id="qRec">0</div>
-          <div class="qa-lbl">Платежи</div>
-        </div>
-        <div class="qa-btn goals-qa" onclick="show('goals')">
-          <div class="qa-btn-ring">🎯</div>
-          <div class="qa-val" id="qGoals">0</div>
-          <div class="qa-lbl">Цели</div>
+        <div class="nh-hero-amount" id="hbal">0 CA$</div>
+        <div class="nh-hero-sub" id="hsub">Добавьте первую операцию</div>
+
+        <!-- inc/exp row -->
+        <div class="nh-stats-row">
+          <div class="nh-stat nh-stat-inc">
+            <div class="nh-stat-icon">↑</div>
+            <div>
+              <div class="nh-stat-lbl">Доходы</div>
+              <div class="nh-stat-val" id="hInc">0</div>
+            </div>
+          </div>
+          <div class="nh-stat-divider"></div>
+          <div class="nh-stat nh-stat-exp">
+            <div class="nh-stat-icon">↓</div>
+            <div>
+              <div class="nh-stat-lbl">Расходы</div>
+              <div class="nh-stat-val" id="hExp">0</div>
+            </div>
+          </div>
+          <div class="nh-stat-divider"></div>
+          <div class="nh-stat nh-stat-pig" onclick="show('piggy')">
+            <div class="nh-stat-icon">🪙</div>
+            <div>
+              <div class="nh-stat-lbl">Копилка</div>
+              <div class="nh-stat-val" id="hPig">0</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- CHART CARD -->
-      <div class="card" style="animation-delay:.06s">
-        <div class="card-shine"></div>
-        <div class="card-title" id="monthLbl">Этот месяц</div>
-        <div style="display:flex;gap:16px;align-items:center">
-          <div class="ring-wrap">
-            <svg width="84" height="84" viewBox="0 0 84 84">
+      <!-- ══ SPEND RING + CHART ══ -->
+      <div class="nh-chart-row">
+        <!-- Donut -->
+        <div class="nh-donut-card">
+          <div class="nh-donut-lbl">Трат от доходов</div>
+          <div class="nh-donut-wrap">
+            <svg width="90" height="90" viewBox="0 0 90 90">
               <defs>
-                <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
+                <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stop-color="#A03070"/>
                   <stop offset="100%" stop-color="#F06FA0"/>
                 </linearGradient>
@@ -1141,38 +1334,72 @@ body::before{
                   <stop offset="100%" stop-color="#E05A50"/>
                 </linearGradient>
               </defs>
-              <circle class="ring-bg" cx="42" cy="42" r="35"/>
-              <circle id="ringFill" class="ring-fill" cx="42" cy="42" r="35" stroke="url(#rg)" stroke-dasharray="220" stroke-dashoffset="220"/>
+              <circle cx="45" cy="45" r="36" fill="none" stroke="rgba(224,82,138,.08)" stroke-width="8"/>
+              <circle id="ringFill" cx="45" cy="45" r="36" fill="none" stroke="url(#rg)"
+                stroke-width="8" stroke-linecap="round"
+                stroke-dasharray="226" stroke-dashoffset="226"
+                transform="rotate(-90 45 45)"/>
             </svg>
-            <div class="ring-center">
-              <div class="ring-pct" id="rPct">0%</div>
-              <div class="ring-tiny">трат</div>
+            <div class="nh-donut-center">
+              <div class="nh-donut-pct" id="rPct">0%</div>
+              <div class="nh-donut-tiny">трат</div>
             </div>
           </div>
-          <div style="flex:1">
-            <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);margin-bottom:8px">6 мес.</div>
-            <div class="bars-wrap" id="barsWrap"></div>
-            <div style="display:flex;gap:5px;margin-top:5px" id="barsLbl"></div>
-          </div>
+        </div>
+
+        <!-- 6-month bars -->
+        <div class="nh-bars-card">
+          <div class="nh-bars-lbl">6 месяцев</div>
+          <div class="nh-bars-inner" id="barsWrap"></div>
+          <div class="nh-bars-labels" id="barsLbl"></div>
         </div>
       </div>
 
-      <!-- TOP CATS -->
-      <div class="card" style="animation-delay:.1s">
-        <div class="card-shine"></div>
-        <div class="card-title">Топ расходов</div>
-        <div id="catLegend"></div>
+      <!-- ══ QUICK ACTIONS ══ -->
+      <div class="nh-qa">
+        <div class="nh-qa-item" onclick="show('budget')">
+          <div class="nh-qa-ico" style="background:rgba(224,82,138,.1);border-color:rgba(224,82,138,.2)">📊</div>
+          <div class="nh-qa-val" id="qBudget">—</div>
+          <div class="nh-qa-lbl">Бюджет</div>
+        </div>
+        <div class="nh-qa-item" onclick="show('credits')">
+          <div class="nh-qa-ico" style="background:rgba(192,68,58,.07);border-color:rgba(192,68,58,.15)">💳</div>
+          <div class="nh-qa-val" id="qDebt">0</div>
+          <div class="nh-qa-lbl">Долги</div>
+        </div>
+        <div class="nh-qa-item" onclick="show('recurring')">
+          <div class="nh-qa-ico" style="background:rgba(76,175,132,.07);border-color:rgba(76,175,132,.15)">📅</div>
+          <div class="nh-qa-val" id="qRec">0</div>
+          <div class="nh-qa-lbl">Платежи</div>
+        </div>
+        <div class="nh-qa-item" onclick="show('goals')">
+          <div class="nh-qa-ico" style="background:rgba(110,115,205,.1);border-color:rgba(110,115,205,.2)">🎯</div>
+          <div class="nh-qa-val" id="qGoals">0</div>
+          <div class="nh-qa-lbl">Цели</div>
+        </div>
       </div>
 
-      <!-- OVERDUE -->
+      <!-- ══ TOP CATEGORIES ══ -->
+      <div class="nh-section">
+        <div class="nh-section-hd">
+          <span class="nh-section-title">Топ расходов</span>
+          <span class="nh-section-link" onclick="show('txs')">все →</span>
+        </div>
+        <div class="nh-cats-card" id="catLegend"></div>
+      </div>
+
+      <!-- ══ OVERDUE ══ -->
       <div id="overdueWidget"></div>
 
-      <!-- RECENT -->
-      <div class="sh" style="animation-delay:.14s">
-        <div class="sh-title">Последние операции</div>
-        <div class="sh-link" onclick="show('txs')">Все →</div>
+      <!-- ══ RECENT TXS ══ -->
+      <div class="nh-section">
+        <div class="nh-section-hd">
+          <span class="nh-section-title">Последние</span>
+          <span class="nh-section-link" onclick="show('txs')">все →</span>
+        </div>
+        <div class="nh-recent-card" id="recentTxs"></div>
       </div>
-      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);margin:0 16px;overflow:hidden;animation:fadeUp .3s .14s ease both" id="recentTxs"></div>
+
       <div class="gap"></div>
     </div>
 
@@ -1669,8 +1896,8 @@ body::before{
 
 <!-- CONVERSION MODAL -->
 <div class="modal-overlay" id="cvOvl" onclick="closeCv()"></div>
-<div class="modal-box" id="cvBox" style="max-width:370px">
-  <div class="modal-title">💱 Конвертация</div>
+<div id="cvBox">
+  <div class="modal-title" style="margin-bottom:4px">💱 Конвертация</div>
   <div style="font-size:12px;color:var(--ink3);margin-bottom:16px" id="cvTxInfo"></div>
 
   <!-- from amount (readonly) -->
@@ -1850,24 +2077,35 @@ function closeMore(){document.getElementById('moreOvl').style.display='none';doc
 // ── HOME ──
 function renderHome(){
   var n=new Date();
+  // greeting by time
+  var hr=n.getHours();
+  var gr=hr<12?'Доброе утро ☀️':hr<18?'Добрый день 👋':'Добрый вечер 🌙';
+  var grEl=document.getElementById('nhGreeting');if(grEl)grEl.textContent=gr;
+
   var mf=function(arr){return arr.filter(function(i){var d=new Date(i.date);return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();});};
   var mInc=mf(S.income).reduce(function(s,i){return s+i.a;},0);
   var mExp=mf(S.expense).reduce(function(s,i){return s+i.a;},0);
   var tInc=S.income.reduce(function(s,i){return s+i.a;},0);
   var tExp=S.expense.reduce(function(s,i){return s+i.a;},0);
   var bal=tInc-tExp;
-  document.getElementById('monthLbl').textContent=n.toLocaleDateString('ru-RU',{month:'long',year:'numeric'});
 
-  // date badge
+  var mlEl=document.getElementById('monthLbl');
+  if(mlEl)mlEl.textContent=n.toLocaleDateString('ru-RU',{month:'long',year:'numeric'});
+
   var dl=document.getElementById('homeDateLbl');
   if(dl)dl.textContent=n.toLocaleDateString('ru-RU',{day:'numeric',month:'short'});
 
   var hb=document.getElementById('hbal');
-  if(hb){hb.textContent=fmt(bal);hb.className='bal-card-amount '+(bal>0?'pos':bal<0?'neg':'zero');}
-  document.getElementById('hsub').textContent=bal>0?'Заработано '+fmt(tInc)+' всего':bal<0?'Перерасход на '+fmt(Math.abs(bal)):'Добавьте первую операцию';
-  document.getElementById('hInc').textContent=fmtK(mInc);
-  document.getElementById('hExp').textContent=fmtK(mExp);
-  document.getElementById('hPig').textContent=fmtK(pigBal());
+  if(hb){
+    hb.textContent=fmt(bal);
+    hb.className='nh-hero-amount '+(bal>0?'pos':bal<0?'neg':'zero');
+  }
+  var hs=document.getElementById('hsub');
+  if(hs)hs.textContent=bal>0?'Заработано '+fmt(tInc)+' всего':bal<0?'Перерасход на '+fmt(Math.abs(bal)):'Добавьте первую операцию';
+
+  var hiEl=document.getElementById('hInc');if(hiEl)hiEl.textContent=fmtK(mInc);
+  var heEl=document.getElementById('hExp');if(heEl)heEl.textContent=fmtK(mExp);
+  var hpEl=document.getElementById('hPig');if(hpEl)hpEl.textContent=fmtK(pigBal());
 
   var budgets=Object.keys(S.budgets);
   var budgetPct=0;
@@ -1875,17 +2113,19 @@ function renderHome(){
   var bEl=document.getElementById('qBudget');
   if(bEl){bEl.textContent=budgets.length?budgetPct+'%':'—';bEl.style.color=budgetPct>80?'var(--red2)':budgetPct>50?'var(--gold2)':'var(--grn2)';}
   var debt=S.credits.reduce(function(s,c){return s+c.total;},0);
-  document.getElementById('qDebt').textContent=debt>0?fmtK(debt)+'$':'0';
-  document.getElementById('qRec').textContent=S.recurring.length;
-  document.getElementById('qGoals').textContent=S.goals.length;
+  var qdEl=document.getElementById('qDebt');if(qdEl)qdEl.textContent=debt>0?fmtK(debt)+'$':'0';
+  var qrEl=document.getElementById('qRec');if(qrEl)qrEl.textContent=S.recurring.length;
+  var qgEl=document.getElementById('qGoals');if(qgEl)qgEl.textContent=S.goals.length;
 
-  // ring
+  // ring (new svg — r=36, circumference=226)
   var pct=mInc>0?Math.min(100,Math.round(mExp/mInc*100)):0;
-  var circ=220;var dash=circ-(circ*(pct/100));
+  var circ=226;var dash=circ-(circ*(pct/100));
   var rf=document.getElementById('ringFill');
-  rf.style.setProperty('--d',dash);rf.style.strokeDashoffset=circ;
-  if(pct>80)rf.setAttribute('stroke','url(#rr)');else rf.setAttribute('stroke','url(#rg)');
-  document.getElementById('rPct').textContent=pct+'%';
+  if(rf){
+    rf.style.strokeDashoffset=dash;
+    rf.setAttribute('stroke',pct>80?'url(#rr)':'url(#rg)');
+  }
+  var rpEl=document.getElementById('rPct');if(rpEl)rpEl.textContent=pct+'%';
 
   // bars
   var months=Array.from({length:6},function(_,i){var d=new Date(n.getFullYear(),n.getMonth()-5+i,1);return{m:d.getMonth(),y:d.getFullYear(),l:d.toLocaleDateString('ru-RU',{month:'short'})};});
@@ -1897,10 +2137,12 @@ function renderHome(){
     };
   });
   var mx=Math.max.apply(null,vals.map(function(v){return Math.max(v.inc,v.exp);}).concat([1]));
-  document.getElementById('barsWrap').innerHTML=vals.map(function(v){
-    return '<div class="bar-group"><div class="bar-pair"><div class="bbar inc" style="height:'+Math.max(3,Math.round(v.inc/mx*52))+'px"></div><div class="bbar exp" style="height:'+Math.max(3,Math.round(v.exp/mx*52))+'px"></div></div></div>';
+  var bwEl=document.getElementById('barsWrap');
+  if(bwEl)bwEl.innerHTML=vals.map(function(v){
+    return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end"><div style="display:flex;gap:2px;align-items:flex-end"><div style="width:7px;border-radius:3px 3px 0 0;min-height:3px;background:linear-gradient(180deg,var(--grn2),var(--grn));height:'+Math.max(3,Math.round(v.inc/mx*52))+'px"></div><div style="width:7px;border-radius:3px 3px 0 0;min-height:3px;background:linear-gradient(180deg,var(--gold2),var(--acc));height:'+Math.max(3,Math.round(v.exp/mx*52))+'px"></div></div></div>';
   }).join('');
-  document.getElementById('barsLbl').innerHTML=vals.map(function(v){return '<div style="flex:1;text-align:center;font-size:9px;color:var(--ink3);font-weight:600">'+v.l+'</div>';}).join('');
+  var blEl=document.getElementById('barsLbl');
+  if(blEl)blEl.innerHTML=vals.map(function(v){return '<div style="flex:1;text-align:center;font-size:8px;color:var(--ink3);font-weight:600">'+v.l+'</div>';}).join('');
 
   // cats
   var cats={};
@@ -1909,11 +2151,14 @@ function renderHome(){
   var mxC=sorted[0]?sorted[0][1]:1;
   var catColors=['#E0528A','#4CAF84','#D45090','#F06FA0'];
   var cl=document.getElementById('catLegend');
-  if(!sorted.length){cl.innerHTML='<div style="font-size:12px;color:var(--ink3);text-align:center;padding:10px">Нет расходов в этом месяце</div>';return;}
-  cl.innerHTML=sorted.map(function(kv,i){
-    var cat=[].concat(iCats,eCats).find(function(c){return c.l===kv[0];})||{e:'•'};
-    return '<div class="cat-row"><div class="cat-dot" style="background:'+catColors[i%4]+'"></div><div class="cat-name">'+cat.e+' '+kv[0]+'</div><div class="cat-bar-bg"><div class="cat-bar" style="width:'+Math.round(kv[1]/mxC*100)+'%;background:'+catColors[i%4]+'"></div></div><div class="cat-amt">'+fmtK(kv[1])+'</div></div>';
-  }).join('');
+  if(!sorted.length){
+    if(cl)cl.innerHTML='<div style="font-size:12px;color:var(--ink3);text-align:center;padding:16px">Нет расходов в этом месяце</div>';
+  } else {
+    if(cl)cl.innerHTML=sorted.map(function(kv,i){
+      var cat=[].concat(iCats,eCats).find(function(c){return c.l===kv[0];})||{e:'•'};
+      return '<div class="cat-row" style="padding:10px 16px"><div class="cat-dot" style="background:'+catColors[i%4]+'"></div><div class="cat-name">'+cat.e+' '+kv[0]+'</div><div class="cat-bar-bg"><div class="cat-bar" style="width:'+Math.round(kv[1]/mxC*100)+'%;background:'+catColors[i%4]+'"></div></div><div class="cat-amt">'+fmtK(kv[1])+'</div></div>';
+    }).join('');
+  }
 
   renderOverdue();
 
@@ -1922,8 +2167,8 @@ function renderHome(){
     S.expense.map(function(i){return Object.assign({},i,{type:'exp'});})
   ).sort(function(a,b){return new Date(b.date)-new Date(a.date);}).slice(0,5);
   var re=document.getElementById('recentTxs');
-  if(!recent.length){re.innerHTML='<div class="empty"><div class="empty-ico">🌸</div><div class="empty-title">Нет операций</div></div>';return;}
-  re.innerHTML=recent.map(function(i){return txHTML(i,i.type,false);}).join('');
+  if(!recent.length){if(re)re.innerHTML='<div class="empty"><div class="empty-ico">🌸</div><div class="empty-title">Нет операций</div></div>';return;}
+  if(re)re.innerHTML=recent.map(function(i){return txHTML(i,i.type,false);}).join('');
 }
 
 function txHTML(i,type,showDel){
@@ -2747,53 +2992,25 @@ async function cvFetchRate(){
   if(f===t){document.getElementById('cvRate').value='1';cvCalc();return;}
   var btn=document.getElementById('cvFetchBtn');
   var st=document.getElementById('cvStatus');
-  btn.textContent='…';st.style.color='var(--ink3)';st.textContent='Загружаем курс…';
-
-  // Try multiple APIs in sequence
-  var apis=[
-    async function(){
-      var r=await fetch('https://api.exchangerate-api.com/v4/latest/'+f);
-      if(!r.ok)throw 0;
-      var d=await r.json();
-      var rate=d.rates&&d.rates[t];
-      if(!rate)throw 0;
-      return rate;
-    },
-    async function(){
-      var r=await fetch('https://open.er-api.com/v6/latest/'+f);
-      if(!r.ok)throw 0;
-      var d=await r.json();
-      var rate=d.rates&&d.rates[t];
-      if(!rate)throw 0;
-      return rate;
-    },
-    async function(){
-      var r=await fetch('https://api.frankfurter.app/latest?from='+f+'&to='+t);
-      if(!r.ok)throw 0;
-      var d=await r.json();
-      var rate=d.rates&&d.rates[t];
-      if(!rate)throw 0;
-      return rate;
-    }
-  ];
-
-  for(var i=0;i<apis.length;i++){
-    try{
-      var rate=await apis[i]();
-      document.getElementById('cvRate').value=rate.toFixed(4);
-      st.textContent='✓ Актуальный курс на '+new Date().toLocaleDateString('ru-RU');
-      st.style.color='var(--grn2)';
-      cvCalc();
-      btn.textContent='↻ Авто';
-      return;
-    }catch(e){}
+  btn.textContent='…';st.textContent='Загружаем курс…';
+  try{
+    var url='https://api.frankfurter.app/latest?from='+f+'&to='+t;
+    var res=await fetch(url);
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    var data=await res.json();
+    var rate=data.rates&&data.rates[t];
+    if(!rate)throw new Error('Нет данных');
+    document.getElementById('cvRate').value=rate.toFixed(4);
+    st.textContent='✓ Актуальный курс на '+new Date().toLocaleDateString('ru-RU');
+    st.style.color='var(--grn2)';
+    cvCalc();
+  }catch(e){
+    // fallback to defaults
+    var def=CV_DEFAULTS[f]&&CV_DEFAULTS[f][t];
+    if(def){document.getElementById('cvRate').value=def.toFixed(4);cvCalc();}
+    st.textContent='Офлайн — используем примерный курс';
+    st.style.color='var(--gold2)';
   }
-
-  // All APIs failed — use built-in defaults
-  var def=CV_DEFAULTS[f]&&CV_DEFAULTS[f][t];
-  if(def){document.getElementById('cvRate').value=def.toFixed(4);cvCalc();}
-  st.textContent='⚠ Нет интернета — вставлен примерный курс, отредактируй вручную';
-  st.style.color='var(--gold2)';
   btn.textContent='↻ Авто';
 }
 
