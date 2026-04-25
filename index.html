@@ -2962,12 +2962,12 @@ document.addEventListener('keydown',function(e){var ls=document.getElementById('
 var _cvAmt=0;
 // Popular exchange rates vs CAD (fallback defaults, user can edit)
 var CV_DEFAULTS={
-  'CAD':{'CAD':1,'USD':0.74,'EUR':0.68,'GBP':0.58,'UAH':30.5,'PLN':3.0},
-  'USD':{'CAD':1.36,'USD':1,'EUR':0.92,'GBP':0.79,'UAH':41.5,'PLN':4.07},
-  'EUR':{'CAD':1.47,'USD':1.09,'EUR':1,'GBP':0.86,'UAH':45.2,'PLN':4.42},
-  'GBP':{'CAD':1.71,'USD':1.27,'EUR':1.17,'GBP':1,'UAH':52.6,'PLN':5.14},
-  'UAH':{'CAD':0.033,'USD':0.024,'EUR':0.022,'GBP':0.019,'UAH':1,'PLN':0.098},
-  'PLN':{'CAD':0.33,'USD':0.25,'EUR':0.23,'GBP':0.19,'UAH':10.2,'PLN':1}
+  'CAD':{'CAD':1,'USD':0.72,'EUR':0.66,'GBP':0.56,'UAH':29.8,'PLN':2.88},
+  'USD':{'CAD':1.39,'USD':1,'EUR':0.92,'GBP':0.78,'UAH':41.3,'PLN':3.99},
+  'EUR':{'CAD':1.51,'USD':1.09,'EUR':1,'GBP':0.85,'UAH':44.9,'PLN':4.34},
+  'GBP':{'CAD':1.77,'USD':1.28,'EUR':1.18,'GBP':1,'UAH':52.8,'PLN':5.10},
+  'UAH':{'CAD':0.034,'USD':0.024,'EUR':0.022,'GBP':0.019,'UAH':1,'PLN':0.097},
+  'PLN':{'CAD':0.347,'USD':0.251,'EUR':0.230,'GBP':0.196,'UAH':10.3,'PLN':1}
 };
 function openCv(amt,name,date){
   _cvAmt=amt;
@@ -3019,23 +3019,48 @@ async function cvFetchRate(){
   if(f===t){document.getElementById('cvRate').value='1';cvCalc();return;}
   var btn=document.getElementById('cvFetchBtn');
   var st=document.getElementById('cvStatus');
-  btn.textContent='…';st.textContent='Загружаем курс…';
-  try{
-    var url='https://api.frankfurter.app/latest?from='+f+'&to='+t;
-    var res=await fetch(url);
-    if(!res.ok)throw new Error('HTTP '+res.status);
-    var data=await res.json();
-    var rate=data.rates&&data.rates[t];
-    if(!rate)throw new Error('Нет данных');
+  btn.textContent='…';st.textContent='Загружаем курс…';st.style.color='var(--ink3)';
+
+  // Try multiple free APIs in order
+  var apis=[
+    async function(){
+      var res=await fetch('https://open.er-api.com/v6/latest/'+f,{signal:AbortSignal.timeout(5000)});
+      if(!res.ok)throw new Error('er-api fail');
+      var d=await res.json();
+      if(!d.rates||!d.rates[t])throw new Error('no rate');
+      return d.rates[t];
+    },
+    async function(){
+      var res=await fetch('https://api.fxratesapi.com/latest?base='+f+'&currencies='+t,{signal:AbortSignal.timeout(5000)});
+      if(!res.ok)throw new Error('fxrates fail');
+      var d=await res.json();
+      if(!d.rates||!d.rates[t])throw new Error('no rate');
+      return d.rates[t];
+    },
+    async function(){
+      var res=await fetch('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/'+f.toLowerCase()+'.json',{signal:AbortSignal.timeout(5000)});
+      if(!res.ok)throw new Error('jsdelivr fail');
+      var d=await res.json();
+      var fl=f.toLowerCase(),tl=t.toLowerCase();
+      if(!d[fl]||!d[fl][tl])throw new Error('no rate');
+      return d[fl][tl];
+    }
+  ];
+
+  var rate=null;
+  for(var i=0;i<apis.length;i++){
+    try{rate=await apis[i]();if(rate&&rate>0)break;}catch(e){rate=null;}
+  }
+
+  if(rate&&rate>0){
     document.getElementById('cvRate').value=rate.toFixed(4);
     st.textContent='✓ Актуальный курс на '+new Date().toLocaleDateString('ru-RU');
     st.style.color='var(--grn2)';
     cvCalc();
-  }catch(e){
-    // fallback to defaults
+  } else {
     var def=CV_DEFAULTS[f]&&CV_DEFAULTS[f][t];
     if(def){document.getElementById('cvRate').value=def.toFixed(4);cvCalc();}
-    st.textContent='Офлайн — используем примерный курс';
+    st.textContent='Офлайн — используем приблизительный курс';
     st.style.color='var(--gold2)';
   }
   btn.textContent='↻ Авто';
