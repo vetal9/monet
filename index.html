@@ -1656,7 +1656,7 @@ var sv=function(){
 
 // ── UTILS ──
 var fmt=function(n){return new Intl.NumberFormat('en-CA').format(Math.round(n))+' CA$';};
-var fmtK=function(n){if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return Math.round(n/1e3)+'K';return Math.round(n);};
+var fmtK=function(n){if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3){var k=n/1e3;var r=Math.round(k*10)/10;return(r===Math.floor(r)?r.toFixed(0):r.toFixed(1))+'K';}return Math.round(n);};
 var td=function(){return new Date().toISOString().split('T')[0];};
 var fD=function(d){return d?new Date(d).toLocaleDateString('ru-RU',{day:'2-digit',month:'short'}):''};
 var fDL=function(d){return d?new Date(d).toLocaleDateString('ru-RU',{day:'numeric',month:'long'}):''};
@@ -2310,7 +2310,7 @@ function confirmPig(){
   var a=parseFloat(document.getElementById('pigInput').value);
   if(!a||a<=0){pulse('pigInput');return;}
   if(_pigMode==='in'){S.piggy.push({id:Date.now(),type:'in',a:a,date:td(),note:'Пополнение'});}
-  else{var bal=pigBal();if(a>bal){openModal('Недостаточно','В копилке: '+fmt(bal),function(){});return;}S.piggy.push({id:Date.now(),type:'out',a:a,date:td(),note:'Снятие'});S.income.unshift({id:Date.now()+1,name:'Снятие из копилки',a:a,cat:'Доход',date:td()});}
+  else{var bal=pigBal();if(a>bal){openModal('Недостаточно','В копилке: '+fmt(bal),function(){});return;}S.piggy.push({id:Date.now(),type:'out',a:a,date:td(),note:'Снятие'});}
   sv();renderPiggy();renderHome();closePigPanel();
 }
 function clearPiggy(){openConfirm('Очистить копилку?','История будет удалена.',function(){S.piggy=[];sv();renderPiggy();},'Очистить',null,null);}
