@@ -2747,25 +2747,53 @@ async function cvFetchRate(){
   if(f===t){document.getElementById('cvRate').value='1';cvCalc();return;}
   var btn=document.getElementById('cvFetchBtn');
   var st=document.getElementById('cvStatus');
-  btn.textContent='…';st.textContent='Загружаем курс…';
-  try{
-    var url='https://api.frankfurter.app/latest?from='+f+'&to='+t;
-    var res=await fetch(url);
-    if(!res.ok)throw new Error('HTTP '+res.status);
-    var data=await res.json();
-    var rate=data.rates&&data.rates[t];
-    if(!rate)throw new Error('Нет данных');
-    document.getElementById('cvRate').value=rate.toFixed(4);
-    st.textContent='✓ Актуальный курс на '+new Date().toLocaleDateString('ru-RU');
-    st.style.color='var(--grn2)';
-    cvCalc();
-  }catch(e){
-    // fallback to defaults
-    var def=CV_DEFAULTS[f]&&CV_DEFAULTS[f][t];
-    if(def){document.getElementById('cvRate').value=def.toFixed(4);cvCalc();}
-    st.textContent='Офлайн — используем примерный курс';
-    st.style.color='var(--gold2)';
+  btn.textContent='…';st.style.color='var(--ink3)';st.textContent='Загружаем курс…';
+
+  // Try multiple APIs in sequence
+  var apis=[
+    async function(){
+      var r=await fetch('https://api.exchangerate-api.com/v4/latest/'+f);
+      if(!r.ok)throw 0;
+      var d=await r.json();
+      var rate=d.rates&&d.rates[t];
+      if(!rate)throw 0;
+      return rate;
+    },
+    async function(){
+      var r=await fetch('https://open.er-api.com/v6/latest/'+f);
+      if(!r.ok)throw 0;
+      var d=await r.json();
+      var rate=d.rates&&d.rates[t];
+      if(!rate)throw 0;
+      return rate;
+    },
+    async function(){
+      var r=await fetch('https://api.frankfurter.app/latest?from='+f+'&to='+t);
+      if(!r.ok)throw 0;
+      var d=await r.json();
+      var rate=d.rates&&d.rates[t];
+      if(!rate)throw 0;
+      return rate;
+    }
+  ];
+
+  for(var i=0;i<apis.length;i++){
+    try{
+      var rate=await apis[i]();
+      document.getElementById('cvRate').value=rate.toFixed(4);
+      st.textContent='✓ Актуальный курс на '+new Date().toLocaleDateString('ru-RU');
+      st.style.color='var(--grn2)';
+      cvCalc();
+      btn.textContent='↻ Авто';
+      return;
+    }catch(e){}
   }
+
+  // All APIs failed — use built-in defaults
+  var def=CV_DEFAULTS[f]&&CV_DEFAULTS[f][t];
+  if(def){document.getElementById('cvRate').value=def.toFixed(4);cvCalc();}
+  st.textContent='⚠ Нет интернета — вставлен примерный курс, отредактируй вручную';
+  st.style.color='var(--gold2)';
   btn.textContent='↻ Авто';
 }
 
