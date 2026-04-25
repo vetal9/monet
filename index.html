@@ -1697,24 +1697,7 @@ body::before{
             </div>
             <div class="tgl on" id="thTgl"><div class="tgl-knob"></div></div>
           </div>
-          <div class="settings-row" style="cursor:default">
-            <div class="settings-row-left">
-              <div class="settings-ico gld">💱</div>
-              <div>
-                <div class="settings-label">Валюта</div>
-                <div class="settings-sub" id="currSubLbl">CA$</div>
-              </div>
-            </div>
-            <select id="currSel" class="finput" style="width:auto;padding:6px 10px;font-size:13px;max-width:110px" onchange="setCurrency(this.value)">
-              <option value="CA$">🇨🇦 CA$</option>
-              <option value="USD">🇺🇸 USD</option>
-              <option value="UAH">🇺🇦 UAH</option>
-              <option value="EUR">🇪🇺 EUR</option>
-              <option value="GBP">🇬🇧 GBP</option>
-              <option value="PLN">🇵🇱 PLN</option>
-              <option value="RUB">🇷🇺 RUB</option>
-            </select>
-          </div>
+
           <div class="settings-row" onclick="requestNotif()">
             <div class="settings-row-left">
               <div class="settings-ico grn">🔔</div>
@@ -1768,6 +1751,30 @@ body::before{
             </div>
             <div class="settings-chev">›</div>
           </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-row" onclick="backupJSON()">
+            <div class="settings-row-left">
+              <div class="settings-ico gld">💾</div>
+              <div>
+                <div class="settings-label">Скачать резервную копию</div>
+                <div class="settings-sub" id="backupSubLbl">Сохранить данные в JSON</div>
+              </div>
+            </div>
+            <div class="settings-chev">›</div>
+          </div>
+          <div class="settings-row" onclick="document.getElementById('restoreFile').click()">
+            <div class="settings-row-left">
+              <div class="settings-ico grn">📂</div>
+              <div>
+                <div class="settings-label">Восстановить из файла</div>
+                <div class="settings-sub">Загрузить JSON резервную копию</div>
+              </div>
+            </div>
+            <div class="settings-chev">›</div>
+          </div>
+          <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="restoreJSON(this)">
         </div>
 
         <div class="db-stat-grid">
@@ -2909,6 +2916,47 @@ document.addEventListener('keydown',function(e){var ls=document.getElementById('
     pulling=false;
   },{passive:true});
 })();
+
+// ── BACKUP / RESTORE ──
+function backupJSON(){
+  var date=new Date().toISOString().split('T')[0];
+  var blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='monet-backup-'+date+'.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  var sub=document.getElementById('backupSubLbl');
+  if(sub){sub.textContent='Скачано ✓ '+date;setTimeout(function(){sub.textContent='Сохранить данные в JSON';},3000);}
+}
+function restoreJSON(input){
+  var file=input.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var parsed=JSON.parse(e.target.result);
+      if(!Array.isArray(parsed.income)||!Array.isArray(parsed.expense)){alert('Неверный формат файла');return;}
+      if(!Array.isArray(parsed.goals))parsed.goals=[];
+      if(!Array.isArray(parsed.credits))parsed.credits=[];
+      if(!Array.isArray(parsed.recurring))parsed.recurring=[];
+      if(!Array.isArray(parsed.piggy))parsed.piggy=[];
+      if(!parsed.budgets||typeof parsed.budgets!=='object'||Array.isArray(parsed.budgets))parsed.budgets={};
+      if(parsed.piggyGoal===undefined)parsed.piggyGoal=null;
+      openConfirm(
+        'Восстановить данные?',
+        'Операций: '+(parsed.income.length+parsed.expense.length)+' · Целей: '+parsed.goals.length+'. Текущие данные будут заменены.',
+        function(){
+          S=parsed;sv();
+          renderHome();renderSettings();
+          if(cur==='txs')renderTxs();
+          alert('✓ Данные восстановлены');
+        },'Восстановить',null,'Отмена'
+      );
+    }catch(err){alert('Ошибка чтения файла: '+err.message);}
+    input.value='';
+  };
+  reader.readAsText(file);
+}
 
 // ── INIT ──
 initCurrUI();
