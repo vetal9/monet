@@ -1068,10 +1068,60 @@ body::before{
 .empty-title{font-size:14px;font-weight:700;color:var(--ink2)}
 .empty-sub{font-size:12px;color:var(--ink3)}
 
+/* ── PIGGY HOME WIDGET ── */
+.pig-widget{
+  margin:0 16px 14px;
+  background:linear-gradient(135deg,#15100A 0%,#1E1508 50%,#150F06 100%);
+  border:1px solid rgba(212,175,55,.22);
+  border-radius:22px;padding:16px 18px;
+  position:relative;overflow:hidden;
+  cursor:pointer;transition:border-color .15s,transform .12s;
+  animation:fadeUp .3s .07s ease both;
+  -webkit-tap-highlight-color:transparent;
+}
+.pig-widget:active{transform:scale(.98);border-color:rgba(212,175,55,.4)}
+.pig-widget::before{content:'';position:absolute;top:-40px;right:-20px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.09) 0%,transparent 65%);pointer-events:none}
+.pig-widget-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.pig-widget-left{display:flex;align-items:center;gap:10px}
+.pig-widget-ico{font-size:26px;line-height:1}
+.pig-widget-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(212,175,55,.45);margin-bottom:3px}
+.pig-widget-bal{font-family:'DM Mono',monospace;font-size:20px;font-weight:700;color:var(--gold2)}
+.pig-widget-arrow{font-size:12px;color:var(--ink3)}
+
+/* No goal state in widget */
+.pig-widget-nogoal{font-size:11px;color:var(--ink3);padding:4px 0}
+
+/* Goal bar in widget */
+.pig-widget-goal-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.pig-widget-goal-name{font-size:11px;font-weight:600;color:var(--ink2)}
+.pig-widget-goal-pct{font-size:11px;font-weight:800;color:var(--gold2);font-family:'DM Mono',monospace}
+.pig-widget-bar-bg{height:6px;background:rgba(212,175,55,.08);border-radius:6px;overflow:hidden}
+.pig-widget-bar{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--acc),var(--gold2));background-size:200%;animation:goldShimmer 3s linear infinite;transition:width .9s ease}
+.pig-widget-bar.done{background:linear-gradient(90deg,var(--grn),var(--grn2))}
 /* ── MISC ── */
 .gap{height:16px}
 .spacer{height:18px}
 .confetti-p{position:fixed;pointer-events:none;z-index:9999;width:8px;height:8px;border-radius:2px;animation:confettiFall var(--dur) ease-in forwards}
+@keyframes txToast{0%{opacity:0;transform:translateY(20px) scale(.9)}15%{opacity:1;transform:translateY(0) scale(1)}80%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-10px) scale(.95)}}
+@keyframes txFloat{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-80px) scale(1.3)}}
+.tx-toast{
+  position:fixed;bottom:calc(var(--safe) + 90px);left:50%;transform:translateX(-50%);
+  background:var(--bg2);border:1px solid var(--border2);border-radius:20px;
+  padding:12px 20px;display:flex;align-items:center;gap:10px;
+  z-index:800;pointer-events:none;white-space:nowrap;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);
+  animation:txToast 2.2s ease forwards;
+}
+.tx-toast-ico{font-size:20px}
+.tx-toast-text{font-size:13px;font-weight:700;color:var(--ink)}
+.tx-toast-amt{font-size:14px;font-weight:800;font-family:'DM Mono',monospace}
+.tx-toast-amt.inc{color:var(--grn2)}
+.tx-toast-amt.exp{color:var(--red2)}
+.tx-float{
+  position:fixed;pointer-events:none;z-index:801;
+  font-size:22px;font-weight:900;font-family:'DM Mono',monospace;
+  animation:txFloat .9s ease-out forwards;
+}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
@@ -1179,6 +1229,34 @@ body::before{
           <div class="qa-val" id="qGoals">0</div>
           <div class="qa-lbl">Цели</div>
         </div>
+      </div>
+
+      <!-- PIGGY WIDGET -->
+      <div class="pig-widget" onclick="show('piggy')" id="pigWidget">
+        <div class="pig-widget-top">
+          <div class="pig-widget-left">
+            <div class="pig-widget-ico">🪙</div>
+            <div>
+              <div class="pig-widget-title">Копилка</div>
+              <div class="pig-widget-bal" id="pwBal">0 CA$</div>
+            </div>
+          </div>
+          <div class="pig-widget-arrow">›</div>
+        </div>
+        <div id="pwGoalSection" style="display:none">
+          <div class="pig-widget-goal-row">
+            <div class="pig-widget-goal-name" id="pwGoalName">Цель</div>
+            <div class="pig-widget-goal-pct" id="pwGoalPct">0%</div>
+          </div>
+          <div class="pig-widget-bar-bg">
+            <div class="pig-widget-bar" id="pwGoalBar" style="width:0%"></div>
+          </div>
+          <div class="pig-widget-sub">
+            <span id="pwGoalCurr">0 CA$</span>
+            <span id="pwGoalLeft"></span>
+          </div>
+        </div>
+        <div class="pig-widget-nogoal" id="pwNoGoal">Нажмите чтобы установить цель →</div>
       </div>
 
       <!-- CHART CARD -->
@@ -1917,6 +1995,7 @@ function renderHome(){
   }).join('');
 
   renderOverdue();
+  renderPiggyWidget();
 
   var recent=[].concat(
     S.income.map(function(i){return Object.assign({},i,{type:'inc'});}),
@@ -1973,6 +2052,57 @@ function renderTxs(){
   }).join('');
 }
 
+// ── PIGGY WIDGET (home) ──
+function renderPiggyWidget(){
+  var bal=pigBal();
+  var wb=document.getElementById('pwBal');if(wb)wb.textContent=fmt(bal);
+  var gs=document.getElementById('pwGoalSection');
+  var ng=document.getElementById('pwNoGoal');
+  if(S.piggyGoal&&S.piggyGoal.amount>0){
+    if(gs)gs.style.display='';
+    if(ng)ng.style.display='none';
+    var pct=Math.min(100,Math.round(bal/S.piggyGoal.amount*100));
+    var n=document.getElementById('pwGoalName');if(n)n.textContent=S.piggyGoal.name;
+    var p=document.getElementById('pwGoalPct');if(p)p.textContent=pct+'%';
+    var b=document.getElementById('pwGoalBar');
+    if(b){b.style.width=pct+'%';b.className='pig-widget-bar'+(pct>=100?' done':'');}
+    var c=document.getElementById('pwGoalCurr');if(c)c.textContent=fmt(bal);
+    var l=document.getElementById('pwGoalLeft');
+    if(l){var left=Math.max(0,S.piggyGoal.amount-bal);l.textContent=pct>=100?'🎉 Цель!':'осталось '+fmt(left);}
+  } else {
+    if(gs)gs.style.display='none';
+    if(ng)ng.style.display='';
+  }
+}
+
+// ── TX TOAST ANIMATION ──
+function showTxToast(type,emoji,name,amount){
+  // Remove existing
+  document.querySelectorAll('.tx-toast').forEach(function(el){el.remove();});
+  document.querySelectorAll('.tx-float').forEach(function(el){el.remove();});
+
+  // Toast
+  var toast=document.createElement('div');
+  toast.className='tx-toast';
+  var sign=type==='inc'?'+':'−';
+  var color=type==='inc'?'var(--grn2)':'var(--red2)';
+  toast.innerHTML='<span class="tx-toast-ico">'+emoji+'</span><span class="tx-toast-text">'+esc(name)+'</span><span class="tx-toast-amt '+(type==='inc'?'inc':'exp')+'">'+sign+fmt(amount)+'</span>';
+  toast.style.borderColor=type==='inc'?'rgba(76,175,132,.3)':'rgba(212,175,55,.3)';
+  document.body.appendChild(toast);
+  setTimeout(function(){toast.remove();},2400);
+
+  // Floating amount near add button
+  var fl=document.createElement('div');
+  fl.className='tx-float';
+  fl.textContent=sign+fmtK(amount);
+  fl.style.color=type==='inc'?'var(--grn2)':'var(--gold2)';
+  fl.style.left='50%';
+  fl.style.bottom='calc(var(--safe) + 90px)';
+  fl.style.transform='translateX(-50%)';
+  document.body.appendChild(fl);
+  setTimeout(function(){fl.remove();},950);
+}
+
 // ── ADD ──
 var _dest='balance';
 function setDest(t){
@@ -1988,6 +2118,8 @@ function addIncome(){
   if(_dest==='piggy'){S.piggy.push({id:Date.now(),type:'in',a:a,date:d,note:note||selI});}
   else{S.income.unshift({id:Date.now(),name:selI,a:a,cat:selI,date:d,note:note});notifTx('income',selI,a);}
   sv();renderHome();
+  var catObj=iCats.find(function(c){return c.l===selI;})||{e:'💼'};
+  showTxToast('inc',_dest==='piggy'?'🪙':catObj.e,_dest==='piggy'?'В копилку':selI,a);
   document.getElementById('iA').value='';document.getElementById('iNote').value='';
   show(_dest==='piggy'?'piggy':'home');
 }
@@ -2000,6 +2132,8 @@ function addExpense(){
   S.expense.unshift({id:Date.now(),name:cat,a:a,cat:cat,date:d,note:note});
   sv();renderHome();notifTx('expense',cat,a);
   if(S.budgets[cat]){var sp=catSpent(cat);if(sp>=S.budgets[cat]*.8)checkBudgetNotif(cat,sp,S.budgets[cat]);}
+  var catObj=eCats.find(function(c){return c.l===cat;})||{e:'💸'};
+  showTxToast('exp',catObj.e,cat,a);
   document.getElementById('eA').value='';document.getElementById('eNote').value='';
   show('home');
 }
