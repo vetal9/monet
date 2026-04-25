@@ -2360,8 +2360,8 @@ function exportXLSX(){
   var d=getExpData();var mn=MONTHS_EN[d.m];var wb=XLSX.utils.book_new();
   var sum=[['Монет — Отчёт'],['Период:',mn+' '+d.y],['Дата:',new Date().toLocaleDateString()],[],['Доходы',d.tI],['Расходы',d.tE],['Баланс',d.bal]];
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(sum),'Сводка');
-  var ir=[['Дата','Категория','Сумма','Заметка']];d.inc.forEach(function(i){ir.push([i.date,i.cat,i.a,i.note||'']);});XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(ir),'Доходы');
-  var er=[['Дата','Название','Категория','Сумма','Заметка']];d.exp.forEach(function(i){er.push([i.date,i.name,i.cat,i.a,i.note||'']);});XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(er),'Расходы');
+  var ir=[['Дата','Категория','Сумма','Заметка']];d.inc.forEach(function(i){ir.push([i.date,i.cat,i.a,i.note||'']);});ir.push([]);ir.push(['','ИТОГО ДОХОДЫ:',d.tI,'']);XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(ir),'Доходы');
+  var er=[['Дата','Название','Категория','Сумма','Заметка']];d.exp.forEach(function(i){er.push([i.date,i.name,i.cat,i.a,i.note||'']);});er.push([]);er.push(['','','ИТОГО РАСХОДЫ:',d.tE,'']);er.push(['','','БАЛАНС:',d.bal,'']);XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(er),'Расходы');
   XLSX.writeFile(wb,'Монет_'+mn+'_'+d.y+'.xlsx');
 }
 
