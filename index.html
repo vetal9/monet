@@ -1314,6 +1314,11 @@ body::before{
     <!-- TXS -->
     <div id="sc-txs" class="screen">
       <div class="spacer"></div>
+      <!-- SEARCH BAR -->
+      <div style="padding:0 16px 10px;position:relative">
+        <span style="position:absolute;left:28px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.4;pointer-events:none">🔍</span>
+        <input type="text" id="txSearch" class="finput" placeholder="Поиск по операциям…" oninput="renderTxs()" style="padding-left:36px;font-size:13px;height:40px">
+      </div>
       <div class="period-tabs" id="periodTabs">
         <button class="period-btn active" onclick="setPeriod('all',this)">Все</button>
         <button class="period-btn" onclick="setPeriod('month',this)">Месяц</button>
@@ -1692,6 +1697,24 @@ body::before{
             </div>
             <div class="tgl on" id="thTgl"><div class="tgl-knob"></div></div>
           </div>
+          <div class="settings-row" style="cursor:default">
+            <div class="settings-row-left">
+              <div class="settings-ico gld">💱</div>
+              <div>
+                <div class="settings-label">Валюта</div>
+                <div class="settings-sub" id="currSubLbl">CA$</div>
+              </div>
+            </div>
+            <select id="currSel" class="finput" style="width:auto;padding:6px 10px;font-size:13px;max-width:110px" onchange="setCurrency(this.value)">
+              <option value="CA$">🇨🇦 CA$</option>
+              <option value="USD">🇺🇸 USD</option>
+              <option value="UAH">🇺🇦 UAH</option>
+              <option value="EUR">🇪🇺 EUR</option>
+              <option value="GBP">🇬🇧 GBP</option>
+              <option value="PLN">🇵🇱 PLN</option>
+              <option value="RUB">🇷🇺 RUB</option>
+            </select>
+          </div>
           <div class="settings-row" onclick="requestNotif()">
             <div class="settings-row-left">
               <div class="settings-ico grn">🔔</div>
@@ -1792,6 +1815,19 @@ body::before{
   </div>
 </div>
 
+<!-- EDIT TX MODAL -->
+<div class="modal-overlay" id="editTxOvl" onclick="closeEditTx()" style="display:none"></div>
+<div class="modal-box" id="editTxBox" style="display:none;max-height:80vh;overflow-y:auto;padding:24px 20px">
+  <div class="modal-title" style="margin-bottom:4px">✏️ Редактировать</div>
+  <div style="font-size:12px;color:var(--ink3);margin-bottom:18px" id="editTxTypeLbl"></div>
+  <div class="fgroup"><label class="flabel">Сумма</label><input type="number" id="editTxAmt" class="finput large" placeholder="0"></div>
+  <div class="fgroup"><label class="flabel">Категория</label><select id="editTxCat" class="finput"></select></div>
+  <div class="fgroup"><label class="flabel">Дата</label><input type="date" id="editTxDate" class="finput"></div>
+  <div class="fgroup"><label class="flabel">Заметка</label><input type="text" id="editTxNote" class="finput" placeholder="Необязательно…"></div>
+  <button class="btn-prim btn-gold" onclick="saveEditTx()" style="border-radius:14px;margin-bottom:8px">Сохранить</button>
+  <button class="modal-btn-alt" onclick="closeEditTx()" style="display:block">Отмена</button>
+</div>
+
 <!-- MODAL -->
 <div class="modal-overlay" id="mOvl" onclick="closeModal()"></div>
 <div class="modal-box" id="mBox">
@@ -1829,8 +1865,23 @@ var sv=function(){
   }
 };
 
+// ── CURRENCY ──
+var _curr='CA$';
+try{var _cs=localStorage.getItem('monetCurr');if(_cs)_curr=_cs;}catch(e){}
+function setCurrency(c){
+  _curr=c;
+  try{localStorage.setItem('monetCurr',c);}catch(e){}
+  var el=document.getElementById('currSubLbl');if(el)el.textContent=c;
+  var sel=document.getElementById('currSel');if(sel)sel.value=c;
+  renderHome();if(cur==='txs')renderTxs();if(cur==='goals')renderGoals();if(cur==='credits')renderCredits();if(cur==='piggy')renderPiggy();
+}
+function initCurrUI(){
+  var sel=document.getElementById('currSel');if(sel)sel.value=_curr;
+  var el=document.getElementById('currSubLbl');if(el)el.textContent=_curr;
+}
+
 // ── UTILS ──
-var fmt=function(n){return new Intl.NumberFormat('en-CA').format(Math.round(n))+' CA$';};
+var fmt=function(n){return new Intl.NumberFormat('en-CA').format(Math.round(n))+'\u00a0'+_curr;};
 var fmtK=function(n){if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3){var k=n/1e3;var r=Math.round(k*10)/10;return(r===Math.floor(r)?r.toFixed(0):r.toFixed(1))+'K';}return Math.round(n);};
 var td=function(){return new Date().toISOString().split('T')[0];};
 var fD=function(d){return d?new Date(d).toLocaleDateString('ru-RU',{day:'2-digit',month:'short'}):''};
@@ -2012,7 +2063,8 @@ function txHTML(i,type,showDel){
   var sign=type==='inc'?'+':'−';
   var fn=type==='inc'?'delI':'delE';
   var noteHTML=i.note?'<div class="tx-note">'+esc(i.note)+'</div>':'';
-  return '<div class="tx-item"><div class="tx-ico '+type+'">'+cat.e+'</div><div class="tx-mid"><div class="tx-name">'+esc(i.name||i.cat)+'</div><div class="tx-cat">'+i.cat+'</div>'+noteHTML+'</div><div class="tx-r"><div class="tx-amt '+type+'">'+sign+fmt(i.a)+'</div><div class="tx-date">'+fD(i.date)+'</div>'+(showDel?'<button class="tx-del" onclick="'+fn+'('+i.id+')">удалить</button>':'')+'</div></div>';
+  var actHTML=showDel?'<div style="display:flex;gap:6px;margin-top:4px"><button class="tx-del" style="color:var(--gold2);border-color:rgba(212,175,55,.2)" onclick="openEditTx('+i.id+',\''+type+'\')">✏️ изм.</button><button class="tx-del" onclick="'+fn+'('+i.id+')">удалить</button></div>':'';
+  return '<div class="tx-item"><div class="tx-ico '+type+'">'+cat.e+'</div><div class="tx-mid"><div class="tx-name">'+esc(i.name||i.cat)+'</div><div class="tx-cat">'+i.cat+'</div>'+noteHTML+'</div><div class="tx-r"><div class="tx-amt '+type+'">'+sign+fmt(i.a)+'</div><div class="tx-date">'+fD(i.date)+'</div>'+actHTML+'</div></div>';
 }
 
 // ── TXS ──
@@ -2037,6 +2089,8 @@ function renderTxs(){
     S.expense.filter(function(i){return inP(i.date);}).map(function(i){return Object.assign({},i,{type:'exp'});})
   ).sort(function(a,b){return new Date(b.date)-new Date(a.date);});
   if(txCat!=='Все')all=all.filter(function(i){return i.cat===txCat;});
+  var srchQ=(document.getElementById('txSearch')||{}).value||'';
+  if(srchQ.trim()){var q=srchQ.trim().toLowerCase();all=all.filter(function(i){return (i.name||'').toLowerCase().indexOf(q)>=0||(i.cat||'').toLowerCase().indexOf(q)>=0||(i.note||'').toLowerCase().indexOf(q)>=0;});}
   var cats=['Все'].concat(Array.from(new Set(all.map(function(i){return i.cat;}))));
   var cf=document.getElementById('catFilter');
   cf.innerHTML=cats.map(function(c){
@@ -2140,6 +2194,41 @@ function addExpense(){
 function delI(id){S.income=S.income.filter(function(i){return i.id!==id;});sv();renderHome();if(cur==='txs')renderTxs();}
 function delE(id){S.expense=S.expense.filter(function(i){return i.id!==id;});sv();renderHome();if(cur==='txs')renderTxs();}
 
+// ── EDIT TX ──
+var _editTxId=null,_editTxType=null;
+function openEditTx(id,type){
+  _editTxId=id;_editTxType=type;
+  var arr=type==='inc'?S.income:S.expense;
+  var tx=arr.find(function(i){return i.id===id;});
+  if(!tx)return;
+  var cats=type==='inc'?iCats:eCats;
+  document.getElementById('editTxTypeLbl').textContent=type==='inc'?'↑ Доход':'↓ Расход';
+  document.getElementById('editTxAmt').value=tx.a;
+  document.getElementById('editTxDate').value=tx.date||td();
+  document.getElementById('editTxNote').value=tx.note||'';
+  var sel=document.getElementById('editTxCat');
+  sel.innerHTML=cats.map(function(c){return '<option value="'+c.l+'"'+(c.l===tx.cat?' selected':'')+'>'+c.e+' '+c.l+'</option>';}).join('');
+  document.getElementById('editTxOvl').style.display='block';
+  document.getElementById('editTxBox').style.display='block';
+  setTimeout(function(){document.getElementById('editTxAmt').focus();},120);
+}
+function closeEditTx(){
+  document.getElementById('editTxOvl').style.display='none';
+  document.getElementById('editTxBox').style.display='none';
+  _editTxId=null;_editTxType=null;
+}
+function saveEditTx(){
+  var a=parseFloat(document.getElementById('editTxAmt').value);
+  if(!a||a<=0){pulse('editTxAmt');return;}
+  var cat=document.getElementById('editTxCat').value;
+  var date=document.getElementById('editTxDate').value||td();
+  var note=(document.getElementById('editTxNote').value||'').trim();
+  var arr=_editTxType==='inc'?S.income:S.expense;
+  var tx=arr.find(function(i){return i.id===_editTxId;});
+  if(tx){tx.a=a;tx.cat=cat;tx.name=cat;tx.date=date;tx.note=note;}
+  sv();closeEditTx();renderHome();if(cur==='txs')renderTxs();
+}
+
 // ── GOALS ──
 var _goalFilter='all';
 var _selGoalEmoji='🎯';
@@ -2190,7 +2279,7 @@ function renderGoals(){
     var el2=document.getElementById('goalOverallPct');if(el2)el2.textContent=pct+'%';
     var el3=document.getElementById('goalCntActive');if(el3)el3.textContent=active.length;
     var el4=document.getElementById('goalCntDone');if(el4)el4.textContent=done.length;
-    var el5=document.getElementById('goalTotalTarget');if(el5)el5.textContent=fmtK(totalTarget)+' CA$';
+    var el5=document.getElementById('goalTotalTarget');if(el5)el5.textContent=fmtK(totalTarget)+'\u00a0'+_curr;
   }
   var el=document.getElementById('goalsList');
   var today=new Date();today.setHours(0,0,0,0);
@@ -2486,7 +2575,7 @@ function payRecurring(id){
 function delRecurring(id){id=Number(id);openConfirm('Удалить платёж?','',function(){S.recurring=S.recurring.filter(function(r){return Number(r.id)!==id;});sv();renderRecurring();},'Удалить',null,null);}
 function renderRecurring(){
   var list=S.recurring;var el=document.getElementById('rpList');var summ=document.getElementById('rpSumm');if(!el)return;
-  if(list.length){summ.style.display='';var tot=list.reduce(function(s,r){return s+rpMonAmt(r);},0);document.getElementById('rpMon').textContent=fmtK(tot)+' CA$';document.getElementById('rpYear').textContent=fmtK(tot*12)+' CA$';document.getElementById('rpCntEl').textContent=list.length;}else{summ.style.display='none';}
+  if(list.length){summ.style.display='';var tot=list.reduce(function(s,r){return s+rpMonAmt(r);},0);document.getElementById('rpMon').textContent=fmtK(tot)+'\u00a0'+_curr;document.getElementById('rpYear').textContent=fmtK(tot*12)+'\u00a0'+_curr;document.getElementById('rpCntEl').textContent=list.length;}else{summ.style.display='none';}
   if(!list.length){el.innerHTML='<div class="empty"><div class="empty-ico">📅</div><div class="empty-title">Нет платежей</div></div>';return;}
   var today=new Date();today.setHours(0,0,0,0);
   el.innerHTML=list.map(function(rp,idx){
@@ -2695,6 +2784,7 @@ function renderSettings(){
   if(stEl)stEl.textContent=S.income.length+S.expense.length;
   if(gcEl)gcEl.textContent=S.goals.length+S.credits.length;
   updateDBUI();
+  initCurrUI();
 }
 
 // ── NOTIFICATIONS ──
@@ -2821,6 +2911,7 @@ document.addEventListener('keydown',function(e){var ls=document.getElementById('
 })();
 
 // ── INIT ──
+initCurrUI();
 renderHome();
 if(DB.connected)setTimeout(function(){pullDB();},1000);
 </script>
